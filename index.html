@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interaktywny Plan Treningowy z Dziennikiem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: "Slate & Amber" -->
+    <!-- Application Structure Plan: Extended the tab-based application to include a new "Log" (Dziennik) tab. This structure maintains the clear separation of concerns. Workout tabs are now interactive forms for data input (exercise selection, weight). The Log tab serves as a central point for data output and export. This flow (Input -> Save -> Review/Export) is intuitive for tracking progress. Direct Google Sheets integration is not feasible/secure in a client-side app, so a CSV-export-to-clipboard function provides the best workaround, empowering the user to easily transfer data. -->
+    <!-- Visualization & Content Choices: Report Info: Exercise selection -> Goal: Organize & Input -> Presentation: Dropdown menu (<select>) for each exercise. Interaction: User selects the main or alternative exercise. Justification: Cleaner and more direct than the previous info button, integrates seamlessly into a data-entry form. Report Info: Weight tracking -> Goal: Input -> Presentation: Number input field (<input type="number">). Interaction: User enters the weight used. Justification: Standard and effective for numeric data entry. Report Info: Saving progress -> Goal: Export Data -> Presentation: A "Log" tab with a textarea and "Copy" button. Interaction: User saves a workout, which generates a CSV string in the textarea. They can then copy this string. Justification: This is a secure and robust client-side solution for data export, allowing easy pasting into Google Sheets or other spreadsheet software. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .tab-btn.active {
+            border-color: #f59e0b;
+            background-color: #fffbeb;
+            color: #b45309;
+        }
+        /* Simple animation for copy confirmation */
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: translateY(10px); }
+            10%, 90% { opacity: 1; transform: translateY(0); }
+        }
+        .toast-animation {
+            animation: fadeInOut 2s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-6xl">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-slate-900">Interaktywny Plan Treningowy</h1>
+            <p class="mt-2 text-slate-600">Twój plan na powrót do formy. Powodzenia!</p>
+        </header>
+
+        <main>
+            <section id="zasady" class="mb-10">
+                <h2 class="text-2xl font-semibold text-center mb-6">Najważniejsze Zasady</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                        <h3 class="font-semibold text-lg mb-2 text-amber-600">1. Technika ponad ciężarem</h3>
+                        <p class="text-slate-600 text-sm">To Twoja zasada numer jeden. Zawsze. Lepsza jest perfekcyjna forma z mniejszym ciężarem niż ryzyko kontuzji. Skup się na pełnym zakresie ruchu.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                        <h3 class="font-semibold text-lg mb-2 text-amber-600">2. Rozgrzewka i Cool Down</h3>
+                        <p class="text-slate-600 text-sm">Zawsze 10-15 min rozgrzewki (cardio + serie wstępne) przed treningiem i 5-10 min rozciągania statycznego po jego zakończeniu.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                        <h3 class="font-semibold text-lg mb-2 text-amber-600">3. Stopniowa Progresja</h3>
+                        <p class="text-slate-600 text-sm">W pierwszym tygodniu skup się na technice. W kolejnych staraj się dokładać mały ciężar lub zwiększać liczbę powtórzeń, gdy czujesz się pewnie.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <div class="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-slate-200">
+                <div class="border-b border-slate-200 mb-6">
+                    <nav class="-mb-px flex flex-wrap gap-2 sm:gap-4" aria-label="Tabs">
+                        <button class="tab-btn" data-tab="harmonogram">🗓️ Harmonogram</button>
+                        <button class="tab-btn" data-tab="push">💪 PUSH</button>
+                        <button class="tab-btn" data-tab="pull">🏋️ PULL</button>
+                        <button class="tab-btn" data-tab="legs">🦵 LEGS</button>
+                        <button class="tab-btn" data-tab="brzuch">🔥 BRZUCH</button>
+                        <button class="tab-btn" data-tab="dziennik">📋 Dziennik</button>
+                    </nav>
+                </div>
+
+                <div id="tab-content">
+                    <div class="tab-pane" id="harmonogram">
+                        <h3 class="text-xl font-semibold mb-4">Wariantowy Harmonogram Treningów</h3>
+                        <p class="mb-6 text-slate-600">System PUSH / PULL / LEGS daje dużą elastyczność. Wybierz opcję, która najlepiej pasuje do Twojego tygodnia. Pamiętaj, że regularność jest kluczowa.</p>
+                        <div class="flex items-center justify-center space-x-4 mb-6">
+                            <span class="font-medium">3 dni w tygodniu</span>
+                            <label for="scheduleToggle" class="flex items-center cursor-pointer">
+                                <div class="relative">
+                                    <input type="checkbox" id="scheduleToggle" class="sr-only">
+                                    <div class="block bg-slate-200 w-14 h-8 rounded-full"></div>
+                                    <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>
+                                </div>
+                            </label>
+                            <span class="font-medium">4 dni w tygodniu</span>
+                        </div>
+                        <div id="schedule-display" class="bg-slate-100 p-4 rounded-lg text-center">
+                            <h4 class="font-semibold mb-2">Przykładowy plan (3 dni):</h4>
+                            <p>Poniedziałek - PUSH, Środa - PULL, Piątek - LEGS</p>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-pane" id="push">
+                        <h3 class="text-xl font-semibold mb-1">Dzień Treningowy: PUSH</h3>
+                        <p class="text-slate-500 mb-4">(Klatka, Barki, Tricepsy)</p>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="text-xs text-slate-700 uppercase bg-slate-50">
+                                    <tr>
+                                        <th scope="col" class="px-4 py-3 w-2/5">Ćwiczenie</th>
+                                        <th scope="col" class="px-4 py-3 text-center">Serie x Powt.</th>
+                                        <th scope="col" class="px-4 py-3 text-center">Ciężar (kg)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="push-tbody"></tbody>
+                            </table>
+                        </div>
+                        <div class="mt-6 text-right">
+                            <button id="save-push" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded transition-colors">Zapisz Trening</button>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="pull">
+                        <h3 class="text-xl font-semibold mb-1">Dzień Treningowy: PULL</h3>
+                        <p class="text-slate-500 mb-4">(Plecy, Bicepsy)</p>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="text-xs text-slate-700 uppercase bg-slate-50">
+                                    <tr><th scope="col" class="px-4 py-3 w-2/5">Ćwiczenie</th><th scope="col" class="px-4 py-3 text-center">Serie x Powt.</th><th scope="col" class="px-4 py-3 text-center">Ciężar (kg)</th></tr>
+                                </thead>
+                                <tbody id="pull-tbody"></tbody>
+                            </table>
+                        </div>
+                         <div class="mt-6 text-right">
+                            <button id="save-pull" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded transition-colors">Zapisz Trening</button>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="legs">
+                        <h3 class="text-xl font-semibold mb-1">Dzień Treningowy: LEGS</h3>
+                        <p class="text-slate-500 mb-4">(Nogi, Pośladki)</p>
+                         <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="text-xs text-slate-700 uppercase bg-slate-50">
+                                    <tr><th scope="col" class="px-4 py-3 w-2/5">Ćwiczenie</th><th scope="col" class="px-4 py-3 text-center">Serie x Powt.</th><th scope="col" class="px-4 py-3 text-center">Ciężar (kg)</th></tr>
+                                </thead>
+                                <tbody id="legs-tbody"></tbody>
+                            </table>
+                        </div>
+                         <div class="mt-6 text-right">
+                            <button id="save-legs" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded transition-colors">Zapisz Trening</button>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="brzuch">
+                         <h3 class="text-xl font-semibold mb-1">Trening Mięśni Brzucha</h3>
+                         <p class="text-slate-500 mb-4">Dodaj 2 wybrane ćwiczenia na koniec każdego treningu.</p>
+                         <div class="mb-6 bg-amber-50 border-l-4 border-amber-400 p-4">
+                            <h4 class="font-semibold">Rekomendacja: Wysoka Częstotliwość</h4>
+                            <p class="text-slate-700 text-sm mt-1">Lepszym rozwiązaniem będzie dodanie 2 ćwiczeń na brzuch na koniec każdej sesji (Push, Pull i Legs). Zapewni to stałą stymulację i wzmocni core bez nadmiernego zmęczenia.</p>
+                         </div>
+                         <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="text-xs text-slate-700 uppercase bg-slate-50">
+                                    <tr><th scope="col" class="px-4 py-3 w-2/5">Ćwiczenie</th><th scope="col" class="px-4 py-3 text-center">Serie x Powt.</th><th scope="col" class="px-4 py-3 text-center">Ciężar (kg)</th></tr>
+                                </thead>
+                                <tbody id="brzuch-tbody"></tbody>
+                            </table>
+                        </div>
+                         <div class="mt-6 text-right">
+                            <button id="save-brzuch" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded transition-colors">Zapisz Trening Brzucha</button>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="dziennik">
+                        <h3 class="text-xl font-semibold mb-4">Dziennik Treningowy (CSV)</h3>
+                        <p class="text-slate-600 mb-2">Twoje zapisane treningi pojawią się tutaj w formacie CSV. Możesz je skopiować i wkleić bezpośrednio do Arkuszy Google lub innego arkusza kalkulacyjnego.</p>
+                        <div class="bg-slate-100 p-4 rounded-lg mb-4">
+                            <h4 class="font-semibold text-slate-800">Jak przenieść dane do Arkuszy Google?</h4>
+                            <ol class="list-decimal list-inside text-sm text-slate-700 mt-2 space-y-1">
+                                <li>Naciśnij przycisk "Kopiuj Dziennik".</li>
+                                <li>Otwórz pusty Arkusz Google.</li>
+                                <li>Zaznacz komórkę A1.</li>
+                                <li>Wklej skopiowane dane (Ctrl+V lub Cmd+V).</li>
+                                <li>Google automatycznie rozdzieli dane na kolumny.</li>
+                            </ol>
+                        </div>
+                        <textarea id="csv-output" class="w-full h-64 p-2 border border-slate-300 rounded-md bg-slate-50 font-mono text-sm" readonly placeholder="Tutaj pojawią się Twoje zapisane treningi..."></textarea>
+                        <div class="mt-4 text-right relative">
+                             <span id="copy-toast" class="absolute right-0 -top-8 bg-green-500 text-white text-sm font-bold py-1 px-3 rounded-md opacity-0">Skopiowano!</span>
+                            <button id="copy-log" class="bg-slate-600 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded transition-colors">Kopiuj Dziennik</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            const workouts = {
+                push: [
+                    { name: "Wyciskanie sztangi na ławce płaskiej", sets: "4x8-10", alts: ["Wyciskanie hantli (płasko)", "Pompki na poręczach"] },
+                    { name: "Wyciskanie hantli nad głowę (siedząc)", sets: "3x8-12", alts: ["Wyciskanie żołnierskie (stojąc)", "Wyciskanie na maszynie"] },
+                    { name: "Wyciskanie sztangi na ławce skośnej", sets: "3x10-12", alts: ["Wyciskanie hantli (skośna)"] },
+                    { name: "Wznosy hantli bokiem", sets: "3x12-15", alts: ["Face pulls (linka)"] },
+                    { name: "Rozpiętki na maszynie 'Butterfly'", sets: "3x12-15", alts: ["Rozpiętki z hantlami"] },
+                    { name: "Prostowanie ramion (linka wyciągu)", sets: "3x10-15", alts: ["Wyciskanie francuskie"] }
+                ],
+                pull: [
+                    { name: "Podciąganie na drążku (nachwyt)", sets: "4xMAX", alts: ["Ściąganie drążka wyciągu"] },
+                    { name: "Wiosłowanie sztangą (opad tułowia)", sets: "4x8-10", alts: ["Wiosłowanie hantlem", "Wiosłowanie na maszynie"] },
+                    { name: "Przyciąganie uchwytu V (siedząc)", sets: "3x10-12", alts: ["Wiosłowanie 'półsztangą'"] },
+                    { name: "Ściąganie drążka (proste ramiona)", sets: "3x12-15", alts: ["Przenoszenie hantla ('pullover')"] },
+                    { name: "Uginanie ramion ze sztangą", sets: "3x10-12", alts: ["Uginanie z hantlami (supinacja)"] },
+                    { name: "Uginanie ramion na modlitewniku", sets: "3x10-15", alts: ["Uginanie w oparciu o ławkę"] }
+                ],
+                legs: [
+                    { name: "Przysiady ze sztangą", sets: "4x8-10", alts: ["Wypychanie na suwnicy", "Przysiady bułgarskie"] },
+                    { name: "Martwy ciąg na prostych nogach (RDL)", sets: "3x10-12", alts: ["'Dzień dobry' ze sztangą", "Uginanie nóg (leżąc)"] },
+                    { name: "Wykroki z hantlami", sets: "3x10-12", alts: ["Wchodzenie na podwyższenie"] },
+                    { name: "Prostowanie nóg na maszynie", sets: "3x12-15", alts: ["Przysiad 'sissy squat'"] },
+                    { name: "Uginanie nóg na maszynie (siedząc)", sets: "3x12-15", alts: ["'Żuraw' (Glute Ham Raise)"] },
+                    { name: "Wspięcia na palce (stojąc)", sets: "4x15-20", alts: ["Wspięcia na suwnicy", "Wspięcia z hantlem"] }
+                ],
+                brzuch: [
+                    { name: "'Allahy' (linka wyciągu)", sets: "3x15-20", alts: ["Spięcia na maszynie"] },
+                    { name: "Unoszenie nóg w zwisie", sets: "3xMAX", alts: ["Unoszenie kolan w zwisie"] },
+                    { name: "Plank (deska)", sets: "3x60s", alts: ["Plank boczny"] },
+                    { name: "'Russian Twist' (z obciążeniem)", sets: "3x15", alts: ["'Wood choppers' (wyciąg)"] }
+                ]
+            };
+
+            function populateTables() {
+                for (const workoutType in workouts) {
+                    const tbody = document.getElementById(`${workoutType}-tbody`);
+                    if (tbody) {
+                        workouts[workoutType].forEach(exercise => {
+                            const row = document.createElement('tr');
+                            row.className = 'bg-white border-b exercise-row';
+                            
+                            const options = [exercise.name, ...exercise.alts]
+                                .map(opt => `<option value="${opt}">${opt}</option>`).join('');
+
+                            row.innerHTML = `
+                                <td class="px-4 py-2">
+                                    <select class="w-full p-2 border border-slate-200 rounded-md text-sm exercise-select">
+                                        ${options}
+                                    </select>
+                                </td>
+                                <td class="px-4 py-2 text-center font-mono">${exercise.sets}</td>
+                                <td class="px-4 py-2 text-center">
+                                    <input type="number" class="w-20 p-2 border border-slate-200 rounded-md text-center weight-input" placeholder="0">
+                                </td>
+                            `;
+                            tbody.appendChild(row);
+                        });
+                    }
+                }
+            }
+
+            function saveWorkout(workoutType) {
+                const tbody = document.getElementById(`${workoutType}-tbody`);
+                const rows = tbody.querySelectorAll('.exercise-row');
+                const csvOutput = document.getElementById('csv-output');
+                const today = new Date().toISOString().slice(0, 10);
+                let workoutData = "";
+
+                rows.forEach(row => {
+                    const exerciseSelect = row.querySelector('.exercise-select');
+                    const weightInput = row.querySelector('.weight-input');
+                    const weight = parseFloat(weightInput.value);
+
+                    if (weight > 0) {
+                        const exerciseName = exerciseSelect.value;
+                        workoutData += `${today},${workoutType.toUpperCase()},"${exerciseName}",${weight}\n`;
+                    }
+                });
+
+                if(workoutData) {
+                    csvOutput.value += workoutData;
+                    alert(`Trening ${workoutType.toUpperCase()} zapisany!`);
+                } else {
+                    alert('Wprowadź ciężar dla przynajmniej jednego ćwiczenia, aby zapisać trening.');
+                }
+            }
+
+            document.getElementById('save-push').addEventListener('click', () => saveWorkout('push'));
+            document.getElementById('save-pull').addEventListener('click', () => saveWorkout('pull'));
+            document.getElementById('save-legs').addEventListener('click', () => saveWorkout('legs'));
+            document.getElementById('save-brzuch').addEventListener('click', () => saveWorkout('brzuch'));
+
+            document.getElementById('copy-log').addEventListener('click', () => {
+                const csvOutput = document.getElementById('csv-output');
+                 if(!csvOutput.value) return;
+                csvOutput.select();
+                document.execCommand('copy');
+                
+                const toast = document.getElementById('copy-toast');
+                toast.classList.remove('opacity-0');
+                toast.classList.add('toast-animation');
+                setTimeout(() => {
+                    toast.classList.add('opacity-0');
+                    toast.classList.remove('toast-animation');
+                }, 2000);
+            });
+
+            const tabs = document.querySelectorAll('.tab-btn');
+            const panes = document.querySelectorAll('.tab-pane');
+            const scheduleToggle = document.getElementById('scheduleToggle');
+            const scheduleDisplay = document.getElementById('schedule-display');
+            const toggleBlock = scheduleToggle.nextElementSibling;
+            const toggleDot = toggleBlock.nextElementSibling;
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const target = tab.getAttribute('data-tab');
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    panes.forEach(pane => {
+                        pane.classList.add('hidden');
+                    });
+                    document.getElementById(target).classList.remove('hidden');
+                });
+            });
+
+            scheduleToggle.addEventListener('change', () => {
+                if (scheduleToggle.checked) {
+                    scheduleDisplay.innerHTML = `<h4 class="font-semibold mb-2">Przykładowy plan (4 dni):</h4><p>Poniedziałek - PUSH, Wtorek - PULL, Czwartek - LEGS, Piątek - PUSH.<br><small>(W kolejnym tygodniu zaczniesz od PULL)</small></p>`;
+                    toggleDot.style.transform = 'translateX(100%)';
+                    toggleBlock.classList.add('bg-amber-400');
+                    toggleBlock.classList.remove('bg-slate-200');
+                } else {
+                    scheduleDisplay.innerHTML = `<h4 class="font-semibold mb-2">Przykładowy plan (3 dni):</h4><p>Poniedziałek - PUSH, Środa - PULL, Piątek - LEGS</p>`;
+                    toggleDot.style.transform = 'translateX(0)';
+                    toggleBlock.classList.remove('bg-amber-400');
+                    toggleBlock.classList.add('bg-slate-200');
+                }
+            });
+
+            populateTables();
+            document.querySelector('.tab-btn[data-tab="harmonogram"]').click();
+        
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            tabButtons.forEach(btn => {
+                btn.classList.add('py-2', 'px-3', 'sm:px-4', 'font-semibold', 'text-slate-600', 'border-b-2', 'border-transparent', 'hover:border-slate-300', 'hover:text-slate-800', 'transition-colors', 'duration-200', 'whitespace-nowrap', 'text-sm', 'sm:text-base', 'rounded-t-md');
+            });
+        });
+    </script>
+
+</body>
+</html>
+
