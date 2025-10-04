@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interaktywny Plan Treningowy z Dziennikiem</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -21,13 +22,18 @@
             background-color: #fffbeb;
             color: #b45309;
         }
-        /* Simple animation for copy confirmation */
         @keyframes fadeInOut {
             0%, 100% { opacity: 0; transform: translateY(10px); }
             10%, 90% { opacity: 1; transform: translateY(0); }
         }
         .toast-animation {
             animation: fadeInOut 2s ease-in-out;
+        }
+        .chart-container {
+            position: relative;
+            height: 50vh;
+            max-height: 400px;
+            width: 100%;
         }
     </style>
 </head>
@@ -67,6 +73,7 @@
                         <button class="tab-btn" data-tab="pull">🏋️ PULL</button>
                         <button class="tab-btn" data-tab="legs">🦵 LEGS</button>
                         <button class="tab-btn" data-tab="brzuch">🔥 BRZUCH</button>
+                        <button class="tab-btn" data-tab="postepy">📊 Postępy</button>
                         <button class="tab-btn" data-tab="dziennik">📋 Dziennik</button>
                     </nav>
                 </div>
@@ -163,6 +170,21 @@
                             <button id="save-brzuch" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded transition-colors">Zapisz Trening Brzucha</button>
                         </div>
                     </div>
+                    
+                    <div class="tab-pane" id="postepy">
+                        <h3 class="text-xl font-semibold mb-4">Wizualizacja Postępów</h3>
+                        <p class="text-slate-600 mb-4">Wybierz ćwiczenie z listy, aby zobaczyć wykres progresji ciężaru w czasie. Lista zawiera tylko te ćwiczenia, dla których zapisałeś/aś już wyniki w dzienniku.</p>
+                        <div id="no-data-message" class="hidden text-center bg-slate-100 p-6 rounded-lg">
+                            <p class="font-semibold">Brak danych do wyświetlenia.</p>
+                            <p class="text-sm text-slate-600 mt-1">Zapisz najpierw kilka treningów w zakładce "Dziennik", aby zobaczyć swoje postępy.</p>
+                        </div>
+                        <div class="mb-4">
+                            <select id="exercise-select" class="w-full max-w-sm mx-auto p-2 border border-slate-300 rounded-md hidden"></select>
+                        </div>
+                        <div id="progress-chart-container" class="chart-container hidden">
+                            <canvas id="progress-chart"></canvas>
+                        </div>
+                    </div>
 
                     <div class="tab-pane" id="dziennik">
                         <h3 class="text-xl font-semibold mb-4">Dziennik Treningowy (CSV)</h3>
@@ -178,8 +200,9 @@
                             </ol>
                         </div>
                         <textarea id="csv-output" class="w-full h-64 p-2 border border-slate-300 rounded-md bg-slate-50 font-mono text-sm" readonly placeholder="Tutaj pojawią się Twoje zapisane treningi..."></textarea>
-                        <div class="mt-4 text-right relative">
-                             <span id="copy-toast" class="absolute right-0 -top-8 bg-green-500 text-white text-sm font-bold py-1 px-3 rounded-md opacity-0">Skopiowano!</span>
+                        <div class="mt-4 flex justify-end items-center relative">
+                             <span id="toast-message" class="absolute right-0 -top-8 text-white text-sm font-bold py-1 px-3 rounded-md opacity-0"></span>
+                            <button id="clear-log" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors mr-2">Wyczyść Dziennik</button>
                             <button id="copy-log" class="bg-slate-600 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded transition-colors">Kopiuj Dziennik</button>
                         </div>
                     </div>
@@ -193,57 +216,170 @@
             
             const workouts = {
                 push: [
-                    { name: "Wyciskanie sztangi na ławce płaskiej", sets: "4x8-10", alts: ["Wyciskanie hantli (płasko)", "Pompki na poręczach"] },
-                    { name: "Wyciskanie hantli nad głowę (siedząc)", sets: "3x8-12", alts: ["Wyciskanie żołnierskie (stojąc)", "Wyciskanie na maszynie"] },
-                    { name: "Wyciskanie sztangi na ławce skośnej", sets: "3x10-12", alts: ["Wyciskanie hantli (skośna)"] },
-                    { name: "Wznosy hantli bokiem", sets: "3x12-15", alts: ["Face pulls (linka)"] },
-                    { name: "Rozpiętki na maszynie 'Butterfly'", sets: "3x12-15", alts: ["Rozpiętki z hantlami"] },
-                    { name: "Prostowanie ramion (linka wyciągu)", sets: "3x10-15", alts: ["Wyciskanie francuskie"] }
+                    { options: [
+                        { name: "Wyciskanie sztangi na ławce płaskiej", sets: "4x8-10" },
+                        { name: "Wyciskanie hantli (płasko)", sets: "4x8-10" },
+                        { name: "Pompki na poręczach", sets: "4xMAX" }
+                    ]},
+                    { options: [
+                        { name: "Wyciskanie hantli nad głowę (siedząc)", sets: "3x8-12" },
+                        { name: "Wyciskanie żołnierskie (stojąc)", sets: "3x8-10" },
+                        { name: "Wyciskanie na maszynie", sets: "3x10-12" }
+                    ]},
+                    { options: [
+                        { name: "Wyciskanie sztangi na ławce skośnej", sets: "3x10-12" },
+                        { name: "Wyciskanie hantli (skośna)", sets: "3x10-12" }
+                    ]},
+                    { options: [
+                        { name: "Wznosy hantli bokiem", sets: "3x12-15" },
+                        { name: "Face pulls (linka)", sets: "3x12-15" }
+                    ]},
+                    { options: [
+                        { name: "Rozpiętki na maszynie 'Butterfly'", sets: "3x12-15" },
+                        { name: "Rozpiętki z hantlami", sets: "3x12-15" }
+                    ]},
+                    { options: [
+                        { name: "Prostowanie ramion (linka wyciągu)", sets: "3x10-15" },
+                        { name: "Wyciskanie francuskie", sets: "3x10-12" }
+                    ]}
                 ],
                 pull: [
-                    { name: "Podciąganie na drążku (nachwyt)", sets: "4xMAX", alts: ["Ściąganie drążka wyciągu"] },
-                    { name: "Wiosłowanie sztangą (opad tułowia)", sets: "4x8-10", alts: ["Wiosłowanie hantlem", "Wiosłowanie na maszynie"] },
-                    { name: "Przyciąganie uchwytu V (siedząc)", sets: "3x10-12", alts: ["Wiosłowanie 'półsztangą'"] },
-                    { name: "Ściąganie drążka (proste ramiona)", sets: "3x12-15", alts: ["Przenoszenie hantla ('pullover')"] },
-                    { name: "Uginanie ramion ze sztangą", sets: "3x10-12", alts: ["Uginanie z hantlami (supinacja)"] },
-                    { name: "Uginanie ramion na modlitewniku", sets: "3x10-15", alts: ["Uginanie w oparciu o ławkę"] }
+                    { options: [
+                        { name: "Podciąganie na drążku (nachwyt)", sets: "4xMAX" },
+                        { name: "Ściąganie drążka wyciągu", sets: "4x8-12" }
+                    ]},
+                    { options: [
+                        { name: "Wiosłowanie sztangą (opad tułowia)", sets: "4x8-10" },
+                        { name: "Wiosłowanie hantlem", sets: "4x8-10" },
+                        { name: "Wiosłowanie na maszynie", sets: "4x10-12" }
+                    ]},
+                    { options: [
+                        { name: "Przyciąganie uchwytu V (siedząc)", sets: "3x10-12" },
+                        { name: "Wiosłowanie 'półsztangą'", sets: "3x8-10" }
+                    ]},
+                    { options: [
+                        { name: "Ściąganie drążka (proste ramiona)", sets: "3x12-15" },
+                        { name: "Przenoszenie hantla ('pullover')", sets: "3x12-15" }
+                    ]},
+                    { options: [
+                        { name: "Uginanie ramion ze sztangą", sets: "3x10-12" },
+                        { name: "Uginanie z hantlami (supinacja)", sets: "3x10-12" }
+                    ]},
+                    { options: [
+                        { name: "Uginanie ramion na modlitewniku", sets: "3x10-15" },
+                        { name: "Uginanie w oparciu o ławkę", sets: "3x10-12" }
+                    ]}
                 ],
                 legs: [
-                    { name: "Przysiady ze sztangą", sets: "4x8-10", alts: ["Wypychanie na suwnicy", "Przysiady bułgarskie"] },
-                    { name: "Martwy ciąg na prostych nogach (RDL)", sets: "3x10-12", alts: ["'Dzień dobry' ze sztangą", "Uginanie nóg (leżąc)"] },
-                    { name: "Wykroki z hantlami", sets: "3x10-12", alts: ["Wchodzenie na podwyższenie"] },
-                    { name: "Prostowanie nóg na maszynie", sets: "3x12-15", alts: ["Przysiad 'sissy squat'"] },
-                    { name: "Uginanie nóg na maszynie (siedząc)", sets: "3x12-15", alts: ["'Żuraw' (Glute Ham Raise)"] },
-                    { name: "Wspięcia na palce (stojąc)", sets: "4x15-20", alts: ["Wspięcia na suwnicy", "Wspięcia z hantlem"] }
+                    { options: [
+                        { name: "Przysiady ze sztangą", sets: "4x8-10" },
+                        { name: "Wypychanie na suwnicy", sets: "4x10-12" },
+                        { name: "Przysiady bułgarskie", sets: "4x8-10 (na nogę)" }
+                    ]},
+                    { options: [
+                        { name: "Martwy ciąg na prostych nogach (RDL)", sets: "3x10-12" },
+                        { name: "'Dzień dobry' ze sztangą", sets: "3x10-12" },
+                        { name: "Uginanie nóg (leżąc)", sets: "3x12-15" }
+                    ]},
+                    { options: [
+                        { name: "Wykroki z hantlami", sets: "3x10-12 (na nogę)" },
+                        { name: "Wchodzenie na podwyższenie", sets: "3x10-12 (na nogę)" }
+                    ]},
+                    { options: [
+                        { name: "Prostowanie nóg na maszynie", sets: "3x12-15" },
+                        { name: "Przysiad 'sissy squat'", sets: "3xMAX" }
+                    ]},
+                    { options: [
+                        { name: "Uginanie nóg na maszynie (siedząc)", sets: "3x12-15" },
+                        { name: "'Żuraw' (Glute Ham Raise)", sets: "3xMAX" }
+                    ]},
+                    { options: [
+                        { name: "Wspięcia na palce (stojąc)", sets: "4x15-20" },
+                        { name: "Wspięcia na suwnicy", sets: "4x15-20" },
+                        { name: "Wspięcia z hantlem", sets: "4x15-20" }
+                    ]}
                 ],
                 brzuch: [
-                    { name: "'Allahy' (linka wyciągu)", sets: "3x15-20", alts: ["Spięcia na maszynie"] },
-                    { name: "Unoszenie nóg w zwisie", sets: "3xMAX", alts: ["Unoszenie kolan w zwisie"] },
-                    { name: "Plank (deska)", sets: "3x60s", alts: ["Plank boczny"] },
-                    { name: "'Russian Twist' (z obciążeniem)", sets: "3x15", alts: ["'Wood choppers' (wyciąg)"] }
+                    { options: [
+                        { name: "'Allahy' (linka wyciągu)", sets: "3x15-20" },
+                        { name: "Spięcia na maszynie", sets: "3x15-20" }
+                    ]},
+                    { options: [
+                        { name: "Unoszenie nóg w zwisie", sets: "3xMAX" },
+                        { name: "Unoszenie kolan w zwisie", sets: "3xMAX" }
+                    ]},
+                    { options: [
+                        { name: "Plank (deska)", sets: "3x60s" },
+                        { name: "Plank boczny", sets: "3x30-45s (na str.)" }
+                    ]},
+                    { options: [
+                        { name: "'Russian Twist' (z obciążeniem)", sets: "3x15 (na str.)" },
+                        { name: "'Wood choppers' (wyciąg)", sets: "3x12-15 (na str.)" }
+                    ]}
                 ]
             };
+
+            const LOG_STORAGE_KEY = 'interactiveTrainingLog';
+            let progressChart = null; 
+
+            function showToast(message, type = 'success') {
+                const toast = document.getElementById('toast-message');
+                const colors = {
+                    success: 'bg-green-500',
+                    error: 'bg-red-500',
+                    info: 'bg-blue-500'
+                };
+                
+                toast.className = 'absolute right-0 -top-8 text-white text-sm font-bold py-1 px-3 rounded-md opacity-0 transition-all duration-300';
+                
+                toast.textContent = message;
+                toast.classList.add(colors[type]);
+                toast.classList.remove('opacity-0');
+                toast.classList.add('toast-animation');
+                
+                setTimeout(() => {
+                    toast.classList.add('opacity-0');
+                    toast.classList.remove('toast-animation');
+                }, 2200);
+            }
+
+            function saveLogToStorage() {
+                const csvOutput = document.getElementById('csv-output');
+                localStorage.setItem(LOG_STORAGE_KEY, csvOutput.value);
+            }
+
+            function loadLogFromStorage() {
+                const csvOutput = document.getElementById('csv-output');
+                const savedLog = localStorage.getItem(LOG_STORAGE_KEY);
+                if (savedLog) {
+                    csvOutput.value = savedLog;
+                }
+            }
 
             function populateTables() {
                 for (const workoutType in workouts) {
                     const tbody = document.getElementById(`${workoutType}-tbody`);
                     if (tbody) {
-                        workouts[workoutType].forEach(exercise => {
+                        tbody.innerHTML = ''; 
+                        workouts[workoutType].forEach((exerciseSlot, index) => {
                             const row = document.createElement('tr');
                             row.className = 'bg-white border-b exercise-row';
+                            row.dataset.index = index;
                             
-                            const options = [exercise.name, ...exercise.alts]
-                                .map(opt => `<option value="${opt}">${opt}</option>`).join('');
+                            const optionsHtml = exerciseSlot.options
+                                .map(opt => `<option value="${opt.name}">${opt.name}</option>`).join('');
+
+                            const initialSets = exerciseSlot.options[0].sets;
 
                             row.innerHTML = `
                                 <td class="px-4 py-2">
                                     <select class="w-full p-2 border border-slate-200 rounded-md text-sm exercise-select">
-                                        ${options}
+                                        ${optionsHtml}
                                     </select>
                                 </td>
-                                <td class="px-4 py-2 text-center font-mono">${exercise.sets}</td>
+                                <td class="px-4 py-2 text-center font-mono sets-cell">${initialSets}</td>
                                 <td class="px-4 py-2 text-center">
-                                    <input type="number" class="w-20 p-2 border border-slate-200 rounded-md text-center weight-input" placeholder="0">
+                                    <input type="number" step="0.5" min="0" class="w-20 p-2 border border-slate-200 rounded-md text-center weight-input" placeholder="0">
                                 </td>
                             `;
                             tbody.appendChild(row);
@@ -266,17 +402,134 @@
 
                     if (weight > 0) {
                         const exerciseName = exerciseSelect.value;
-                        workoutData += `${today},${workoutType.toUpperCase()},"${exerciseName}",${weight}\n`;
+                        const setsInfo = row.querySelector('.sets-cell').textContent;
+                        workoutData += `${today},${workoutType.toUpperCase()},"${exerciseName}",${setsInfo},${weight}\n`;
                     }
                 });
 
                 if(workoutData) {
+                    if (csvOutput.value === "") {
+                        csvOutput.value = "Data,Trening,Ćwiczenie,Serie x Powt.,Ciężar (kg)\n";
+                    }
                     csvOutput.value += workoutData;
-                    alert(`Trening ${workoutType.toUpperCase()} zapisany!`);
+                    saveLogToStorage();
+                    showToast(`Trening ${workoutType.toUpperCase()} zapisany!`, 'info');
                 } else {
-                    alert('Wprowadź ciężar dla przynajmniej jednego ćwiczenia, aby zapisać trening.');
+                    showToast('Wprowadź ciężar, aby zapisać.', 'error');
                 }
             }
+
+            function parseCsvData() {
+                const log = localStorage.getItem(LOG_STORAGE_KEY);
+                if (!log || log.split('\n').length < 2) return [];
+                const rows = log.trim().split('\n');
+                rows.shift(); 
+                return rows.map(row => {
+                    const values = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];
+                    return {
+                        date: values[0],
+                        workout: values[1],
+                        exercise: values[2] ? values[2].replace(/"/g, '') : '',
+                        sets: values[3],
+                        weight: parseFloat(values[4])
+                    };
+                });
+            }
+
+            function updateProgressTab() {
+                const data = parseCsvData();
+                const exerciseSelect = document.getElementById('exercise-select');
+                const chartContainer = document.getElementById('progress-chart-container');
+                const noDataMessage = document.getElementById('no-data-message');
+                
+                if (data.length === 0) {
+                    noDataMessage.classList.remove('hidden');
+                    chartContainer.classList.add('hidden');
+                    exerciseSelect.classList.add('hidden');
+                    return;
+                }
+
+                noDataMessage.classList.add('hidden');
+                exerciseSelect.classList.remove('hidden');
+                
+                const uniqueExercises = [...new Set(data.map(item => item.exercise))].sort();
+                
+                exerciseSelect.innerHTML = '<option value="">-- Wybierz ćwiczenie --</option>';
+                uniqueExercises.forEach(ex => {
+                    if(ex) {
+                        const option = document.createElement('option');
+                        option.value = ex;
+                        option.textContent = ex;
+                        exerciseSelect.appendChild(option);
+                    }
+                });
+            }
+            
+            function renderProgressChart(selectedExercise) {
+                const chartContainer = document.getElementById('progress-chart-container');
+                if (!selectedExercise) {
+                    chartContainer.classList.add('hidden');
+                    return;
+                }
+                
+                chartContainer.classList.remove('hidden');
+                const data = parseCsvData();
+                const chartData = data
+                    .filter(item => item.exercise === selectedExercise)
+                    .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                const labels = chartData.map(d => d.date);
+                const weights = chartData.map(d => d.weight);
+
+                const ctx = document.getElementById('progress-chart').getContext('2d');
+                
+                if (progressChart) {
+                    progressChart.destroy();
+                }
+
+                progressChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: `Progresja ciężaru (kg)`,
+                            data: weights,
+                            borderColor: '#f59e0b',
+                            backgroundColor: '#fef3c7',
+                            fill: true,
+                            tension: 0.1,
+                            pointBackgroundColor: '#b45309',
+                            pointRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: selectedExercise,
+                                font: {
+                                    size: 16
+                                }
+                            },
+                             legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                title: { display: true, text: 'Ciężar (kg)' }
+                            },
+                            x: {
+                                title: { display: true, text: 'Data' }
+                            }
+                        }
+                    }
+                });
+            }
+
 
             document.getElementById('save-push').addEventListener('click', () => saveWorkout('push'));
             document.getElementById('save-pull').addEventListener('click', () => saveWorkout('pull'));
@@ -288,22 +541,27 @@
                  if(!csvOutput.value) return;
                 csvOutput.select();
                 document.execCommand('copy');
-                
-                const toast = document.getElementById('copy-toast');
-                toast.classList.remove('opacity-0');
-                toast.classList.add('toast-animation');
-                setTimeout(() => {
-                    toast.classList.add('opacity-0');
-                    toast.classList.remove('toast-animation');
-                }, 2000);
+                showToast('Skopiowano do schowka!', 'success');
+            });
+
+            document.getElementById('clear-log').addEventListener('click', () => {
+                const csvOutput = document.getElementById('csv-output');
+                if (!csvOutput.value) return;
+
+                if (confirm("Czy na pewno chcesz trwale usunąć cały dziennik? Tej operacji nie można cofnąć.")) {
+                    csvOutput.value = '';
+                    localStorage.removeItem(LOG_STORAGE_KEY);
+                    showToast('Dziennik wyczyszczony!', 'error');
+                    updateProgressTab(); 
+                    if (progressChart) progressChart.destroy();
+                    document.getElementById('progress-chart-container').classList.add('hidden');
+                }
             });
 
             const tabs = document.querySelectorAll('.tab-btn');
             const panes = document.querySelectorAll('.tab-pane');
             const scheduleToggle = document.getElementById('scheduleToggle');
             const scheduleDisplay = document.getElementById('schedule-display');
-            const toggleBlock = scheduleToggle.nextElementSibling;
-            const toggleDot = toggleBlock.nextElementSibling;
             
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
@@ -314,10 +572,21 @@
                         pane.classList.add('hidden');
                     });
                     document.getElementById(target).classList.remove('hidden');
+
+                    if (target === 'postepy') {
+                        updateProgressTab();
+                    }
                 });
             });
 
+            document.getElementById('exercise-select').addEventListener('change', (e) => {
+                renderProgressChart(e.target.value);
+            });
+
+
             scheduleToggle.addEventListener('change', () => {
+                const toggleDot = scheduleToggle.parentElement.querySelector('.dot');
+                const toggleBlock = scheduleToggle.parentElement.querySelector('.block');
                 if (scheduleToggle.checked) {
                     scheduleDisplay.innerHTML = `<h4 class="font-semibold mb-2">Przykładowy plan (4 dni):</h4><p>Poniedziałek - PUSH, Wtorek - PULL, Czwartek - LEGS, Piątek - PUSH.<br><small>(W kolejnym tygodniu zaczniesz od PULL)</small></p>`;
                     toggleDot.style.transform = 'translateX(100%)';
@@ -332,6 +601,25 @@
             });
 
             populateTables();
+            loadLogFromStorage();
+
+            document.querySelectorAll('#push-tbody, #pull-tbody, #legs-tbody, #brzuch-tbody').forEach(tbody => {
+                tbody.addEventListener('change', function(e) {
+                    if (e.target.classList.contains('exercise-select')) {
+                        const selectEl = e.target;
+                        const selectedIndex = selectEl.selectedIndex;
+                        const row = selectEl.closest('tr');
+                        const rowIndex = parseInt(row.dataset.index, 10);
+                        const workoutType = this.id.replace('-tbody', '');
+
+                        const newSets = workouts[workoutType][rowIndex].options[selectedIndex].sets;
+
+                        const setsCell = row.querySelector('.sets-cell');
+                        setsCell.textContent = newSets;
+                    }
+                });
+            });
+
             document.querySelector('.tab-btn[data-tab="harmonogram"]').click();
         
             const tabButtons = document.querySelectorAll('.tab-btn');
