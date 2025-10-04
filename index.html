@@ -188,7 +188,7 @@
 
                     <div class="tab-pane" id="dziennik">
                         <h3 class="text-xl font-semibold mb-4">Dziennik Treningowy (CSV)</h3>
-                        <p class="text-slate-600 mb-2">Twoje zapisane treningi pojawią się tutaj w formacie CSV. Możesz je skopiować i wkleić bezpośrednio do Arkuszy Google lub innego arkusza kalkulacyjnego.</p>
+                        <p class="text-slate-600 mb-2">Możesz ręcznie edytować ten dziennik. Pamiętaj, aby zachować format CSV i zapisać zmiany.</p>
                         <div class="bg-slate-100 p-4 rounded-lg mb-4">
                             <h4 class="font-semibold text-slate-800">Jak przenieść dane do Arkuszy Google?</h4>
                             <ol class="list-decimal list-inside text-sm text-slate-700 mt-2 space-y-1">
@@ -199,9 +199,10 @@
                                 <li>Google automatycznie rozdzieli dane na kolumny.</li>
                             </ol>
                         </div>
-                        <textarea id="csv-output" class="w-full h-64 p-2 border border-slate-300 rounded-md bg-slate-50 font-mono text-sm" readonly placeholder="Tutaj pojawią się Twoje zapisane treningi..."></textarea>
+                        <textarea id="csv-output" class="w-full h-64 p-2 border border-slate-300 rounded-md bg-slate-50 font-mono text-sm" placeholder="Tutaj pojawią się Twoje zapisane treningi..."></textarea>
                         <div class="mt-4 flex justify-end items-center relative">
                              <span id="toast-message" class="absolute right-0 -top-8 text-white text-sm font-bold py-1 px-3 rounded-md opacity-0"></span>
+                             <button id="save-log-changes" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors mr-auto">Zapisz Zmiany w Dzienniku</button>
                             <button id="clear-log" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors mr-2">Wyczyść Dziennik</button>
                             <button id="copy-log" class="bg-slate-600 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded transition-colors">Kopiuj Dziennik</button>
                         </div>
@@ -421,11 +422,12 @@
 
             function parseCsvData() {
                 const log = localStorage.getItem(LOG_STORAGE_KEY);
-                if (!log || log.split('\n').length < 2) return [];
+                if (!log || log.trim() === '' || log.split('\n').length < 2) return [];
                 const rows = log.trim().split('\n');
                 rows.shift(); 
                 return rows.map(row => {
                     const values = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];
+                     if (values.length < 5) return null;
                     return {
                         date: values[0],
                         workout: values[1],
@@ -433,7 +435,7 @@
                         sets: values[3],
                         weight: parseFloat(values[4])
                     };
-                });
+                }).filter(Boolean);
             }
 
             function updateProgressTab() {
@@ -454,6 +456,7 @@
                 
                 const uniqueExercises = [...new Set(data.map(item => item.exercise))].sort();
                 
+                const currentSelection = exerciseSelect.value;
                 exerciseSelect.innerHTML = '<option value="">-- Wybierz ćwiczenie --</option>';
                 uniqueExercises.forEach(ex => {
                     if(ex) {
@@ -463,6 +466,9 @@
                         exerciseSelect.appendChild(option);
                     }
                 });
+                if (uniqueExercises.includes(currentSelection)) {
+                    exerciseSelect.value = currentSelection;
+                }
             }
             
             function renderProgressChart(selectedExercise) {
@@ -536,6 +542,13 @@
             document.getElementById('save-legs').addEventListener('click', () => saveWorkout('legs'));
             document.getElementById('save-brzuch').addEventListener('click', () => saveWorkout('brzuch'));
 
+            document.getElementById('save-log-changes').addEventListener('click', () => {
+                saveLogToStorage();
+                showToast('Zmiany w dzienniku zapisane!', 'success');
+                updateProgressTab();
+                renderProgressChart(document.getElementById('exercise-select').value);
+            });
+
             document.getElementById('copy-log').addEventListener('click', () => {
                 const csvOutput = document.getElementById('csv-output');
                  if(!csvOutput.value) return;
@@ -543,20 +556,41 @@
                 document.execCommand('copy');
                 showToast('Skopiowano do schowka!', 'success');
             });
-
-            document.getElementById('clear-log').addEventListener('click', () => {
-                const csvOutput = document.getElementById('csv-output');
-                if (!csvOutput.value) return;
-
-                if (confirm("Czy na pewno chcesz trwale usunąć cały dziennik? Tej operacji nie można cofnąć.")) {
+            
+            const clearLogBtn = document.getElementById('clear-log');
+            clearLogBtn.addEventListener('click', () => {
+                if (clearLogBtn.dataset.confirm === 'true') {
+                    const csvOutput = document.getElementById('csv-output');
                     csvOutput.value = '';
                     localStorage.removeItem(LOG_STORAGE_KEY);
                     showToast('Dziennik wyczyszczony!', 'error');
                     updateProgressTab(); 
-                    if (progressChart) progressChart.destroy();
+                     if (progressChart) {
+                        progressChart.destroy();
+                    }
                     document.getElementById('progress-chart-container').classList.add('hidden');
+                    
+                    clearLogBtn.textContent = 'Wyczyść Dziennik';
+                    clearLogBtn.dataset.confirm = 'false';
+                    clearLogBtn.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
+                    clearLogBtn.classList.add('bg-red-600', 'hover:bg-red-700');
+                } else {
+                    clearLogBtn.textContent = 'Potwierdź usunięcie';
+                    clearLogBtn.dataset.confirm = 'true';
+                    clearLogBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
+                    clearLogBtn.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
+                    
+                    setTimeout(() => {
+                        if (clearLogBtn.dataset.confirm === 'true') {
+                             clearLogBtn.textContent = 'Wyczyść Dziennik';
+                             clearLogBtn.dataset.confirm = 'false';
+                             clearLogBtn.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
+                             clearLogBtn.classList.add('bg-red-600', 'hover:bg-red-700');
+                        }
+                    }, 3000);
                 }
             });
+
 
             const tabs = document.querySelectorAll('.tab-btn');
             const panes = document.querySelectorAll('.tab-pane');
@@ -575,6 +609,7 @@
 
                     if (target === 'postepy') {
                         updateProgressTab();
+                        renderProgressChart(document.getElementById('exercise-select').value);
                     }
                 });
             });
