@@ -173,15 +173,35 @@
                     
                     <div class="tab-pane" id="postepy">
                         <h3 class="text-xl font-semibold mb-4">Wizualizacja Postępów</h3>
-                        <p class="text-slate-600 mb-4">Wybierz ćwiczenie z listy, aby zobaczyć wykres progresji ciężaru w czasie. Lista zawiera tylko te ćwiczenia, dla których zapisałeś/aś już wyniki w dzienniku.</p>
+                        <p class="text-slate-600 mb-6">Wybierz ćwiczenie z odpowiedniej kategorii, aby zobaczyć wykres progresji ciężaru w czasie.</p>
+                        
                         <div id="no-data-message" class="hidden text-center bg-slate-100 p-6 rounded-lg">
                             <p class="font-semibold">Brak danych do wyświetlenia.</p>
                             <p class="text-sm text-slate-600 mt-1">Zapisz najpierw kilka treningów w zakładce "Dziennik", aby zobaczyć swoje postępy.</p>
                         </div>
-                        <div class="mb-4">
-                            <select id="exercise-select" class="w-full max-w-sm mx-auto p-2 border border-slate-300 rounded-md hidden"></select>
+
+                        <div class="space-y-6">
+                            <div id="push-progress-section" class="hidden">
+                                <h4 class="text-lg font-semibold mb-2 text-amber-700">💪 Postępy PUSH</h4>
+                                <select class="progress-select w-full max-w-sm p-2 border border-slate-300 rounded-md" data-type="push">
+                                    <option value="">-- Wybierz ćwiczenie --</option>
+                                </select>
+                            </div>
+                            <div id="pull-progress-section" class="hidden">
+                                <h4 class="text-lg font-semibold mb-2 text-amber-700">🏋️ Postępy PULL</h4>
+                                <select class="progress-select w-full max-w-sm p-2 border border-slate-300 rounded-md" data-type="pull">
+                                     <option value="">-- Wybierz ćwiczenie --</option>
+                                </select>
+                            </div>
+                            <div id="legs-progress-section" class="hidden">
+                                <h4 class="text-lg font-semibold mb-2 text-amber-700">🦵 Postępy LEGS</h4>
+                                <select class="progress-select w-full max-w-sm p-2 border border-slate-300 rounded-md" data-type="legs">
+                                     <option value="">-- Wybierz ćwiczenie --</option>
+                                </select>
+                            </div>
                         </div>
-                        <div id="progress-chart-container" class="chart-container hidden">
+
+                        <div id="progress-chart-container" class="chart-container mt-6 hidden">
                             <canvas id="progress-chart"></canvas>
                         </div>
                     </div>
@@ -440,35 +460,44 @@
 
             function updateProgressTab() {
                 const data = parseCsvData();
-                const exerciseSelect = document.getElementById('exercise-select');
-                const chartContainer = document.getElementById('progress-chart-container');
                 const noDataMessage = document.getElementById('no-data-message');
                 
                 if (data.length === 0) {
                     noDataMessage.classList.remove('hidden');
-                    chartContainer.classList.add('hidden');
-                    exerciseSelect.classList.add('hidden');
+                    document.getElementById('push-progress-section').classList.add('hidden');
+                    document.getElementById('pull-progress-section').classList.add('hidden');
+                    document.getElementById('legs-progress-section').classList.add('hidden');
                     return;
                 }
 
                 noDataMessage.classList.add('hidden');
-                exerciseSelect.classList.remove('hidden');
-                
-                const uniqueExercises = [...new Set(data.map(item => item.exercise))].sort();
-                
-                const currentSelection = exerciseSelect.value;
-                exerciseSelect.innerHTML = '<option value="">-- Wybierz ćwiczenie --</option>';
-                uniqueExercises.forEach(ex => {
-                    if(ex) {
-                        const option = document.createElement('option');
-                        option.value = ex;
-                        option.textContent = ex;
-                        exerciseSelect.appendChild(option);
+
+                const exercises = {
+                    PUSH: [...new Set(data.filter(d => d.workout === 'PUSH').map(item => item.exercise))].sort(),
+                    PULL: [...new Set(data.filter(d => d.workout === 'PULL').map(item => item.exercise))].sort(),
+                    LEGS: [...new Set(data.filter(d => d.workout === 'LEGS').map(item => item.exercise))].sort()
+                };
+
+                ['push', 'pull', 'legs'].forEach(type => {
+                    const section = document.getElementById(`${type}-progress-section`);
+                    const select = section.querySelector('.progress-select');
+                    const exerciseList = exercises[type.toUpperCase()];
+
+                    if (exerciseList.length > 0) {
+                        section.classList.remove('hidden');
+                        select.innerHTML = '<option value="">-- Wybierz ćwiczenie --</option>';
+                        exerciseList.forEach(ex => {
+                            if(ex) {
+                                const option = document.createElement('option');
+                                option.value = ex;
+                                option.textContent = ex;
+                                select.appendChild(option);
+                            }
+                        });
+                    } else {
+                        section.classList.add('hidden');
                     }
                 });
-                if (uniqueExercises.includes(currentSelection)) {
-                    exerciseSelect.value = currentSelection;
-                }
             }
             
             function renderProgressChart(selectedExercise) {
@@ -546,7 +575,7 @@
                 saveLogToStorage();
                 showToast('Zmiany w dzienniku zapisane!', 'success');
                 updateProgressTab();
-                renderProgressChart(document.getElementById('exercise-select').value);
+                renderProgressChart(''); 
             });
 
             document.getElementById('copy-log').addEventListener('click', () => {
@@ -609,13 +638,20 @@
 
                     if (target === 'postepy') {
                         updateProgressTab();
-                        renderProgressChart(document.getElementById('exercise-select').value);
+                        renderProgressChart('');
                     }
                 });
             });
 
-            document.getElementById('exercise-select').addEventListener('change', (e) => {
-                renderProgressChart(e.target.value);
+            document.querySelectorAll('.progress-select').forEach(select => {
+                select.addEventListener('change', (e) => {
+                    document.querySelectorAll('.progress-select').forEach(otherSelect => {
+                        if(otherSelect !== e.target) {
+                            otherSelect.value = '';
+                        }
+                    });
+                    renderProgressChart(e.target.value);
+                });
             });
 
 
