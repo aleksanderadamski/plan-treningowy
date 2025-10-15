@@ -289,7 +289,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const labels = chartData.map(d => d.date);
         const weights = chartData.map(d => d.weight);
 
-        const ctx = document.getElementById('progress-chart').getContext('2d');
+        const canvas = document.getElementById('progress-chart');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
         
         if (progressChart) {
             progressChart.destroy();
