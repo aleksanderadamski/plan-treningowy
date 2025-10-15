@@ -388,39 +388,98 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-
+    const mainContent = document.getElementById('main-content');
     const navBtns = document.querySelectorAll('.nav-btn');
     const panes = document.querySelectorAll('.page-pane');
+    const tabOrder = ['harmonogram', 'push', 'pull', 'legs', 'postepy', 'dziennik'];
+    let isAnimating = false;
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    function showPage(newPageId, fromSwipe = false) {
+        if (isAnimating) return;
+
+        const currentPane = document.querySelector('.page-pane:not(.hidden)');
+        if (currentPane && currentPane.id === newPageId) return;
+
+        isAnimating = true;
+
+        const newPane = document.getElementById(newPageId);
+        const currentIndex = currentPane ? tabOrder.indexOf(currentPane.id) : -1;
+        const newIndex = tabOrder.indexOf(newPageId);
+
+        // Update nav button active state
+        navBtns.forEach(b => b.classList.remove('active'));
+        document.querySelector(`.nav-btn[data-tab="${newPageId}"]`).classList.add('active');
+
+        if (currentPane && fromSwipe) {
+            const direction = newIndex > currentIndex ? 'left' : 'right';
+
+            if (direction === 'left') {
+                currentPane.classList.add('animate-slide-out-to-left');
+                newPane.classList.add('animate-slide-in-from-right');
+            } else {
+                currentPane.classList.add('animate-slide-out-to-right');
+                newPane.classList.add('animate-slide-in-from-left');
+            }
+        }
+        
+        newPane.classList.remove('hidden');
+
+        setTimeout(() => {
+            if (currentPane) {
+                if(!fromSwipe){
+                    panes.forEach(p => p.classList.add('hidden'));
+                    newPane.classList.remove('hidden');
+                } else {
+                    currentPane.classList.add('hidden');
+                }
+                currentPane.className = 'page-pane hidden'; 
+            }
+            newPane.className = 'page-pane'; 
+            isAnimating = false;
+        }, 300);
+
+
+        if (newPageId === 'postepy') {
+            updateProgressTab();
+            renderProgressChart('');
+        }
+        window.scrollTo(0, 0);
+    }
     
     navBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             const target = btn.getAttribute('data-tab');
-            navBtns.forEach(t => t.classList.remove('active'));
-            btn.classList.add('active');
-            panes.forEach(pane => {
-                pane.classList.add('hidden');
-            });
-            document.getElementById(target).classList.remove('hidden');
+            showPage(target, false);
+        });
+    });
 
-            if (target === 'postepy') {
-                updateProgressTab();
-                renderProgressChart('');
+    mainContent.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    mainContent.addEventListener('touchend', e => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    });
+
+    function handleSwipe() {
+        const deltaX = touchEndX - touchStartX;
+        if (Math.abs(deltaX) > 60) { // Swipe threshold
+            const currentPane = document.querySelector('.page-pane:not(.hidden)');
+            const currentIndex = tabOrder.indexOf(currentPane.id);
+
+            if (deltaX < 0) { // Swipe Left
+                const nextIndex = (currentIndex + 1) % tabOrder.length;
+                showPage(tabOrder[nextIndex], true);
+            } else { // Swipe Right
+                const prevIndex = (currentIndex - 1 + tabOrder.length) % tabOrder.length;
+                showPage(tabOrder[prevIndex], true);
             }
-            window.scrollTo(0, 0);
-        });
-    });
-
-    document.querySelectorAll('.progress-select').forEach(select => {
-        select.addEventListener('change', (e) => {
-            document.querySelectorAll('.progress-select').forEach(otherSelect => {
-                if(otherSelect !== e.target) {
-                    otherSelect.value = '';
-                }
-            });
-            renderProgressChart(e.target.value);
-        });
-    });
-
+        }
+    }
+    
     const scheduleToggle = document.getElementById('scheduleToggle');
     scheduleToggle.addEventListener('change', () => {
         const scheduleDisplay = document.getElementById('schedule-display');
@@ -471,6 +530,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     populateWorkoutCards();
     loadLogFromStorage();
-    document.querySelector('.nav-btn[data-tab="harmonogram"]').click();
+    
+    // Initial page load without animation
+    const initialPane = document.getElementById('harmonogram');
+    panes.forEach(p => p.classList.add('hidden'));
+    initialPane.classList.remove('hidden');
+    document.querySelector('.nav-btn[data-tab="harmonogram"]').classList.add('active');
 });
 
