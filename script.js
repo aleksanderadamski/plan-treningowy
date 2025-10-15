@@ -341,6 +341,9 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('save-push').addEventListener('click', () => saveWorkout('push'));
     document.getElementById('save-pull').addEventListener('click', () => saveWorkout('pull'));
     document.getElementById('save-legs').addEventListener('click', () => saveWorkout('legs'));
+    document.getElementById('save-push-bottom').addEventListener('click', () => saveWorkout('push'));
+    document.getElementById('save-pull-bottom').addEventListener('click', () => saveWorkout('pull'));
+    document.getElementById('save-legs-bottom').addEventListener('click', () => saveWorkout('legs'));
     document.getElementById('save-brzuch').addEventListener('click', () => saveWorkout('brzuch'));
 
     document.getElementById('save-log-changes').addEventListener('click', () => {
