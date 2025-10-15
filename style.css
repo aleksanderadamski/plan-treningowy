@@ -1,0 +1,46 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+.nav-btn.active {
+    color: #2563eb; /* blue-600 */
+}
+html.dark .nav-btn.active {
+     color: #60a5fa; /* blue-400 */
+}
+@keyframes fadeInOut {
+    0%, 100% { opacity: 0; transform: translateY(10px); }
+    10%, 90% { opacity: 1; transform: translateY(0); }
+}
+.toast-animation {
+    animation: fadeInOut 3s ease-in-out;
+}
+.chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}
+/* Custom scrollbar for better mobile look */
+::-webkit-scrollbar {
+    width: 5px;
+}
+::-webkit-scrollbar-track {
+    background: #f9fafb; /* gray-50 */
+}
+html.dark ::-webkit-scrollbar-track {
+    background: #111827; /* gray-900 */
+}
+::-webkit-scrollbar-thumb {
+    background: #d1d5db; /* gray-300 */
+    border-radius: 10px;
+}
+ html.dark ::-webkit-scrollbar-thumb {
+    background: #4b5563; /* gray-600 */
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af; /* gray-400 */
+}
+html.dark ::-webkit-scrollbar-thumb:hover {
+    background: #6b7280; /* gray-500 */
+}
+
