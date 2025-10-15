@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 container.innerHTML = ''; 
                 workouts[workoutType].forEach((exerciseSlot, index) => {
                     const card = document.createElement('div');
-                    card.className = 'bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm exercise-card';
+                    card.className = 'bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-4 rounded-xl shadow-sm exercise-card';
                     card.dataset.index = index;
                     
                     const optionsHtml = exerciseSlot.options
@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     card.innerHTML = `
                         <div class="mb-2">
-                            <select class="w-full p-3 border border-gray-200 dark:border-gray-600 rounded-lg text-base exercise-select bg-gray-50 dark:bg-gray-700 dark:text-gray-200">
+                            <select class="w-full p-3 border border-gray-200/80 dark:border-gray-600/80 rounded-lg text-base exercise-select bg-gray-50/50 dark:bg-gray-700/50">
                                 ${optionsHtml}
                             </select>
                         </div>
@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <div class="flex items-center justify-between">
                             <span class="font-mono text-gray-600 dark:text-gray-400 sets-cell text-sm">${initialSets}</span>
                             <div class="flex items-center gap-2">
-                                <input type="number" step="0.5" min="0" class="w-24 p-3 border border-gray-200 dark:border-gray-600 rounded-lg text-center text-base bg-gray-50 dark:bg-gray-700 dark:text-gray-200 weight-input" placeholder="0">
+                                <input type="number" step="0.5" min="0" class="w-24 p-3 border border-gray-200/80 dark:border-gray-600/80 rounded-lg text-center text-base bg-gray-50/50 dark:bg-gray-700/50 weight-input" placeholder="0">
                                 <span class="text-gray-500 dark:text-gray-400">kg</span>
                             </div>
                         </div>
@@ -460,6 +460,11 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('pull-cards').addEventListener('change', onCardSelectChange);
     document.getElementById('legs-cards').addEventListener('change', onCardSelectChange);
     document.getElementById('brzuch-cards').addEventListener('change', onCardSelectChange);
+
+    window.addEventListener('scroll', () => {
+        const scrollOffset = window.scrollY / -15;
+        document.body.style.setProperty('--scroll-y', `${scrollOffset}px`);
+    });
 
     populateWorkoutCards();
     loadLogFromStorage();
