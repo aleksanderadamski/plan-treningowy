@@ -96,3 +96,22 @@ html.dark ::-webkit-scrollbar-thumb:hover {
 .animate-slide-in-from-left { animation: slide-in-from-left 0.3s ease-out forwards; }
 .animate-slide-out-to-right { animation: slide-out-to-right 0.3s ease-out forwards; }
 
+details > summary {
+  list-style: none;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
+details summary:after {
+    content: '+';
+    float: right;
+    font-size: 1.5em;
+    font-weight: bold;
+    line-height: 1;
+    margin-top: -4px;
+    transition: transform 0.2s ease-in-out;
+}
+details[open] summary:after {
+    transform: rotate(45deg);
+}
+

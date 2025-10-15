@@ -73,15 +73,12 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
         // Update chart if it's visible
-        let activeSelectValue = null;
-        document.querySelectorAll('.progress-select').forEach(select => {
-            if (select.value) {
-                activeSelectValue = select.value;
+        const openAccordion = document.querySelector('#progress-accordion details[open]');
+        if (openAccordion) {
+            const activeExerciseButton = openAccordion.querySelector('.exercise-btn.active');
+            if (activeExerciseButton) {
+                renderProgressChart(activeExerciseButton.dataset.exercise);
             }
-        });
-
-        if (activeSelectValue) {
-            renderProgressChart(activeSelectValue);
         }
     });
 
@@ -233,42 +230,59 @@ document.addEventListener('DOMContentLoaded', function () {
      function updateProgressTab() {
         const data = parseCsvData();
         const noDataMessage = document.getElementById('no-data-message');
+        const accordionContainer = document.getElementById('progress-accordion');
+        accordionContainer.innerHTML = '';
         
         if (data.length === 0) {
             noDataMessage.classList.remove('hidden');
-            document.getElementById('push-progress-section').classList.add('hidden');
-            document.getElementById('pull-progress-section').classList.add('hidden');
-            document.getElementById('legs-progress-section').classList.add('hidden');
             return;
         }
 
         noDataMessage.classList.add('hidden');
 
         const exercises = {
-            PUSH: [...new Set(data.filter(d => d.workout === 'PUSH').map(item => item.exercise))].sort(),
-            PULL: [...new Set(data.filter(d => d.workout === 'PULL').map(item => item.exercise))].sort(),
-            LEGS: [...new Set(data.filter(d => d.workout === 'LEGS').map(item => item.exercise))].sort()
+            PUSH: { list: [...new Set(data.filter(d => d.workout === 'PUSH').map(item => item.exercise))].sort(), emoji: '💪' },
+            PULL: { list: [...new Set(data.filter(d => d.workout === 'PULL').map(item => item.exercise))].sort(), emoji: '🏋️' },
+            LEGS: { list: [...new Set(data.filter(d => d.workout === 'LEGS').map(item => item.exercise))].sort(), emoji: '🦵' }
         };
 
-        ['push', 'pull', 'legs'].forEach(type => {
-            const section = document.getElementById(`${type}-progress-section`);
-            const select = section.querySelector('.progress-select');
-            const exerciseList = exercises[type.toUpperCase()];
-
-            if (exerciseList.length > 0) {
-                section.classList.remove('hidden');
-                select.innerHTML = '<option value="">-- Wybierz ćwiczenie --</option>';
-                exerciseList.forEach(ex => {
-                    if(ex) {
-                        const option = document.createElement('option');
-                        option.value = ex;
-                        option.textContent = ex;
-                        select.appendChild(option);
-                    }
-                });
-            } else {
-                section.classList.add('hidden');
+        Object.keys(exercises).forEach(type => {
+            const { list, emoji } = exercises[type];
+            if (list.length > 0) {
+                const details = document.createElement('details');
+                details.className = 'bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-xl shadow-sm';
+                details.innerHTML = `
+                    <summary class="font-semibold text-lg cursor-pointer text-gray-800 dark:text-gray-200 p-4">
+                        ${emoji} Postępy ${type}
+                    </summary>
+                    <div class="px-4 pb-4 border-t border-gray-200/80 dark:border-gray-700/80">
+                        <ul class="pt-2 space-y-1">
+                            ${list.map(ex => `<li><button class="exercise-btn w-full text-left p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" data-exercise="${ex}">${ex}</button></li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+                accordionContainer.appendChild(details);
             }
+        });
+        
+        document.querySelectorAll('#progress-accordion details').forEach(detail => {
+            detail.addEventListener('toggle', (event) => {
+                if(event.target.open) {
+                    document.querySelectorAll('#progress-accordion details').forEach(otherDetail => {
+                        if(otherDetail !== event.target) {
+                            otherDetail.open = false;
+                        }
+                    });
+                }
+            });
+        });
+        
+        document.querySelectorAll('.exercise-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                 document.querySelectorAll('.exercise-btn').forEach(btn => btn.classList.remove('active', 'bg-blue-100', 'dark:bg-blue-900/50'));
+                 e.target.classList.add('active', 'bg-blue-100', 'dark:bg-blue-900/50');
+                 renderProgressChart(e.target.dataset.exercise);
+            });
         });
     }
     
@@ -340,7 +354,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
-
+    
     document.querySelectorAll('.save-button-top, .save-button-bottom').forEach(button => {
         button.addEventListener('click', (e) => {
             const workoutType = e.target.dataset.workout;
@@ -351,6 +365,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     document.getElementById('save-brzuch').addEventListener('click', () => saveWorkout('brzuch'));
+
 
     document.getElementById('save-log-changes').addEventListener('click', () => {
         saveLogToStorage();
@@ -531,17 +546,6 @@ document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener('scroll', () => {
         const scrollOffset = window.scrollY / -15;
         document.body.style.setProperty('--scroll-y', `${scrollOffset}px`);
-    });
-    
-    document.querySelectorAll('.progress-select').forEach(select => {
-        select.addEventListener('change', (e) => {
-            document.querySelectorAll('.progress-select').forEach(otherSelect => {
-                if(otherSelect !== e.target) {
-                    otherSelect.value = '';
-                }
-            });
-            renderProgressChart(e.target.value);
-        });
     });
 
     populateWorkoutCards();
