@@ -1,7 +1,33 @@
+:root {
+  --grad-color-1: #e0f2fe;
+  --grad-color-2: #f0f9ff;
+  --grad-color-3: #fefce8;
+  --grad-color-4: #ecfdf5;
+}
+
+html.dark {
+  --grad-color-1: #1e3a8a;
+  --grad-color-2: #1e1b4b;
+  --grad-color-3: #4a044e;
+  --grad-color-4: #312e81;
+}
+
 body {
     font-family: 'Poppins', sans-serif;
     -webkit-tap-highlight-color: transparent;
+    background: linear-gradient(-45deg, var(--grad-color-1), var(--grad-color-2), var(--grad-color-3), var(--grad-color-4));
+    background-size: 400% 400%;
+    animation: gradientFloat 25s ease infinite;
+    background-position-y: calc(50% + var(--scroll-y, 0px));
+    transition: background 0.5s ease;
 }
+
+@keyframes gradientFloat {
+    0% { background-position-x: 0%; }
+    50% { background-position-x: 100%; }
+    100% { background-position-x: 0%; }
+}
+
 .nav-btn.active {
     color: #2563eb; /* blue-600 */
 }
