@@ -27,11 +27,11 @@
         }
     </script>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-300 transition-colors duration-300">
+<body class="text-gray-800 dark:text-gray-300">
 
     <div id="main-content" class="pb-24">
         
-        <header class="text-center p-6 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 relative">
+        <header class="text-center p-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-b border-gray-200/50 dark:border-gray-700/50 relative">
             <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Interaktywny Plan Treningowy</h1>
             <p class="mt-1 text-gray-600 dark:text-gray-400 text-sm">Twój mobilny dziennik postępów.</p>
             <button id="theme-toggle" type="button" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 absolute top-5 right-4">
@@ -44,10 +44,10 @@
             <div id="tab-content">
                 
                 <div class="page-pane" id="harmonogram">
-                    <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm mb-4">
+                    <div class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-4 rounded-xl shadow-sm mb-4">
                         <details>
                             <summary class="font-semibold text-lg cursor-pointer text-gray-800 dark:text-gray-200">Najważniejsze Zasady</summary>
-                            <div class="mt-4 space-y-3 text-sm text-gray-600 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700 pt-4">
+                            <div class="mt-4 space-y-3 text-sm text-gray-600 dark:text-gray-400 border-t border-gray-200/80 dark:border-gray-700/80 pt-4">
                                 <div>
                                     <h3 class="font-semibold text-blue-600 dark:text-blue-400">1. Technika ponad ciężarem</h3>
                                     <p>Skup się na pełnym zakresie ruchu. Lepsza perfekcyjna forma z mniejszym ciężarem niż ryzyko kontuzji.</p>
@@ -64,7 +64,7 @@
                         </details>
                     </div>
 
-                    <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
+                    <div class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-4 rounded-xl shadow-sm">
                         <h3 class="text-lg font-semibold mb-4 text-center text-gray-800 dark:text-gray-200">Wariantowy Harmonogram</h3>
                         <div class="flex items-center justify-center space-x-4 mb-4">
                             <span class="font-medium text-sm">3 dni/tyg.</span>
@@ -77,7 +77,7 @@
                             </label>
                             <span class="font-medium text-sm">4 dni/tyg.</span>
                         </div>
-                        <div id="schedule-display" class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center text-sm">
+                        <div id="schedule-display" class="bg-gray-100/80 dark:bg-gray-700/80 p-4 rounded-lg text-center text-sm">
                             <h4 class="font-semibold mb-1">Przykładowy plan (3 dni):</h4>
                             <p>Poniedziałek - PUSH, Środa - PULL, Piątek - LEGS</p>
                         </div>
@@ -113,7 +113,7 @@
                          <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Trening: BRZUCH</h3>
                          <button id="save-brzuch" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
                     </div>
-                    <div class="mb-4 bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-400 dark:border-blue-500 p-4 rounded-r-lg">
+                    <div class="mb-4 bg-blue-50/50 dark:bg-blue-900/20 backdrop-blur-sm border-l-4 border-blue-400 dark:border-blue-500 p-4 rounded-r-lg">
                         <p class="text-gray-700 dark:text-gray-300 text-sm">Dodaj 2 wybrane ćwiczenia na koniec każdej sesji siłowej.</p>
                      </div>
                      <div id="brzuch-cards" class="space-y-4"></div>
@@ -121,44 +121,44 @@
                 
                 <div class="page-pane" id="postepy">
                     <h3 class="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Wizualizacja Postępów</h3>
-                    <div id="no-data-message" class="hidden text-center bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
+                    <div id="no-data-message" class="hidden text-center bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl shadow-sm">
                         <p class="font-semibold">Brak danych do wyświetlenia.</p>
                         <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Zapisz treningi, aby zobaczyć postępy.</p>
                     </div>
                     <div class="space-y-6">
-                        <div id="push-progress-section" class="hidden bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
+                        <div id="push-progress-section" class="hidden bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-4 rounded-xl shadow-sm">
                             <h4 class="text-lg font-semibold mb-3 text-blue-700 dark:text-blue-400">💪 Postępy PUSH</h4>
                             <select class="progress-select w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg text-base bg-gray-50 dark:bg-gray-700 dark:text-gray-200">
                                 <option value="">-- Wybierz ćwiczenie --</option>
                             </select>
                         </div>
-                        <div id="pull-progress-section" class="hidden bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
+                        <div id="pull-progress-section" class="hidden bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-4 rounded-xl shadow-sm">
                             <h4 class="text-lg font-semibold mb-3 text-blue-700 dark:text-blue-400">🏋️ Postępy PULL</h4>
                             <select class="progress-select w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg text-base bg-gray-50 dark:bg-gray-700 dark:text-gray-200">
                                  <option value="">-- Wybierz ćwiczenie --</option>
                             </select>
                         </div>
-                        <div id="legs-progress-section" class="hidden bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
+                        <div id="legs-progress-section" class="hidden bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-4 rounded-xl shadow-sm">
                             <h4 class="text-lg font-semibold mb-3 text-blue-700 dark:text-blue-400">🦵 Postępy LEGS</h4>
                             <select class="progress-select w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg text-base bg-gray-50 dark:bg-gray-700 dark:text-gray-200">
                                  <option value="">-- Wybierz ćwiczenie --</option>
                             </select>
                         </div>
                     </div>
-                    <div id="progress-chart-container" class="chart-container mt-6 hidden bg-white dark:bg-gray-800 p-2 rounded-xl shadow-sm">
+                    <div id="progress-chart-container" class="chart-container mt-6 hidden bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-2 rounded-xl shadow-sm">
                         <canvas id="progress-chart"></canvas>
                     </div>
                 </div>
 
                 <div class="page-pane" id="dziennik">
                     <h3 class="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Dziennik Treningowy</h3>
-                    <textarea id="csv-output" class="w-full h-48 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-gray-300 font-mono text-xs" placeholder="Twoje zapisane treningi..."></textarea>
+                    <textarea id="csv-output" class="w-full h-48 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100/50 dark:bg-gray-700/50 backdrop-blur-sm dark:text-gray-300 font-mono text-xs" placeholder="Twoje zapisane treningi..."></textarea>
                     <div class="mt-4 grid grid-cols-3 gap-2">
                         <button id="save-log-changes" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-2 rounded-lg text-sm">Zapisz</button>
                         <button id="copy-log" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-2 rounded-lg text-sm">Kopiuj</button>
                         <button id="clear-log" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-2 rounded-lg text-sm">Wyczyść</button>
                     </div>
-                     <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm mt-4 text-sm">
+                     <div class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-4 rounded-xl shadow-sm mt-4 text-sm">
                         <h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-2">Jak przenieść dane do Arkuszy Google?</h4>
                         <p class="text-gray-600 dark:text-gray-400">Skopiuj dziennik, otwórz pusty Arkusz Google, zaznacz komórkę A1 i wklej dane.</p>
                     </div>
@@ -169,7 +169,7 @@
 
     <div id="toast-message" class="fixed bottom-20 left-1/2 -translate-x-1/2 text-white text-sm font-bold py-2 px-4 rounded-md opacity-0 z-50"></div>
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex justify-around p-2 z-40">
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-t border-gray-200/50 dark:border-gray-700/50 flex justify-around p-2 z-40">
         <button class="nav-btn text-gray-500 dark:text-gray-400" data-tab="harmonogram"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg><span class="text-xs">Start</span></button>
         <button class="nav-btn text-gray-500 dark:text-gray-400" data-tab="push"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg><span class="text-xs">PUSH</span></button>
         <button class="nav-btn text-gray-500 dark:text-gray-400" data-tab="pull"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.25 8.25a2.25 2.25 0 01-2.25 2.25H12a2.25 2.25 0 01-2.25-2.25V6.75A2.25 2.25 0 0112 4.5h0A2.25 2.25 0 0114.25 6.75v1.5z" /><path stroke-linecap="round" stroke-linejoin="round" d="M6 18.75h12A2.25 2.25 0 0020.25 16.5v-3.375A2.25 2.25 0 0018 10.875H6A2.25 2.25 0 003.75 13.125v3.375A2.25 2.25 0 006 18.75z" /></svg><span class="text-xs">PULL</span></button>
