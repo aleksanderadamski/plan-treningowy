@@ -87,33 +87,33 @@
                 <div class="page-pane" id="push">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Trening: PUSH</h3>
-                        <button id="save-push" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
+                        <button data-workout="push" class="save-button-top bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
                     </div>
-                     <div id="push-cards" class="space-y-4"></div>
+                     <div id="push-cards" class="space-y-4 workout-cards-container"></div>
                      <div class="mt-4 flex justify-end">
-                        <button id="save-push-bottom" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
+                        <button data-workout="push" class="save-button-bottom bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
                      </div>
                 </div>
 
                 <div class="page-pane" id="pull">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Trening: PULL</h3>
-                        <button id="save-pull" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
+                        <button data-workout="pull" class="save-button-top bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
                     </div>
-                     <div id="pull-cards" class="space-y-4"></div>
+                     <div id="pull-cards" class="space-y-4 workout-cards-container"></div>
                      <div class="mt-4 flex justify-end">
-                        <button id="save-pull-bottom" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
+                        <button data-workout="pull" class="save-button-bottom bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
                      </div>
                 </div>
 
                 <div class="page-pane" id="legs">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Trening: LEGS</h3>
-                        <button id="save-legs" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
+                        <button data-workout="legs" class="save-button-top bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
                     </div>
-                     <div id="legs-cards" class="space-y-4"></div>
+                     <div id="legs-cards" class="space-y-4 workout-cards-container"></div>
                      <div class="mt-4 flex justify-end">
-                        <button id="save-legs-bottom" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
+                        <button data-workout="legs" class="save-button-bottom bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
                      </div>
                 </div>
 
@@ -125,7 +125,7 @@
                     <div class="mb-4 bg-blue-50/50 dark:bg-blue-900/20 backdrop-blur-sm border-l-4 border-blue-400 dark:border-blue-500 p-4 rounded-r-lg">
                         <p class="text-gray-700 dark:text-gray-300 text-sm">Dodaj 2 wybrane ćwiczenia na koniec każdej sesji siłowej.</p>
                      </div>
-                     <div id="brzuch-cards" class="space-y-4"></div>
+                     <div id="brzuch-cards" class="space-y-4 workout-cards-container"></div>
                 </div>
                 
                 <div class="page-pane" id="postepy">
@@ -134,25 +134,8 @@
                         <p class="font-semibold">Brak danych do wyświetlenia.</p>
                         <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Zapisz treningi, aby zobaczyć postępy.</p>
                     </div>
-                    <div class="space-y-6">
-                        <div id="push-progress-section" class="hidden bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-4 rounded-xl shadow-sm">
-                            <h4 class="text-lg font-semibold mb-3 text-blue-700 dark:text-blue-400">💪 Postępy PUSH</h4>
-                            <select class="progress-select w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg text-base bg-gray-50 dark:bg-gray-700 dark:text-gray-200">
-                                <option value="">-- Wybierz ćwiczenie --</option>
-                            </select>
-                        </div>
-                        <div id="pull-progress-section" class="hidden bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-4 rounded-xl shadow-sm">
-                            <h4 class="text-lg font-semibold mb-3 text-blue-700 dark:text-blue-400">🏋️ Postępy PULL</h4>
-                            <select class="progress-select w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg text-base bg-gray-50 dark:bg-gray-700 dark:text-gray-200">
-                                 <option value="">-- Wybierz ćwiczenie --</option>
-                            </select>
-                        </div>
-                        <div id="legs-progress-section" class="hidden bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-4 rounded-xl shadow-sm">
-                            <h4 class="text-lg font-semibold mb-3 text-blue-700 dark:text-blue-400">🦵 Postępy LEGS</h4>
-                            <select class="progress-select w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg text-base bg-gray-50 dark:bg-gray-700 dark:text-gray-200">
-                                 <option value="">-- Wybierz ćwiczenie --</option>
-                            </select>
-                        </div>
+                    <div id="progress-accordion" class="space-y-2">
+                        <!-- Accordion items will be generated here -->
                     </div>
                     <div id="progress-chart-container" class="chart-container mt-6 hidden bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-2 rounded-xl shadow-sm">
                         <canvas id="progress-chart"></canvas>
