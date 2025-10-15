@@ -341,12 +341,15 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    document.getElementById('save-push').addEventListener('click', () => saveWorkout('push'));
-    document.getElementById('save-pull').addEventListener('click', () => saveWorkout('pull'));
-    document.getElementById('save-legs').addEventListener('click', () => saveWorkout('legs'));
-    document.getElementById('save-push-bottom').addEventListener('click', () => saveWorkout('push'));
-    document.getElementById('save-pull-bottom').addEventListener('click', () => saveWorkout('pull'));
-    document.getElementById('save-legs-bottom').addEventListener('click', () => saveWorkout('legs'));
+    document.querySelectorAll('.save-button-top, .save-button-bottom').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const workoutType = e.target.dataset.workout;
+            if(workoutType) {
+                saveWorkout(workoutType);
+            }
+        });
+    });
+
     document.getElementById('save-brzuch').addEventListener('click', () => saveWorkout('brzuch'));
 
     document.getElementById('save-log-changes').addEventListener('click', () => {
@@ -521,14 +524,24 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
     
-    document.getElementById('push-cards').addEventListener('change', onCardSelectChange);
-    document.getElementById('pull-cards').addEventListener('change', onCardSelectChange);
-    document.getElementById('legs-cards').addEventListener('change', onCardSelectChange);
-    document.getElementById('brzuch-cards').addEventListener('change', onCardSelectChange);
+    document.querySelectorAll('.workout-cards-container').forEach(container => {
+        container.addEventListener('change', onCardSelectChange);
+    });
 
     window.addEventListener('scroll', () => {
         const scrollOffset = window.scrollY / -15;
         document.body.style.setProperty('--scroll-y', `${scrollOffset}px`);
+    });
+    
+    document.querySelectorAll('.progress-select').forEach(select => {
+        select.addEventListener('change', (e) => {
+            document.querySelectorAll('.progress-select').forEach(otherSelect => {
+                if(otherSelect !== e.target) {
+                    otherSelect.value = '';
+                }
+            });
+            renderProgressChart(e.target.value);
+        });
     });
 
     populateWorkoutCards();
