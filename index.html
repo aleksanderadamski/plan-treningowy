@@ -16,10 +16,80 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+          --grad-color-1: #e0f2fe;
+          --grad-color-2: #f0f9ff;
+          --grad-color-3: #fefce8;
+          --grad-color-4: #ecfdf5;
+        }
+
+        html.dark {
+          --grad-color-1: #1e3a8a;
+          --grad-color-2: #1e1b4b;
+          --grad-color-3: #4a044e;
+          --grad-color-4: #312e81;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            background: linear-gradient(-45deg, var(--grad-color-1), var(--grad-color-2), var(--grad-color-3), var(--grad-color-4));
+            background-size: 400% 400%;
+            animation: gradientFloat 25s ease infinite;
+            background-position-y: calc(50% + var(--scroll-y, 0px));
+            transition: background 0.5s ease;
+        }
+
+        @keyframes gradientFloat {
+            0% { background-position-x: 0%; }
+            50% { background-position-x: 100%; }
+            100% { background-position-x: 0%; }
+        }
+
+        .nav-btn.active {
+            color: #2563eb;
+        }
+        html.dark .nav-btn.active {
+             color: #60a5fa;
+        }
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: translateY(10px); }
+            10%, 90% { opacity: 1; transform: translateY(0); }
+        }
+        .toast-animation {
+            animation: fadeInOut 3s ease-in-out;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f9fafb;
+        }
+        html.dark ::-webkit-scrollbar-track {
+            background: #111827;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 10px;
+        }
+         html.dark ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+        html.dark ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+    </style>
 
     <script>
-        // On page load or when changing themes, best to add inline in `head` to avoid FOUC
         if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         } else {
@@ -90,6 +160,7 @@
                         <button id="save-push" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
                     </div>
                      <div id="push-cards" class="space-y-4"></div>
+                     <button id="save-push-bottom" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors">Zapisz Trening</button>
                 </div>
 
                 <div class="page-pane" id="pull">
@@ -98,6 +169,7 @@
                         <button id="save-pull" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
                     </div>
                      <div id="pull-cards" class="space-y-4"></div>
+                     <button id="save-pull-bottom" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors">Zapisz Trening</button>
                 </div>
 
                 <div class="page-pane" id="legs">
@@ -106,6 +178,7 @@
                         <button id="save-legs" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
                     </div>
                      <div id="legs-cards" class="space-y-4"></div>
+                     <button id="save-legs-bottom" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors">Zapisz Trening</button>
                 </div>
 
                 <div class="page-pane" id="brzuch">
@@ -178,7 +251,482 @@
         <button class="nav-btn text-gray-500 dark:text-gray-400" data-tab="dziennik"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg><span class="text-xs">Dziennik</span></button>
     </nav>
     
-    <script src="script.js"></script>
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    
+     const workouts = {
+        push: [
+            { options: [{ name: "Wyciskanie sztangi na ławce płaskiej", sets: "4x8-10" }, { name: "Wyciskanie hantli (płasko)", sets: "4x8-10" }, { name: "Pompki na poręczach", sets: "4xMAX" }] },
+            { options: [{ name: "Wyciskanie hantli nad głowę (siedząc)", sets: "3x8-12" }, { name: "Wyciskanie żołnierskie (stojąc)", sets: "3x8-10" }, { name: "Wyciskanie na maszynie", sets: "3x10-12" }] },
+            { options: [{ name: "Wyciskanie sztangi na ławce skośnej", sets: "3x10-12" }, { name: "Wyciskanie hantli (skośna)", sets: "3x10-12" }] },
+            { options: [{ name: "Wznosy hantli bokiem", sets: "3x12-15" }, { name: "Face pulls (linka)", sets: "3x12-15" }] },
+            { options: [{ name: "Rozpiętki na maszynie 'Butterfly'", sets: "3x12-15" }, { name: "Rozpiętki z hantlami", sets: "3x12-15" }] },
+            { options: [{ name: "Prostowanie ramion (linka wyciągu)", sets: "3x10-15" }, { name: "Wyciskanie francuskie", sets: "3x10-12" }] }
+        ],
+        pull: [
+            { options: [{ name: "Podciąganie na drążku (nachwyt)", sets: "4xMAX" }, { name: "Ściąganie drążka wyciągu", sets: "4x8-12" }] },
+            { options: [{ name: "Wiosłowanie sztangą (opad tułowia)", sets: "4x8-10" }, { name: "Wiosłowanie hantlem", sets: "4x8-10" }, { name: "Wiosłowanie na maszynie", sets: "4x10-12" }] },
+            { options: [{ name: "Przyciąganie uchwytu V (siedząc)", sets: "3x10-12" }, { name: "Wiosłowanie 'półsztangą'", sets: "3x8-10" }] },
+            { options: [{ name: "Ściąganie drążka (proste ramiona)", sets: "3x12-15" }, { name: "Przenoszenie hantla ('pullover')", sets: "3x12-15" }] },
+            { options: [{ name: "Uginanie ramion ze sztangą", sets: "3x10-12" }, { name: "Uginanie z hantlami (supinacja)", sets: "3x10-12" }] },
+            { options: [{ name: "Uginanie ramion na modlitewniku", sets: "3x10-15" }, { name: "Uginanie w oparciu o ławkę", sets: "3x10-12" }] }
+        ],
+        legs: [
+            { options: [{ name: "Przysiady ze sztangą", sets: "4x8-10" }, { name: "Wypychanie na suwnicy", sets: "4x10-12" }, { name: "Przysiady bułgarskie", sets: "4x8-10 (na nogę)" }] },
+            { options: [{ name: "Martwy ciąg na prostych nogach (RDL)", sets: "3x10-12" }, { name: "'Dzień dobry' ze sztangą", sets: "3x10-12" }, { name: "Uginanie nóg (leżąc)", sets: "3x12-15" }] },
+            { options: [{ name: "Wykroki z hantlami", sets: "3x10-12 (na nogę)" }, { name: "Wchodzenie na podwyższenie", sets: "3x10-12 (na nogę)" }] },
+            { options: [{ name: "Prostowanie nóg na maszynie", sets: "3x12-15" }, { name: "Przysiad 'sissy squat'", sets: "3xMAX" }] },
+            { options: [{ name: "Uginanie nóg na maszynie (siedząc)", sets: "3x12-15" }, { name: "'Żuraw' (Glute Ham Raise)", sets: "3xMAX" }] },
+            { options: [{ name: "Wspięcia na palce (stojąc)", sets: "4x15-20" }, { name: "Wspięcia na suwnicy", sets: "4x15-20" }, { name: "Wspięcia z hantlem", sets: "4x15-20" }] }
+        ],
+        brzuch: [
+            { options: [{ name: "'Allahy' (linka wyciągu)", sets: "3x15-20" }, { name: "Spięcia na maszynie", sets: "3x15-20" }] },
+            { options: [{ name: "Unoszenie nóg w zwisie", sets: "3xMAX" }, { name: "Unoszenie kolan w zwisie", sets: "3xMAX" }] },
+            { options: [{ name: "Plank (deska)", sets: "3x60s" }, { name: "Plank boczny", sets: "3x30-45s (na str.)" }] },
+            { options: [{ name: "'Russian Twist' (z obciążeniem)", sets: "3x15 (na str.)" }, { name: "'Wood choppers' (wyciąg)", sets: "3x12-15 (na str.)" }] }
+        ]
+    };
+
+    const LOG_STORAGE_KEY = 'interactiveTrainingLog';
+    let progressChart = null; 
+
+    // THEME TOGGLE LOGIC
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+
+    // Show correct icon on page load
+    if (document.documentElement.classList.contains('dark')) {
+        themeToggleLightIcon.classList.remove('hidden');
+    } else {
+        themeToggleDarkIcon.classList.remove('hidden');
+    }
+
+    themeToggleBtn.addEventListener('click', function() {
+        // toggle icons
+        themeToggleDarkIcon.classList.toggle('hidden');
+        themeToggleLightIcon.classList.toggle('hidden');
+
+        // if set via local storage previously
+        if (localStorage.getItem('theme')) {
+            if (localStorage.getItem('theme') === 'light') {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            }
+        // if NOT set via local storage previously
+        } else {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        // Update chart if it's visible
+        let activeSelectValue = null;
+        document.querySelectorAll('.progress-select').forEach(select => {
+            if (select.value) {
+                activeSelectValue = select.value;
+            }
+        });
+
+        if (activeSelectValue) {
+            renderProgressChart(activeSelectValue);
+        }
+    });
+
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast-message');
+        const colors = {
+            success: 'bg-green-500',
+            error: 'bg-red-500',
+            info: 'bg-blue-600'
+        };
+        toast.className = 'fixed bottom-20 left-1/2 -translate-x-1/2 text-white text-sm font-bold py-2 px-4 rounded-md opacity-0 z-50';
+        toast.textContent = message;
+        toast.classList.add(colors[type]);
+        toast.classList.remove('opacity-0');
+        toast.classList.add('toast-animation');
+        
+        setTimeout(() => {
+            toast.classList.add('opacity-0');
+            toast.classList.remove('toast-animation');
+        }, 2800);
+    }
+
+    function saveLogToStorage() {
+        localStorage.setItem(LOG_STORAGE_KEY, document.getElementById('csv-output').value);
+    }
+
+    function loadLogFromStorage() {
+        const savedLog = localStorage.getItem(LOG_STORAGE_KEY);
+        if (savedLog) {
+            document.getElementById('csv-output').value = savedLog;
+        }
+    }
+
+    function getPersonalBest(exerciseName) {
+        const data = parseCsvData();
+        const exerciseData = data.filter(entry => entry.exercise === exerciseName && entry.weight > 0);
+        if (exerciseData.length === 0) {
+            return null;
+        }
+        const maxWeight = Math.max(...exerciseData.map(entry => entry.weight));
+        return maxWeight;
+    }
+
+    function updateAllPersonalBests(workoutType) {
+        const container = document.getElementById(`${workoutType}-cards`);
+        if (!container) return;
+        const cards = container.querySelectorAll('.exercise-card');
+
+        cards.forEach(card => {
+            const selectEl = card.querySelector('.exercise-select');
+            const exerciseName = selectEl.value;
+            const personalBest = getPersonalBest(exerciseName);
+            const pbElement = card.querySelector('.personal-best');
+
+            if (pbElement) {
+                 pbElement.innerHTML = personalBest > 0 ? `🏆 Rekord: ${personalBest} kg` : '';
+            }
+        });
+    }
+
+    function populateWorkoutCards() {
+        for (const workoutType in workouts) {
+            const container = document.getElementById(`${workoutType}-cards`);
+            if (container) {
+                container.innerHTML = ''; 
+                workouts[workoutType].forEach((exerciseSlot, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-4 rounded-xl shadow-sm exercise-card';
+                    card.dataset.index = index;
+                    
+                    const optionsHtml = exerciseSlot.options
+                        .map(opt => `<option value="${opt.name}">${opt.name}</option>`).join('');
+                    const initialSets = exerciseSlot.options[0].sets;
+                    const defaultExerciseName = exerciseSlot.options[0].name;
+                    const personalBest = getPersonalBest(defaultExerciseName);
+                    const pbHtml = personalBest > 0 ? `🏆 Rekord: ${personalBest} kg` : '';
+
+                    card.innerHTML = `
+                        <div class="mb-2">
+                            <select class="w-full p-3 border border-gray-200/80 dark:border-gray-600/80 rounded-lg text-base exercise-select bg-gray-50/50 dark:bg-gray-700/50">
+                                ${optionsHtml}
+                            </select>
+                        </div>
+                        <div class="personal-best text-xs text-center h-4 mb-2 text-blue-500 dark:text-blue-400 font-semibold">${pbHtml}</div>
+                        <div class="flex items-center justify-between">
+                            <span class="font-mono text-gray-600 dark:text-gray-400 sets-cell text-sm">${initialSets}</span>
+                            <div class="flex items-center gap-2">
+                                <input type="number" step="0.5" min="0" class="w-24 p-3 border border-gray-200/80 dark:border-gray-600/80 rounded-lg text-center text-base bg-gray-50/50 dark:bg-gray-700/50 weight-input" placeholder="0">
+                                <span class="text-gray-500 dark:text-gray-400">kg</span>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+        }
+    }
+
+    function saveWorkout(workoutType) {
+        const container = document.getElementById(`${workoutType}-cards`);
+        const cards = container.querySelectorAll('.exercise-card');
+        const csvOutput = document.getElementById('csv-output');
+        const today = new Date().toISOString().slice(0, 10);
+        let workoutData = "";
+
+        cards.forEach(card => {
+            const exerciseSelect = card.querySelector('.exercise-select');
+            const weightInput = card.querySelector('.weight-input');
+            const weight = parseFloat(weightInput.value);
+
+            if (weight > 0) {
+                const exerciseName = exerciseSelect.value;
+                const setsInfo = card.querySelector('.sets-cell').textContent;
+                workoutData += `${today},${workoutType.toUpperCase()},"${exerciseName}",${setsInfo},${weight}\n`;
+            }
+        });
+
+        if(workoutData) {
+            if (csvOutput.value.trim() === "") {
+                csvOutput.value = "Data,Trening,Ćwiczenie,Serie x Powt.,Ciężar (kg)\n";
+            }
+            csvOutput.value += workoutData;
+            saveLogToStorage();
+            showToast(`Trening ${workoutType.toUpperCase()} zapisany!`, 'info');
+            updateAllPersonalBests(workoutType);
+        } else {
+            showToast('Wprowadź ciężar, aby zapisać.', 'error');
+        }
+    }
+
+    function parseCsvData() {
+        const log = localStorage.getItem(LOG_STORAGE_KEY);
+        if (!log || log.trim() === '' || log.split('\n').length < 2) return [];
+        const rows = log.trim().split('\n');
+        rows.shift(); 
+        return rows.map(row => {
+            const values = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];
+             if (values.length < 5) return null;
+            return {
+                date: values[0],
+                workout: values[1],
+                exercise: values[2] ? values[2].replace(/"/g, '') : '',
+                sets: values[3],
+                weight: parseFloat(values[4])
+            };
+        }).filter(Boolean);
+    }
+
+     function updateProgressTab() {
+        const data = parseCsvData();
+        const noDataMessage = document.getElementById('no-data-message');
+        
+        if (data.length === 0) {
+            noDataMessage.classList.remove('hidden');
+            document.getElementById('push-progress-section').classList.add('hidden');
+            document.getElementById('pull-progress-section').classList.add('hidden');
+            document.getElementById('legs-progress-section').classList.add('hidden');
+            return;
+        }
+
+        noDataMessage.classList.add('hidden');
+
+        const exercises = {
+            PUSH: [...new Set(data.filter(d => d.workout === 'PUSH').map(item => item.exercise))].sort(),
+            PULL: [...new Set(data.filter(d => d.workout === 'PULL').map(item => item.exercise))].sort(),
+            LEGS: [...new Set(data.filter(d => d.workout === 'LEGS').map(item => item.exercise))].sort()
+        };
+
+        ['push', 'pull', 'legs'].forEach(type => {
+            const section = document.getElementById(`${type}-progress-section`);
+            const select = section.querySelector('.progress-select');
+            const exerciseList = exercises[type.toUpperCase()];
+
+            if (exerciseList.length > 0) {
+                section.classList.remove('hidden');
+                select.innerHTML = '<option value="">-- Wybierz ćwiczenie --</option>';
+                exerciseList.forEach(ex => {
+                    if(ex) {
+                        const option = document.createElement('option');
+                        option.value = ex;
+                        option.textContent = ex;
+                        select.appendChild(option);
+                    }
+                });
+            } else {
+                section.classList.add('hidden');
+            }
+        });
+    }
+    
+    function renderProgressChart(selectedExercise) {
+        const chartContainer = document.getElementById('progress-chart-container');
+        if (!selectedExercise) {
+            chartContainer.classList.add('hidden');
+            return;
+        }
+        
+        chartContainer.classList.remove('hidden');
+        const isDarkMode = document.documentElement.classList.contains('dark');
+        const data = parseCsvData();
+        const chartData = data
+            .filter(item => item.exercise === selectedExercise)
+            .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        const labels = chartData.map(d => d.date);
+        const weights = chartData.map(d => d.weight);
+
+        const ctx = document.getElementById('progress-chart').getContext('2d');
+        
+        if (progressChart) {
+            progressChart.destroy();
+        }
+
+        progressChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: `Progresja ciężaru (kg)`,
+                    data: weights,
+                    borderColor: isDarkMode ? '#60a5fa' : '#2563eb',
+                    backgroundColor: isDarkMode ? 'rgba(96, 165, 250, 0.2)' : 'rgba(59, 130, 246, 0.1)',
+                    fill: true,
+                    tension: 0.1,
+                    pointBackgroundColor: isDarkMode ? '#93c5fd' : '#1d4ed8',
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: { 
+                        display: true, 
+                        text: selectedExercise, 
+                        font: { size: 14, family: 'Poppins' },
+                        color: isDarkMode ? '#d1d5db' : '#374151'
+                    },
+                     legend: { display: false }
+                },
+                scales: {
+                    y: { 
+                        title: { display: true, text: 'Ciężar (kg)', color: isDarkMode ? '#9ca3af' : '#4b5563' },
+                        ticks: { color: isDarkMode ? '#9ca3af' : '#4b5563' },
+                        grid: { color: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }
+                    },
+                    x: { 
+                        title: { display: false },
+                        ticks: { color: isDarkMode ? '#9ca3af' : '#4b5563' },
+                        grid: { color: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }
+                    }
+                }
+            }
+        });
+    }
+
+    document.getElementById('save-push').addEventListener('click', () => saveWorkout('push'));
+    document.getElementById('save-pull').addEventListener('click', () => saveWorkout('pull'));
+    document.getElementById('save-legs').addEventListener('click', () => saveWorkout('legs'));
+    document.getElementById('save-brzuch').addEventListener('click', () => saveWorkout('brzuch'));
+    document.getElementById('save-push-bottom').addEventListener('click', () => saveWorkout('push'));
+    document.getElementById('save-pull-bottom').addEventListener('click', () => saveWorkout('pull'));
+    document.getElementById('save-legs-bottom').addEventListener('click', () => saveWorkout('legs'));
+
+    document.getElementById('save-log-changes').addEventListener('click', () => {
+        saveLogToStorage();
+        showToast('Zmiany w dzienniku zapisane!', 'success');
+        updateProgressTab();
+        renderProgressChart(''); 
+    });
+
+    document.getElementById('copy-log').addEventListener('click', () => {
+        const csvOutput = document.getElementById('csv-output');
+         if(!csvOutput.value) return;
+        navigator.clipboard.writeText(csvOutput.value).then(() => {
+            showToast('Skopiowano do schowka!', 'success');
+        });
+    });
+    
+    const clearLogBtn = document.getElementById('clear-log');
+    clearLogBtn.addEventListener('click', () => {
+        if (clearLogBtn.dataset.confirm === 'true') {
+            document.getElementById('csv-output').value = '';
+            localStorage.removeItem(LOG_STORAGE_KEY);
+            showToast('Dziennik wyczyszczony!', 'error');
+            updateProgressTab(); 
+            if (progressChart) progressChart.destroy();
+            document.getElementById('progress-chart-container').classList.add('hidden');
+            
+            clearLogBtn.textContent = 'Wyczyść';
+            clearLogBtn.dataset.confirm = 'false';
+            clearLogBtn.classList.remove('bg-yellow-500');
+        } else {
+            clearLogBtn.textContent = 'Potwierdź';
+            clearLogBtn.dataset.confirm = 'true';
+            clearLogBtn.classList.add('bg-yellow-500');
+            setTimeout(() => {
+                if (clearLogBtn.dataset.confirm === 'true') {
+                     clearLogBtn.textContent = 'Wyczyść';
+                     clearLogBtn.dataset.confirm = 'false';
+                     clearLogBtn.classList.remove('bg-yellow-500');
+                }
+            }, 3000);
+        }
+    });
+
+
+    const navBtns = document.querySelectorAll('.nav-btn');
+    const panes = document.querySelectorAll('.page-pane');
+    
+    navBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const target = btn.getAttribute('data-tab');
+            navBtns.forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            panes.forEach(pane => {
+                pane.classList.add('hidden');
+            });
+            document.getElementById(target).classList.remove('hidden');
+
+            if (target === 'postepy') {
+                updateProgressTab();
+                renderProgressChart('');
+            }
+            window.scrollTo(0, 0);
+        });
+    });
+
+    document.querySelectorAll('.progress-select').forEach(select => {
+        select.addEventListener('change', (e) => {
+            document.querySelectorAll('.progress-select').forEach(otherSelect => {
+                if(otherSelect !== e.target) {
+                    otherSelect.value = '';
+                }
+            });
+            renderProgressChart(e.target.value);
+        });
+    });
+
+    const scheduleToggle = document.getElementById('scheduleToggle');
+    scheduleToggle.addEventListener('change', () => {
+        const scheduleDisplay = document.getElementById('schedule-display');
+        const toggleDot = scheduleToggle.parentElement.querySelector('.dot');
+        const toggleBlock = scheduleToggle.parentElement.querySelector('.block');
+        if (scheduleToggle.checked) {
+            scheduleDisplay.innerHTML = `<h4 class="font-semibold mb-1">Przykładowy plan (4 dni):</h4><p>Tydzień 1: PUSH, PULL, LEGS, PUSH<br>Tydzień 2: PULL, LEGS, PUSH, PULL</p>`;
+            toggleDot.style.transform = 'translateX(100%)';
+            toggleBlock.classList.replace('bg-gray-200', 'bg-blue-500');
+            toggleBlock.classList.replace('dark:bg-gray-600', 'dark:bg-blue-600');
+        } else {
+            scheduleDisplay.innerHTML = `<h4 class="font-semibold mb-1">Przykładowy plan (3 dni):</h4><p>Poniedziałek - PUSH, Środa - PULL, Piątek - LEGS</p>`;
+            toggleDot.style.transform = 'translateX(0)';
+            toggleBlock.classList.replace('bg-blue-500', 'bg-gray-200');
+            toggleBlock.classList.replace('dark:bg-blue-600', 'dark:bg-gray-600');
+        }
+    });
+    
+    function onCardSelectChange(e) {
+        if (e.target.classList.contains('exercise-select')) {
+            const selectEl = e.target;
+            const card = selectEl.closest('.exercise-card');
+            const workoutType = card.parentElement.id.replace('-cards', '');
+            const rowIndex = parseInt(card.dataset.index, 10);
+            const selectedIndex = selectEl.selectedIndex;
+
+            const newSets = workouts[workoutType][rowIndex].options[selectedIndex].sets;
+            card.querySelector('.sets-cell').textContent = newSets;
+
+            const newExerciseName = selectEl.value;
+            const personalBest = getPersonalBest(newExerciseName);
+            const pbElement = card.querySelector('.personal-best');
+            if (pbElement) {
+                pbElement.innerHTML = personalBest > 0 ? `🏆 Rekord: ${personalBest} kg` : '';
+            }
+        }
+    }
+    
+    document.getElementById('push-cards').addEventListener('change', onCardSelectChange);
+    document.getElementById('pull-cards').addEventListener('change', onCardSelectChange);
+    document.getElementById('legs-cards').addEventListener('change', onCardSelectChange);
+    document.getElementById('brzuch-cards').addEventListener('change', onCardSelectChange);
+
+    window.addEventListener('scroll', () => {
+        const scrollOffset = window.scrollY / -15;
+        document.body.style.setProperty('--scroll-y', `${scrollOffset}px`);
+    });
+
+    populateWorkoutCards();
+    loadLogFromStorage();
+    document.querySelector('.nav-btn[data-tab="harmonogram"]').click();
+});
+    </script>
 </body>
 </html>
-
