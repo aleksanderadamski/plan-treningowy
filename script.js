@@ -115,6 +115,33 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function getPersonalBest(exerciseName) {
+        const data = parseCsvData();
+        const exerciseData = data.filter(entry => entry.exercise === exerciseName && entry.weight > 0);
+        if (exerciseData.length === 0) {
+            return null;
+        }
+        const maxWeight = Math.max(...exerciseData.map(entry => entry.weight));
+        return maxWeight;
+    }
+
+    function updateAllPersonalBests(workoutType) {
+        const container = document.getElementById(`${workoutType}-cards`);
+        if (!container) return;
+        const cards = container.querySelectorAll('.exercise-card');
+
+        cards.forEach(card => {
+            const selectEl = card.querySelector('.exercise-select');
+            const exerciseName = selectEl.value;
+            const personalBest = getPersonalBest(exerciseName);
+            const pbElement = card.querySelector('.personal-best');
+
+            if (pbElement) {
+                 pbElement.innerHTML = personalBest > 0 ? `🏆 Rekord: ${personalBest} kg` : '';
+            }
+        });
+    }
+
     function populateWorkoutCards() {
         for (const workoutType in workouts) {
             const container = document.getElementById(`${workoutType}-cards`);
@@ -128,13 +155,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     const optionsHtml = exerciseSlot.options
                         .map(opt => `<option value="${opt.name}">${opt.name}</option>`).join('');
                     const initialSets = exerciseSlot.options[0].sets;
+                    const defaultExerciseName = exerciseSlot.options[0].name;
+                    const personalBest = getPersonalBest(defaultExerciseName);
+                    const pbHtml = personalBest > 0 ? `🏆 Rekord: ${personalBest} kg` : '';
 
                     card.innerHTML = `
-                        <div class="mb-3">
+                        <div class="mb-2">
                             <select class="w-full p-3 border border-gray-200 dark:border-gray-600 rounded-lg text-base exercise-select bg-gray-50 dark:bg-gray-700 dark:text-gray-200">
                                 ${optionsHtml}
                             </select>
                         </div>
+                        <div class="personal-best text-xs text-center h-4 mb-2 text-blue-500 dark:text-blue-400 font-semibold">${pbHtml}</div>
                         <div class="flex items-center justify-between">
                             <span class="font-mono text-gray-600 dark:text-gray-400 sets-cell text-sm">${initialSets}</span>
                             <div class="flex items-center gap-2">
@@ -175,6 +206,7 @@ document.addEventListener('DOMContentLoaded', function () {
             csvOutput.value += workoutData;
             saveLogToStorage();
             showToast(`Trening ${workoutType.toUpperCase()} zapisany!`, 'info');
+            updateAllPersonalBests(workoutType);
         } else {
             showToast('Wprowadź ciężar, aby zapisać.', 'error');
         }
@@ -414,6 +446,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const newSets = workouts[workoutType][rowIndex].options[selectedIndex].sets;
             card.querySelector('.sets-cell').textContent = newSets;
+
+            const newExerciseName = selectEl.value;
+            const personalBest = getPersonalBest(newExerciseName);
+            const pbElement = card.querySelector('.personal-best');
+            if (pbElement) {
+                pbElement.innerHTML = personalBest > 0 ? `🏆 Rekord: ${personalBest} kg` : '';
+            }
         }
     }
     
