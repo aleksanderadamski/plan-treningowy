@@ -20,6 +20,7 @@ body {
     animation: gradientFloat 25s ease infinite;
     background-position-y: calc(50% + var(--scroll-y, 0px));
     transition: background 0.5s ease;
+    overflow-x: hidden;
 }
 
 @keyframes gradientFloat {
@@ -69,4 +70,29 @@ html.dark ::-webkit-scrollbar-track {
 html.dark ::-webkit-scrollbar-thumb:hover {
     background: #6b7280; /* gray-500 */
 }
+
+@keyframes slide-in-from-right {
+  from { transform: translateX(100%); opacity: 0.5; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slide-out-to-left {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(-100%); opacity: 0.5; }
+}
+
+@keyframes slide-in-from-left {
+  from { transform: translateX(-100%); opacity: 0.5; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slide-out-to-right {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0.5; }
+}
+
+.animate-slide-in-from-right { animation: slide-in-from-right 0.3s ease-out forwards; }
+.animate-slide-out-to-left { animation: slide-out-to-left 0.3s ease-out forwards; }
+.animate-slide-in-from-left { animation: slide-in-from-left 0.3s ease-out forwards; }
+.animate-slide-out-to-right { animation: slide-out-to-right 0.3s ease-out forwards; }
 
