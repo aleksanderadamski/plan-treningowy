@@ -87,33 +87,33 @@
                 <div class="page-pane" id="push">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Trening: PUSH</h3>
-                        <button id="save-push" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
+                        <button data-workout="push" class="save-button-top bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
                     </div>
-                     <div id="push-cards" class="space-y-4"></div>
+                     <div id="push-cards" class="space-y-4 workout-cards-container"></div>
                      <div class="mt-4 flex justify-end">
-                        <button id="save-push-bottom" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
+                        <button data-workout="push" class="save-button-bottom bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
                      </div>
                 </div>
 
                 <div class="page-pane" id="pull">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Trening: PULL</h3>
-                        <button id="save-pull" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
+                        <button data-workout="pull" class="save-button-top bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
                     </div>
-                     <div id="pull-cards" class="space-y-4"></div>
+                     <div id="pull-cards" class="space-y-4 workout-cards-container"></div>
                      <div class="mt-4 flex justify-end">
-                        <button id="save-pull-bottom" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
+                        <button data-workout="pull" class="save-button-bottom bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
                      </div>
                 </div>
 
                 <div class="page-pane" id="legs">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Trening: LEGS</h3>
-                        <button id="save-legs" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
+                        <button data-workout="legs" class="save-button-top bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
                     </div>
-                     <div id="legs-cards" class="space-y-4"></div>
+                     <div id="legs-cards" class="space-y-4 workout-cards-container"></div>
                      <div class="mt-4 flex justify-end">
-                        <button id="save-legs-bottom" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
+                        <button data-workout="legs" class="save-button-bottom bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">Zapisz</button>
                      </div>
                 </div>
 
@@ -125,7 +125,7 @@
                     <div class="mb-4 bg-blue-50/50 dark:bg-blue-900/20 backdrop-blur-sm border-l-4 border-blue-400 dark:border-blue-500 p-4 rounded-r-lg">
                         <p class="text-gray-700 dark:text-gray-300 text-sm">Dodaj 2 wybrane ćwiczenia na koniec każdej sesji siłowej.</p>
                      </div>
-                     <div id="brzuch-cards" class="space-y-4"></div>
+                     <div id="brzuch-cards" class="space-y-4 workout-cards-container"></div>
                 </div>
                 
                 <div class="page-pane" id="postepy">
@@ -134,25 +134,8 @@
                         <p class="font-semibold">Brak danych do wyświetlenia.</p>
                         <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Zapisz treningi, aby zobaczyć postępy.</p>
                     </div>
-                    <div class="space-y-6">
-                        <div id="push-progress-section" class="hidden bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-4 rounded-xl shadow-sm">
-                            <h4 class="text-lg font-semibold mb-3 text-blue-700 dark:text-blue-400">💪 Postępy PUSH</h4>
-                            <select class="progress-select w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg text-base bg-gray-50 dark:bg-gray-700 dark:text-gray-200">
-                                <option value="">-- Wybierz ćwiczenie --</option>
-                            </select>
-                        </div>
-                        <div id="pull-progress-section" class="hidden bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-4 rounded-xl shadow-sm">
-                            <h4 class="text-lg font-semibold mb-3 text-blue-700 dark:text-blue-400">🏋️ Postępy PULL</h4>
-                            <select class="progress-select w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg text-base bg-gray-50 dark:bg-gray-700 dark:text-gray-200">
-                                 <option value="">-- Wybierz ćwiczenie --</option>
-                            </select>
-                        </div>
-                        <div id="legs-progress-section" class="hidden bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-4 rounded-xl shadow-sm">
-                            <h4 class="text-lg font-semibold mb-3 text-blue-700 dark:text-blue-400">🦵 Postępy LEGS</h4>
-                            <select class="progress-select w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg text-base bg-gray-50 dark:bg-gray-700 dark:text-gray-200">
-                                 <option value="">-- Wybierz ćwiczenie --</option>
-                            </select>
-                        </div>
+                    <div id="progress-accordion" class="space-y-2">
+                        <!-- Accordion items will be generated here -->
                     </div>
                     <div id="progress-chart-container" class="chart-container mt-6 hidden bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-2 rounded-xl shadow-sm">
                         <canvas id="progress-chart"></canvas>
@@ -183,6 +166,7 @@
         <button class="nav-btn text-gray-500 dark:text-gray-400" data-tab="push"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg><span class="text-xs">PUSH</span></button>
         <button class="nav-btn text-gray-500 dark:text-gray-400" data-tab="pull"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.25 8.25a2.25 2.25 0 01-2.25 2.25H12a2.25 2.25 0 01-2.25-2.25V6.75A2.25 2.25 0 0112 4.5h0A2.25 2.25 0 0114.25 6.75v1.5z" /><path stroke-linecap="round" stroke-linejoin="round" d="M6 18.75h12A2.25 2.25 0 0020.25 16.5v-3.375A2.25 2.25 0 0018 10.875H6A2.25 2.25 0 003.75 13.125v3.375A2.25 2.25 0 006 18.75z" /></svg><span class="text-xs">PULL</span></button>
         <button class="nav-btn text-gray-500 dark:text-gray-400" data-tab="legs"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.5 3.75a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zM9.5 8.25v9.75M12.75 12.75L16.5 21" /><path stroke-linecap="round" stroke-linejoin="round" d="M6 12.75L9.5 8.25l-2.25-2.25" /></svg><span class="text-xs">LEGS</span></button>
+        <button class="nav-btn text-gray-500 dark:text-gray-400" data-tab="brzuch"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7.014A8.003 8.003 0 0112 2c1.398 0 2.743.57 3.714 1.543C18.5 5.543 19 8.5 19 10c2 1 2.657 2.657 2.657 2.657a8 8 0 01-4.001 6z" /></svg><span class="text-xs">Brzuch</span></button>
         <button class="nav-btn text-gray-500 dark:text-gray-400" data-tab="postepy"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg><span class="text-xs">Postępy</span></button>
         <button class="nav-btn text-gray-500 dark:text-gray-400" data-tab="dziennik"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg><span class="text-xs">Dziennik</span></button>
     </nav>
