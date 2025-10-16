@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
         pull: [
             { options: [{ name: "Podciąganie na drążku (nachwytem, z obciążeniem)", sets: "4x6-10" }, { name: "Ściąganie drążka wyciągu", sets: "4x8-12" }] },
             { options: [{ name: "Wiosłowanie sztangą (opad tułowia)", sets: "4x6-8" }, { name: "Wiosłowanie 'półsztangą'", sets: "4x6-8" }] },
-            { options: [{ name: "Wiosłowanie hantlem", sets: "3x8-12" }, { name: "Wiosłowanie na maszynie siedząc", sets: "3x10-12" }] },
+            { options: [{ name: "Wiosłowanie hantlem", sets: "3x8-12" }, { name: "Przyciąganie uchwytu V (siedząc)", sets: "3x10-12" }] },
             { options: [{ name: "Ściąganie drążka (proste ramiona)", sets: "3x12-15" }, { name: "Face pulls (linka)", sets: "3x15-20" }] },
             { options: [{ name: "Uginanie ramion ze sztangą", sets: "4x8-10" }, { name: "Uginanie z hantlami (supinacja)", sets: "4x8-10" }] },
             { options: [{ name: "Uginanie ramion z hantlami na ławce skośnej", sets: "3x10-15" }, { name: "Uginanie ramion na modlitewniku", sets: "3x10-15" }] }
@@ -563,4 +563,5 @@ document.addEventListener('DOMContentLoaded', function () {
     initialPane.classList.remove('hidden');
     document.querySelector('.nav-btn[data-tab="harmonogram"]').classList.add('active');
 });
+
 
