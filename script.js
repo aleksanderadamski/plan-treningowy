@@ -7,12 +7,12 @@ document.addEventListener('DOMContentLoaded', function () {
             { options: [{ name: "Pompki na poręczach (z obciążeniem)", sets: "3x8-12" }, { name: "Wyciskanie hantli nad głowę (siedząc)", sets: "3x8-12" }] },
             { options: [{ name: "Wznosy hantli bokiem", sets: "4x10-15" }, { name: "Wznosy linek wyciągu w bok", sets: "4x10-15" }] },
             { options: [{ name: "Rozpiętki z linkami wyciągu (brama)", sets: "3x12-15" }, { name: "Rozpiętki na maszynie 'Butterfly'", sets: "3x12-15" }] },
-            { options: [{ name: "Prostowanie ramion (linka wyciągu)", sets: "3x10-15" }, { name: "Wyciskanie francuskie", sets: "3x10-12" }] }
+            { options: [{ name: "Prostowanie ramion (linka wyciągu) z dropsetem", sets: "3x10-15" }, { name: "Wyciskanie francuskie", sets: "3x10-12" }] }
         ],
         pull: [
-            { options: [{ name: "Podciąganie na drążku (nachwyt)", sets: "4xMAX" }, { name: "Ściąganie drążka wyciągu", sets: "4x8-12" }] },
-            { options: [{ name: "Wiosłowanie sztangą (opad tułowia)", sets: "4x6-8" }, { name: "Wiosłowanie hantlem", sets: "4x6-8" }] },
-            { options: [{ name: "Przyciąganie uchwytu V (siedząc)", sets: "4x6-8" }, { name: "Wiosłowanie na maszynie siedząc", sets: "3x10-12" }] },
+            { options: [{ name: "Podciąganie na drążku (nachwytem, z obciążeniem)", sets: "4x6-10" }, { name: "Ściąganie drążka wyciągu", sets: "4x8-12" }] },
+            { options: [{ name: "Wiosłowanie sztangą (opad tułowia)", sets: "4x6-8" }, { name: "Wiosłowanie 'półsztangą'", sets: "4x6-8" }] },
+            { options: [{ name: "Wiosłowanie hantlem", sets: "3x8-12" }, { name: "Wiosłowanie na maszynie siedząc", sets: "3x10-12" }] },
             { options: [{ name: "Ściąganie drążka (proste ramiona)", sets: "3x12-15" }, { name: "Face pulls (linka)", sets: "3x15-20" }] },
             { options: [{ name: "Uginanie ramion ze sztangą", sets: "4x8-10" }, { name: "Uginanie z hantlami (supinacja)", sets: "4x8-10" }] },
             { options: [{ name: "Uginanie ramion z hantlami na ławce skośnej", sets: "3x10-15" }, { name: "Uginanie ramion na modlitewniku", sets: "3x10-15" }] }
@@ -372,6 +372,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     document.getElementById('save-brzuch').addEventListener('click', () => saveWorkout('brzuch'));
+    document.getElementById('save-brzuch-bottom').addEventListener('click', () => saveWorkout('brzuch'));
 
 
     document.getElementById('save-log-changes').addEventListener('click', () => {
@@ -421,8 +422,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const panes = document.querySelectorAll('.page-pane');
     const tabOrder = ['harmonogram', 'push', 'pull', 'legs', 'brzuch', 'postepy', 'dziennik'];
     let isAnimating = false;
-    let touchStartX = 0;
-    let touchEndX = 0;
+    let touchStartX = 0, touchStartY = 0;
+    let touchEndX = 0, touchEndY = 0;
 
     function showPage(newPageId, fromSwipe = false) {
         if (isAnimating) return;
@@ -485,16 +486,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
     mainContent.addEventListener('touchstart', e => {
         touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
     }, { passive: true });
 
     mainContent.addEventListener('touchend', e => {
         touchEndX = e.changedTouches[0].screenX;
+        touchEndY = e.changedTouches[0].screenY;
         handleSwipe();
     });
 
     function handleSwipe() {
         const deltaX = touchEndX - touchStartX;
-        if (Math.abs(deltaX) > 60) { // Swipe threshold
+        const deltaY = touchEndY - touchStartY;
+        
+        // Only swipe if horizontal movement is greater than vertical
+        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 100) { // Increased threshold
             const currentPane = document.querySelector('.page-pane:not(.hidden)');
             const currentIndex = tabOrder.indexOf(currentPane.id);
 
@@ -564,4 +570,3 @@ document.addEventListener('DOMContentLoaded', function () {
     initialPane.classList.remove('hidden');
     document.querySelector('.nav-btn[data-tab="harmonogram"]').classList.add('active');
 });
-
