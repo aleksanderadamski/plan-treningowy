@@ -304,12 +304,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const isDarkMode = document.documentElement.classList.contains('dark');
         const data = parseCsvData();
         
-        // --- START FIX ---
-        // Group data by date and find the max weight for each date
         const groupedData = data
             .filter(item => item.exercise === selectedExercise)
             .reduce((acc, current) => {
-                // If date doesn't exist or current weight is higher, update it
                 if (!acc[current.date] || current.weight > acc[current.date]) {
                     acc[current.date] = current.weight;
                 }
@@ -319,7 +316,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const chartData = Object.keys(groupedData)
             .map(date => ({ date: date, weight: groupedData[date] }))
             .sort((a, b) => new Date(a.date) - new Date(b.date));
-        // --- END FIX ---
 
         const labels = chartData.map(d => d.date);
         const weights = chartData.map(d => d.weight);
