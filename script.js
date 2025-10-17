@@ -563,4 +563,4 @@ document.addEventListener('DOMContentLoaded', function () {
     panes.forEach(p => p.classList.add('hidden'));
     initialPane.classList.remove('hidden');
     document.querySelector('.nav-btn[data-tab="harmonogram"]').classList.add('active');
-}); 
+});
