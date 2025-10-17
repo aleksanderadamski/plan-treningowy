@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
             { options: [{ name: "Uginanie ramion ze sztangą", sets: "4x8-10" }, { name: "Uginanie z hantlami (supinacja)", sets: "4x8-10" }] },
             { options: [{ name: "Uginanie ramion z hantlami na ławce skośnej", sets: "3x10-15" }, { name: "Uginanie ramion na modlitewniku", sets: "3x10-15" }] }
         ],
-         legs: [
+        legs: [
             { options: [{ name: "Przysiady ze sztangą na plecach", sets: "4x6-8" }, { name: "Wypychanie ciężaru na suwnicy", sets: "4x8-10" }] },
             { options: [{ name: "Martwy ciąg na prostych nogach (RDL)", sets: "3x8-12" }, { name: "Uginanie nóg na maszynie leżąc", sets: "3x10-12" }] },
             { options: [{ name: "Przysiady bułgarskie", sets: "3x8-12 (na nogę)" }, { name: "Wykroki z hantlami", sets: "3x10-12 (na nogę)" }] },
@@ -570,3 +570,4 @@ document.addEventListener('DOMContentLoaded', function () {
     initialPane.classList.remove('hidden');
     document.querySelector('.nav-btn[data-tab="harmonogram"]').classList.add('active');
 });
+
