@@ -5,9 +5,9 @@ document.addEventListener('DOMContentLoaded', function () {
             { options: [{ name: "Wyciskanie sztangi na ławce płaskiej", sets: "4x6-8" }, { name: "Wyciskanie hantli (płasko)", sets: "4x6-8" }] },
             { options: [{ name: "Wyciskanie hantli (skośna)", sets: "3x8-12" }, { name: "Wyciskanie sztangi na ławce skośnej", sets: "3x8-12" }] },
             { options: [{ name: "Pompki na poręczach (z obciążeniem)", sets: "3x8-12" }, { name: "Wyciskanie hantli nad głowę (siedząc)", sets: "3x8-12" }] },
-            { options: [{ name: "Wznosy hantli bokiem", sets: "4x10-15" }, { name: "Wznosy linek wyciągu w bok", sets: "4x10-15" }] },
+            { options: [{ name: "Wznosy hantli bokiem", sets: "4x10-15" }, { name: "Unoszenie sztangi łamanej", sets: "4x10-15" }] },
             { options: [{ name: "Rozpiętki z hantlami", sets: "3x6-8"}, { name: "Rozpiętki z linkami wyciągu (brama)", sets: "3x12-15" }, { name: "Rozpiętki na maszynie 'Butterfly'", sets: "3x12-15" }] }, 
-            { options: [{ name: "Prostowanie ramion (linka wyciągu) z dropsetem", sets: "3x10-15" }, { name: "Wyciskanie francuskie", sets: "3x10-12" }] }
+            { options: [{ name: "Prostowanie ramion (linka wyciągu)", sets: "3x10-15" }, { name: "Wyciskanie francuskie", sets: "3x10-12" }] }
         ],
         pull: [
             { options: [{ name: "Podciąganie na drążku (nachwyt)", sets: "4xMAX" }, { name: "Ściąganie drążka wyciągu", sets: "4x8-12" }] },
