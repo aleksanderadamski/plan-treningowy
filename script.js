@@ -2,34 +2,144 @@ document.addEventListener('DOMContentLoaded', function () {
     
      const workouts = {
         push: [
-            { options: [{ name: "Wyciskanie sztangi na ławce płaskiej", sets: "4x6-8" }, { name: "Wyciskanie hantli (płasko)", sets: "4x6-8" }] },
-            { options: [{ name: "Wyciskanie hantli (skośna)", sets: "3x8-12" }, { name: "Wyciskanie sztangi na ławce skośnej", sets: "3x8-12" }] },
-            { options: [{ name: "Pompki na poręczach (z obciążeniem)", sets: "3x8-12" }, { name: "Wyciskanie hantli nad głowę (siedząc)", sets: "3x8-12" }] },
-            { options: [{ name: "Wznosy hantli bokiem", sets: "4x10-15" }, { name: "Unoszenie sztangi łamanej", sets: "4x10-15" }] },
-            { options: [{ name: "Rozpiętki z hantlami", sets: "3x6-8"}, { name: "Rozpiętki z linkami wyciągu (brama)", sets: "3x12-15" }, { name: "Rozpiętki na maszynie 'Butterfly'", sets: "3x12-15" }] }, 
-            { options: [{ name: "Prostowanie ramion (linka wyciągu)", sets: "3x10-15" }, { name: "Wyciskanie francuskie", sets: "3x10-12" }] }
+            // Klatka (Płasko)
+            { options: [
+                { name: "Wyciskanie sztangi na ławce płaskiej", sets: "4x6-8" }, 
+                { name: "Wyciskanie hantli (płasko)", sets: "4x6-8" },
+                { name: "Wyciskanie na maszynie siedząc (klatka)", sets: "4x8-10" } // Nowy wariant
+            ]},
+            // Klatka (Skos)
+            { options: [
+                { name: "Wyciskanie hantli (skośna)", sets: "3x8-12" }, 
+                { name: "Wyciskanie sztangi na ławce skośnej", sets: "3x8-12" },
+                { name: "Wyciskanie na maszynie Smitha (skos dodatni)", sets: "3x8-12" } // Nowy wariant
+            ]},
+            // Barki (Wyciskanie) / Triceps (Pompki)
+            { options: [
+                { name: "Pompki na poręczach (z obciążeniem)", sets: "3x8-12" }, 
+                { name: "Wyciskanie hantli nad głowę (siedząc)", sets: "3x8-12" },
+                { name: "Wyciskanie żołnierskie (sztanga stojąc)", sets: "3x6-8" } // Nowy wariant
+            ]},
+            // Barki (Bok)
+            { options: [
+                { name: "Wznosy hantli bokiem", sets: "4x10-15" }, 
+                { name: "Wznosy linek wyciągu w bok", sets: "4x10-15" },
+                { name: "Unoszenie sztangi łamanej", sets: "4x12-15" } // Nowy wariant
+            ]},
+            // Klatka (Izolacja)
+            { options: [
+                { name: "Rozpiętki z hantlami", sets: "3x8-12"}, 
+                { name: "Rozpiętki z linkami wyciągu (brama)", sets: "3x12-15" }, 
+                { name: "Rozpiętki na maszynie 'Butterfly'", sets: "3x12-15" }
+            ]}, 
+            // Triceps (Izolacja)
+            { options: [
+                { name: "Prostowanie ramion (linka wyciągu) z dropsetem", sets: "3x10-15" }, 
+                { name: "Wyciskanie francuskie sztangą łamaną", sets: "3x8-12" },
+                { name: "Wyciskanie francuskie", sets: "3x10-12" } // Nowy wariant
+            ]}
         ],
         pull: [
-            { options: [{ name: "Podciąganie na drążku (nachwyt)", sets: "4xMAX" }, { name: "Ściąganie drążka wyciągu", sets: "4x8-12" }] },
-            { options: [{ name: "Wiosłowanie sztangą (opad tułowia)", sets: "4x6-8" }, { name: "Wiosłowanie hantlem", sets: "4x6-8" }] },
-            { options: [{ name: "Przyciąganie uchwytu V (siedząc)", sets: "4x6-8" }, { name: "Wiosłowanie na maszynie siedząc", sets: "3x10-12" }] },
-            { options: [{ name: "Ściąganie drążka (proste ramiona)", sets: "3x12-15" }, { name: "Face pulls (linka)", sets: "3x15-20" }] },
-            { options: [{ name: "Uginanie ramion ze sztangą", sets: "4x8-10" }, { name: "Uginanie z hantlami (supinacja)", sets: "4x8-10" }] },
-            { options: [{ name: "Uginanie ramion z hantlami na ławce skośnej", sets: "3x10-15" }, { name: "Uginanie ramion na modlitewniku", sets: "3x10-15" }] }
+            // Plecy (Ruch wertykalny)
+            { options: [
+                { name: "Podciąganie na drążku (nachwyt)", sets: "4xMAX" }, 
+                { name: "Ściąganie drążka wyciągu", sets: "4x8-12" },
+                { name: "Ściąganie na maszynie typu Hammer", sets: "4x8-12" } // Nowy wariant
+            ]},
+            // Plecy (Ruch horyzontalny - wolny ciężar)
+            { options: [
+                { name: "Wiosłowanie sztangą (opad tułowia)", sets: "4x6-8" }, 
+                { name: "Wiosłowanie hantlem", sets: "4x8-10" },
+                { name: "Wiosłowanie półsztangą (T-Bar)", sets: "4x8-10" } // Nowy wariant
+            ]},
+            // Plecy (Ruch horyzontalny - maszyny/wyciągi)
+            { options: [
+                { name: "Przyciąganie uchwytu V (siedząc)", sets: "3x10-12" }, 
+                { name: "Wiosłowanie na maszynie siedząc", sets: "3x10-12" },
+                { name: "Wiosłowanie hantlami leżąc na ławce (chest supported)", sets: "3x10-12" } // Nowy wariant
+            ]},
+            // Plecy (Izolacja / Tył barku)
+            { options: [
+                { name: "Ściąganie drążka (proste ramiona)", sets: "3x12-15" }, 
+                { name: "Face pulls (linka)", sets: "3x15-20" },
+                { name: "Odwrotne rozpiętki na maszynie (tył barku)", sets: "3x12-15" } // Nowy wariant
+            ]},
+            // Biceps (Baza)
+            { options: [
+                { name: "Uginanie ramion ze sztangą", sets: "4x8-10" }, 
+                { name: "Uginanie z hantlami (supinacja)", sets: "4x8-10" },
+                { name: "Uginanie ramion z linkami wyciągu dolnego", sets: "4x10-12" } // Nowy wariant
+            ]},
+            // Biceps (Izolacja / Brachialis)
+            { options: [
+                { name: "Uginanie ramion z hantlami na ławce skośnej", sets: "3x10-15" }, 
+                { name: "Uginanie ramion na modlitewniku", sets: "3x10-15" },
+                { name: "Uginanie młotkowe z hantlami", sets: "3x10-12" } // Nowy wariant
+            ]}
         ],
         legs: [
-            { options: [{ name: "Przysiady ze sztangą na plecach", sets: "4x6-8" }, { name: "Wypychanie ciężaru na suwnicy", sets: "4x8-10" }] },
-            { options: [{ name: "Martwy ciąg na prostych nogach (RDL)", sets: "3x8-12" }, { name: "Uginanie nóg na maszynie leżąc", sets: "3x10-12" }] },
-            { options: [{ name: "Przysiady bułgarskie", sets: "3x8-12 (na nogę)" }, { name: "Wykroki z hantlami", sets: "3x10-12 (na nogę)" }] },
-            { options: [{ name: "Prostowanie nóg na maszynie siedząc", sets: "3x12-15" }, { name: "Przysiad Goblet", sets: "3x12-15" }] },
-            { options: [{ name: "Hip Thrust ze sztangą", sets: "4x8-12" }, { name: "'Żuraw' (Glute Ham Raise)", sets: "3xMAX" }] },
-            { options: [{ name: "Wspięcia na palce (stojąc)", sets: "4x12-20" }, { name: "Wspięcia na palce na suwnicy", sets: "4x15-25" }] }
+            // Czworogłowe (Baza)
+            { options: [
+                { name: "Przysiady ze sztangą na plecach", sets: "4x6-8" }, 
+                { name: "Wypychanie ciężaru na suwnicy", sets: "4x8-10" },
+                { name: "Przysiady na maszynie Hack", sets: "4x8-10" } // Nowy wariant
+            ]},
+            // Dwugłowe / Pośladki (Hinge)
+            { options: [
+                { name: "Martwy ciąg na prostych nogach (RDL)", sets: "3x8-12" }, 
+                { name: "Uginanie nóg na maszynie leżąc", sets: "3x10-12" },
+                { name: "Uginanie nóg na maszynie siedząc", sets: "3x10-12" } // Nowy wariant
+            ]},
+            // Jednonóż
+            { options: [
+                { name: "Przysiady bułgarskie", sets: "3x8-12 (na nogę)" }, 
+                { name: "Wykroki z hantlami", sets: "3x10-12 (na nogę)" },
+                { name: "Zakroki ze sztangą/hantlami", sets: "3x10-12 (na nogę)" } // Nowy wariant
+            ]},
+            // Czworogłowe (Izolacja / Akcesoria)
+            { options: [
+                { name: "Prostowanie nóg na maszynie siedząc", sets: "3x12-15" }, 
+                { name: "Przysiad Goblet", sets: "3x12-15" },
+                { name: "Przysiad syzyfowy (Sissy Squat)", sets: "3xMAX" } // Nowy wariant
+            ]},
+            // Dwugłowe / Pośladki (Akcesoria)
+            { options: [
+                { name: "Hip Thrust ze sztangą", sets: "4x8-12" }, 
+                { name: "'Żuraw' (Glute Ham Raise)", sets: "3xMAX" },
+                { name: "Wyprosty tułowia na ławce rzymskiej (pod pośladki)", sets: "3x12-15" } // Nowy wariant
+            ]},
+            // Łydki
+            { options: [
+                { name: "Wspięcia na palce (stojąc)", sets: "4x12-20" }, 
+                { name: "Wspięcia na palce na suwnicy", sets: "4x15-25" },
+                { name: "Wspięcia na palce siedząc", sets: "4x15-25" } // Nowy wariant
+            ]}
         ],
         brzuch: [
-            { options: [{ name: "'Allahy' (linka wyciągu)", sets: "4x10-15" }, { name: "Spięcia brzucha na maszynie", sets: "4x10-15" }] },
-            { options: [{ name: "Unoszenie nóg w zwisie na drążku", sets: "4xMAX" }, { name: "Unoszenie kolan do klatki piersiowej w zwisie", sets: "4xMAX" }] },
-            { options: [{ name: "Plank (z obciążeniem na plecach)", sets: "4x60-90s" }, { name: "Plank boczny", sets: "3x45-60s (na str.)" }] },
-            { options: [{ name: "'Wood choppers' (rąbanie drewna) z użyciem wyciągu", sets: "3x12-15 (na str.)" }, { name: "'Russian Twist' (skręty tułowia z obciążeniem)", sets: "3x15 (na stronę)" }] }
+            // Zginanie tułowia
+            { options: [
+                { name: "'Allahy' (linka wyciągu)", sets: "4x10-15" }, 
+                { name: "Spięcia brzucha na maszynie", sets: "4x10-15" },
+                { name: "Spięcia leżąc z talerzem na klatce", sets: "4x12-15" } // Nowy wariant
+            ]},
+            // Unoszenie nóg
+            { options: [
+                { name: "Unoszenie nóg w zwisie na drążku", sets: "4xMAX" }, 
+                { name: "Unoszenie kolan do klatki piersiowej w zwisie", sets: "4xMAX" },
+                { name: "Scyzoryki (V-ups)", sets: "4x15-20" } // Nowy wariant
+            ]},
+            // Stabilizacja
+            { options: [
+                { name: "Plank (z obciążeniem na plecach)", sets: "4x60-90s" }, 
+                { name: "Plank boczny", sets: "3x45-60s (na str.)" },
+                { name: "Ab Wheel (kółko)", sets: "3x10-15" } // Nowy wariant
+            ]},
+            // Rotacja / Antyrotacja
+            { options: [
+                { name: "'Wood choppers' (rąbanie drewna)", sets: "3x12-15 (na str.)" }, 
+                { name: "'Russian Twist' (skręty tułowia)", sets: "3x15 (na stronę)" },
+                { name: "Pallof Press (antyrotacja z gumą/linką)", sets: "3x12-15 (na str.)" } // Nowy wariant
+            ]}
         ]
     };
 
