@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
             { options: [
                 { name: "Wznosy hantli bokiem", sets: "4x10-15" }, 
                 { name: "Wznosy linek wyciągu w bok", sets: "4x10-15" },
-                { name: "Unoszenie sztangi łamanej", sets: "4x12-15" } // Nowy wariant
+                { name: "Wznosy bokiem na maszynie", sets: "4x12-15" } // Nowy wariant
             ]},
             // Klatka (Izolacja)
             { options: [
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
             { options: [
                 { name: "Prostowanie ramion (linka wyciągu) z dropsetem", sets: "3x10-15" }, 
                 { name: "Wyciskanie francuskie sztangą łamaną", sets: "3x8-12" },
-                { name: "Wyciskanie francuskie", sets: "3x10-12" } // Nowy wariant
+                { name: "Wyciskanie francuskie hantlami (młotkowo)", sets: "3x10-12" } // Nowy wariant
             ]}
         ],
         pull: [
@@ -232,7 +232,31 @@ document.addEventListener('DOMContentLoaded', function () {
         return maxWeight;
     }
 
-    function updateAllPersonalBests(workoutType) {
+    function getLastResult(exerciseName) {
+        const data = parseCsvData();
+        const exerciseData = data.filter(entry => entry.exercise === exerciseName && entry.weight > 0);
+        if (exerciseData.length === 0) {
+            return null;
+        }
+        // Sort by date descending
+        exerciseData.sort((a, b) => new Date(b.date) - new Date(a.date));
+        return exerciseData[0].weight;
+    }
+
+    function getExerciseStatsHtml(exerciseName) {
+        const pb = getPersonalBest(exerciseName);
+        const last = getLastResult(exerciseName);
+        let html = '';
+        if (pb !== null) {
+            html += `<span class="text-amber-600 dark:text-amber-400 mr-3">🏆 Max: ${pb} kg</span>`;
+        }
+        if (last !== null) {
+            html += `<span class="text-blue-600 dark:text-blue-400">⏮ Ost: ${last} kg</span>`;
+        }
+        return html;
+    }
+
+    function updateAllExerciseStats(workoutType) {
         const container = document.getElementById(`${workoutType}-cards`);
         if (!container) return;
         const cards = container.querySelectorAll('.exercise-card');
@@ -240,11 +264,9 @@ document.addEventListener('DOMContentLoaded', function () {
         cards.forEach(card => {
             const selectEl = card.querySelector('.exercise-select');
             const exerciseName = selectEl.value;
-            const personalBest = getPersonalBest(exerciseName);
-            const pbElement = card.querySelector('.personal-best');
-
-            if (pbElement) {
-                 pbElement.innerHTML = personalBest > 0 ? `🏆 Rekord: ${personalBest} kg` : '';
+            const statsContainer = card.querySelector('.exercise-stats');
+            if (statsContainer) {
+                statsContainer.innerHTML = getExerciseStatsHtml(exerciseName);
             }
         });
     }
@@ -263,8 +285,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         .map(opt => `<option value="${opt.name}">${opt.name}</option>`).join('');
                     const initialSets = exerciseSlot.options[0].sets;
                     const defaultExerciseName = exerciseSlot.options[0].name;
-                    const personalBest = getPersonalBest(defaultExerciseName);
-                    const pbHtml = personalBest > 0 ? `🏆 Rekord: ${personalBest} kg` : '';
+                    const statsHtml = getExerciseStatsHtml(defaultExerciseName);
 
                     card.innerHTML = `
                         <div class="mb-2">
@@ -272,7 +293,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 ${optionsHtml}
                             </select>
                         </div>
-                        <div class="personal-best text-xs text-center h-4 mb-2 text-blue-500 dark:text-blue-400 font-semibold">${pbHtml}</div>
+                        <div class="exercise-stats text-xs text-center h-4 mb-2 font-semibold flex justify-center">${statsHtml}</div>
                         <div class="flex items-center justify-between">
                             <span class="font-mono text-gray-600 dark:text-gray-400 sets-cell text-sm">${initialSets}</span>
                             <div class="flex items-center gap-2">
@@ -313,7 +334,7 @@ document.addEventListener('DOMContentLoaded', function () {
             csvOutput.value += workoutData;
             saveLogToStorage();
             showToast(`Trening ${workoutType.toUpperCase()} zapisany!`, 'info');
-            updateAllPersonalBests(workoutType);
+            updateAllExerciseStats(workoutType);
         } else {
             showToast('Wprowadź ciężar, aby zapisać.', 'error');
         }
@@ -414,6 +435,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const isDarkMode = document.documentElement.classList.contains('dark');
         const data = parseCsvData();
         
+        // Group data by date and find the max weight for each date
         const groupedData = data
             .filter(item => item.exercise === selectedExercise)
             .reduce((acc, current) => {
@@ -664,10 +686,9 @@ document.addEventListener('DOMContentLoaded', function () {
             card.querySelector('.sets-cell').textContent = newSets;
 
             const newExerciseName = selectEl.value;
-            const personalBest = getPersonalBest(newExerciseName);
-            const pbElement = card.querySelector('.personal-best');
-            if (pbElement) {
-                pbElement.innerHTML = personalBest > 0 ? `🏆 Rekord: ${personalBest} kg` : '';
+            const statsContainer = card.querySelector('.exercise-stats');
+            if (statsContainer) {
+                statsContainer.innerHTML = getExerciseStatsHtml(newExerciseName);
             }
         }
     }
@@ -690,4 +711,3 @@ document.addEventListener('DOMContentLoaded', function () {
     initialPane.classList.remove('hidden');
     document.querySelector('.nav-btn[data-tab="harmonogram"]').classList.add('active');
 });
-
