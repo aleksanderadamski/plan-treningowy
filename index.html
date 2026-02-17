@@ -281,7 +281,25 @@
             try { await createUserWithEmailAndPassword(auth, email, password); } catch (e) { document.getElementById('auth-error').textContent = e.message; }
         };
 
-        const loginWithGoogle = async () => { try { await signInWithPopup(auth, new GoogleAuthProvider()); } catch (e) { document.getElementById('auth-error').textContent = e.message; } };
+        const loginWithGoogle = async () => {
+            const provider = new GoogleAuthProvider();
+            // Wymuszanie wyboru konta przy każdym kliknięciu
+            provider.setCustomParameters({ prompt: 'select_account' });
+            
+            try {
+                // Wywołanie okna logowania Google
+                await signInWithPopup(auth, provider);
+            } catch (e) {
+                console.error("Błąd Google SSO:", e);
+                // Wyświetlenie błędu użytkownikowi (np. zablokowany pop-up)
+                document.getElementById('auth-error').textContent = `Błąd Google: ${e.code || e.message}`;
+                
+                // Sugestia dla użytkownika w przypadku zablokowania okna
+                if (e.code === 'auth/popup-blocked') {
+                    showToast("Zablokowano okno logowania. Zmień ustawienia przeglądarki.");
+                }
+            }
+        };
 
         document.getElementById('email-login').onclick = loginWithEmail;
         document.getElementById('email-register').onclick = registerWithEmail;
@@ -297,13 +315,13 @@
 
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
-            if (user) {
+            if (user && !user.isAnonymous) {
                 document.getElementById('auth-overlay').classList.add('hidden');
                 document.getElementById('app-content').classList.remove('hidden');
                 document.getElementById('app-nav').classList.remove('hidden');
-                document.getElementById('user-id-display').textContent = user.uid;
+                document.getElementById('user-id-display').textContent = user.email || user.uid;
                 syncLogs(user.uid);
-            } else {
+            } else if (!user) {
                 document.getElementById('auth-overlay').classList.remove('hidden');
                 document.getElementById('app-content').classList.add('hidden');
                 document.getElementById('app-nav').classList.add('hidden');
@@ -315,7 +333,12 @@
             onSnapshot(userDoc, (snap) => {
                 trainingLogs = snap.exists() ? (snap.data().entries || []) : [];
                 renderAll();
-            }, (err) => console.error("Sync error:", err));
+            }, (err) => {
+                console.error("Sync error:", err);
+                if (err.code === 'permission-denied') {
+                    showToast("Brak uprawnień do bazy danych");
+                }
+            });
         };
 
         const saveToCloud = async (entries) => {
