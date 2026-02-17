@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plan Treningowy Pro</title>
-    <!-- Biblioteki zewnętrzne -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -17,7 +16,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* Kolory gradientu */
         :root {
           --grad-color-1: #e0f2fe; --grad-color-2: #f0f9ff;
           --grad-color-3: #fefce8; --grad-color-4: #ecfdf5;
@@ -46,7 +44,6 @@
         html.dark .nav-btn.active { color: #60a5fa; }
         .page-pane { transition: transform 0.3s ease-out, opacity 0.3s ease-out; }
         
-        /* Animacje swipe */
         @keyframes slide-in-from-right { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes slide-out-to-left { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
         @keyframes slide-in-from-left { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
@@ -64,7 +61,6 @@
         #auth-overlay { backdrop-filter: blur(10px); }
     </style>
     <script>
-        // Natychmiastowe wykrywanie motywu przed renderowaniem
         (function() {
             const savedTheme = localStorage.getItem('theme');
             const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -78,15 +74,14 @@
 </head>
 <body class="text-gray-800 dark:text-gray-300">
 
-    <!-- Auth Overlay -->
+    <!-- Nakładka autoryzacji -->
     <div id="auth-overlay" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-white/70 dark:bg-gray-900/70">
         <div class="w-full max-w-sm bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700 text-center relative">
-            <!-- Przełącznik motywu na ekranie logowania -->
             <button id="auth-theme-toggle" class="absolute top-4 right-4 p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition auth-theme-icon">
                 🌙
             </button>
 
-            <h2 class="text-2xl font-bold mb-6">Witaj</h2>
+            <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Witaj</h2>
             <div class="space-y-4">
                 <button id="google-login" class="w-full flex items-center justify-center gap-3 p-3 border border-gray-200 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition font-semibold">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.55 10.78l7.98-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path><path fill="none" d="M0 0h48v48H0z"></path></svg>
@@ -99,14 +94,16 @@
                 <input type="password" id="auth-password" placeholder="Hasło" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-900 border-none outline-none focus:ring-2 focus:ring-blue-500">
                 <div class="flex gap-2">
                     <button id="email-login" class="flex-1 bg-blue-600 text-white p-3 rounded-xl font-bold hover:bg-blue-700">Logowanie</button>
-                    <button id="email-register" class="flex-1 border border-blue-600 text-blue-600 p-3 rounded-xl font-bold">Rejestracja</button>
+                    <button id="email-register" class="flex-1 border border-blue-600 text-blue-600 p-3 rounded-xl font-bold hover:bg-blue-50 dark:hover:bg-blue-900/10">Rejestracja</button>
                 </div>
             </div>
-            <p id="auth-error" class="mt-4 text-xs text-red-500 font-medium"></p>
+            <div id="auth-error-container" class="mt-4 p-3 bg-red-50 dark:bg-red-900/20 rounded-xl hidden text-left">
+                <p id="auth-error" class="text-[10px] text-red-600 dark:text-red-400 font-medium leading-tight whitespace-pre-wrap"></p>
+            </div>
         </div>
     </div>
 
-    <!-- Main Content -->
+    <!-- Zawartość główna -->
     <div id="app-content" class="hidden pb-24">
         <header class="text-center p-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-b border-gray-200/50 dark:border-gray-700/50 relative">
             <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 uppercase tracking-tight">Plan Treningowy</h1>
@@ -147,22 +144,22 @@
                 </div>
 
                 <div class="page-pane hidden" id="push">
-                    <div class="flex justify-between items-center mb-4"><h3 class="font-bold uppercase tracking-widest">Push</h3><button data-workout="push" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase">Zapisz</button></div>
+                    <div class="flex justify-between items-center mb-4"><h3 class="font-bold uppercase tracking-widest text-gray-900 dark:text-white">Push</h3><button data-workout="push" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase">Zapisz</button></div>
                     <div id="push-cards" class="space-y-4"></div>
                 </div>
 
                 <div class="page-pane hidden" id="pull">
-                    <div class="flex justify-between items-center mb-4"><h3 class="font-bold uppercase tracking-widest">Pull</h3><button data-workout="pull" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase">Zapisz</button></div>
+                    <div class="flex justify-between items-center mb-4"><h3 class="font-bold uppercase tracking-widest text-gray-900 dark:text-white">Pull</h3><button data-workout="pull" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase">Zapisz</button></div>
                     <div id="pull-cards" class="space-y-4"></div>
                 </div>
 
                 <div class="page-pane hidden" id="legs">
-                    <div class="flex justify-between items-center mb-4"><h3 class="font-bold uppercase tracking-widest">Legs</h3><button data-workout="legs" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase">Zapisz</button></div>
+                    <div class="flex justify-between items-center mb-4"><h3 class="font-bold uppercase tracking-widest text-gray-900 dark:text-white">Legs</h3><button data-workout="legs" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase">Zapisz</button></div>
                     <div id="legs-cards" class="space-y-4"></div>
                 </div>
 
                 <div class="page-pane hidden" id="brzuch">
-                    <div class="flex justify-between items-center mb-4"><h3 class="font-bold uppercase tracking-widest">Brzuch</h3><button data-workout="brzuch" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase">Zapisz</button></div>
+                    <div class="flex justify-between items-center mb-4"><h3 class="font-bold uppercase tracking-widest text-gray-900 dark:text-white">Brzuch</h3><button data-workout="brzuch" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase">Zapisz</button></div>
                     <div id="brzuch-cards" class="space-y-4"></div>
                 </div>
 
@@ -189,7 +186,7 @@
         </main>
     </div>
 
-    <!-- Nav -->
+    <!-- Nawigacja -->
     <nav id="app-nav" class="hidden fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t border-gray-200 dark:border-gray-800 flex justify-around p-2 z-50">
         <button class="nav-btn p-2 flex flex-col items-center" data-tab="harmonogram"><span>🏠</span><span class="text-[9px] font-bold">START</span></button>
         <button class="nav-btn p-2 flex flex-col items-center" data-tab="push"><span>💪</span><span class="text-[9px] font-bold">PUSH</span></button>
@@ -207,11 +204,28 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithCustomToken, signInAnonymously } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
         import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        // --- KONFIGURACJA PRODUKCYJNA ---
+        // Uzupełnij te dane z sekcji: Project Settings -> Your apps -> Web apps -> Config
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+		  apiKey: "AIzaSyAdWYZmp9zfQ7Rbvi91WBUSHPmgOWypAfM",
+		  authDomain: "training-assistant-44a28.firebaseapp.com",
+		  projectId: "training-assistant-44a28",
+		  storageBucket: "training-assistant-44a28.firebasestorage.app",
+		  messagingSenderId: "385371344810",
+		  appId: "1:385371344810:web:ee262a94683b54ad58e5d3",
+		  measurementId: "G-PBPMKQLKT8"
+		};
+        
+        let app, auth, db;
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+        } catch (e) {
+            console.error("Inicjalizacja Firebase nieudana:", e);
+        }
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'training-pro-v1';
 
         const workouts = {
             push: [
@@ -250,13 +264,11 @@
         let chartInstance = null;
         let currentUser = null;
 
-        // AUTH & THEME LOGIC
+        // MOTYW
         const updateThemeUI = () => {
             const isDark = document.documentElement.classList.contains('dark');
             const icons = document.querySelectorAll('.auth-theme-icon, #theme-icon');
-            icons.forEach(icon => {
-                icon.textContent = isDark ? '☀️' : '🌙';
-            });
+            icons.forEach(icon => { icon.textContent = isDark ? '☀️' : '🌙'; });
         };
 
         const toggleTheme = () => {
@@ -269,35 +281,57 @@
         document.getElementById('theme-toggle').onclick = toggleTheme;
         updateThemeUI();
 
+        // BŁĘDY
+        const showError = (msg) => {
+            const container = document.getElementById('auth-error-container');
+            const errorEl = document.getElementById('auth-error');
+            errorEl.textContent = msg;
+            container.classList.remove('hidden');
+        };
+
+        const hideError = () => {
+            document.getElementById('auth-error-container').classList.add('hidden');
+        };
+
+        // AUTH
         const loginWithEmail = async () => {
+            hideError();
             const email = document.getElementById('auth-email').value;
             const password = document.getElementById('auth-password').value;
-            try { await signInWithEmailAndPassword(auth, email, password); } catch (e) { document.getElementById('auth-error').textContent = e.message; }
+            if (!email || !password) return showError("Wprowadź email i hasło.");
+            try { 
+                await signInWithEmailAndPassword(auth, email, password); 
+            } catch (e) { 
+                showError(`Logowanie email nieudane.\nKod: ${e.code}`); 
+            }
         };
 
         const registerWithEmail = async () => {
+            hideError();
             const email = document.getElementById('auth-email').value;
             const password = document.getElementById('auth-password').value;
-            try { await createUserWithEmailAndPassword(auth, email, password); } catch (e) { document.getElementById('auth-error').textContent = e.message; }
+            if (!email || !password) return showError("Wprowadź email i hasło.");
+            try { 
+                await createUserWithEmailAndPassword(auth, email, password); 
+            } catch (e) { 
+                showError(`Rejestracja nieudana.\nKod: ${e.code}`); 
+            }
         };
 
         const loginWithGoogle = async () => {
+            hideError();
             const provider = new GoogleAuthProvider();
-            // Wymuszanie wyboru konta przy każdym kliknięciu
             provider.setCustomParameters({ prompt: 'select_account' });
-            
             try {
-                // Wywołanie okna logowania Google
                 await signInWithPopup(auth, provider);
             } catch (e) {
-                console.error("Błąd Google SSO:", e);
-                // Wyświetlenie błędu użytkownikowi (np. zablokowany pop-up)
-                document.getElementById('auth-error').textContent = `Błąd Google: ${e.code || e.message}`;
-                
-                // Sugestia dla użytkownika w przypadku zablokowania okna
-                if (e.code === 'auth/popup-blocked') {
-                    showToast("Zablokowano okno logowania. Zmień ustawienia przeglądarki.");
+                let message = `Błąd Google: ${e.code}`;
+                if (e.code === 'auth/unauthorized-domain') {
+                    message = `Niedozwolona domena: ${window.location.hostname}\n\nUpewnij się, że ten adres jest dodany w Firebase Console -> Authentication -> Settings -> Authorized domains.`;
+                } else if (e.code === 'auth/popup-blocked') {
+                    message = "Zablokowano pop-up. Zezwól na wyskakujące okna.";
                 }
+                showError(message);
             }
         };
 
@@ -308,8 +342,8 @@
 
         const initAuth = async () => {
             if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                await signInWithCustomToken(auth, __initial_auth_token);
-            } else { await signInAnonymously(auth); }
+                try { await signInWithCustomToken(auth, __initial_auth_token); } catch (e) {}
+            }
         };
         initAuth();
 
@@ -321,34 +355,34 @@
                 document.getElementById('app-nav').classList.remove('hidden');
                 document.getElementById('user-id-display').textContent = user.email || user.uid;
                 syncLogs(user.uid);
-            } else if (!user) {
+            } else {
                 document.getElementById('auth-overlay').classList.remove('hidden');
                 document.getElementById('app-content').classList.add('hidden');
                 document.getElementById('app-nav').classList.add('hidden');
             }
         });
 
+        // SYNC
         const syncLogs = (uid) => {
             const userDoc = doc(db, 'artifacts', appId, 'users', uid, 'data', 'logs');
             onSnapshot(userDoc, (snap) => {
                 trainingLogs = snap.exists() ? (snap.data().entries || []) : [];
                 renderAll();
             }, (err) => {
-                console.error("Sync error:", err);
-                if (err.code === 'permission-denied') {
-                    showToast("Brak uprawnień do bazy danych");
-                }
+                if (err.code === 'permission-denied') showToast("Błąd uprawnień Firestore");
             });
         };
 
         const saveToCloud = async (entries) => {
             if (!currentUser) return;
             const userDoc = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs');
-            await setDoc(userDoc, { entries: entries });
-            showToast("Dane zsynchronizowane");
+            try {
+                await setDoc(userDoc, { entries: entries });
+                showToast("Zsynchronizowano");
+            } catch (e) { showToast("Błąd zapisu"); }
         };
 
-        // UI HELPERS
+        // UI
         const getStats = (name) => {
             const filtered = trainingLogs.filter(l => l.exercise === name);
             if (!filtered.length) return null;
@@ -360,11 +394,10 @@
                 const container = document.getElementById(`${type}-cards`);
                 if(!container) return;
                 container.innerHTML = workouts[type].map((slot, i) => {
-                    const first = slot.options[0];
-                    const stats = getStats(first.name);
+                    const stats = getStats(slot.options[0].name);
                     return `
                         <div class="card bg-white/60 dark:bg-gray-800/60 p-5 rounded-3xl border border-white/20">
-                            <select class="ex-select w-full bg-transparent font-bold text-sm outline-none mb-2" data-type="${type}" data-idx="${i}">
+                            <select class="ex-select w-full bg-transparent font-bold text-sm outline-none mb-2 text-gray-900 dark:text-white" data-type="${type}" data-idx="${i}">
                                 ${slot.options.map(o => `<option value="${o.name}">${o.name}</option>`).join('')}
                             </select>
                             <div class="stats-box text-[10px] font-bold text-blue-500 dark:text-blue-400 mb-4 px-1 flex gap-4">
@@ -373,7 +406,7 @@
                             <div class="flex items-center justify-between">
                                 <span class="sets-display text-[10px] font-mono opacity-50 uppercase">${slot.options[0].sets}</span>
                                 <div class="flex items-center gap-2">
-                                    <input type="number" step="0.5" class="weight-input w-16 p-1 bg-slate-100 dark:bg-gray-700 rounded-lg text-center font-bold text-xs" placeholder="0">
+                                    <input type="number" step="0.5" class="weight-input w-16 p-1 bg-slate-100 dark:bg-gray-700 rounded-lg text-center font-bold text-xs text-gray-900 dark:text-white" placeholder="0">
                                     <span class="text-[10px] font-bold uppercase opacity-50">kg</span>
                                 </div>
                             </div>
@@ -413,7 +446,7 @@
             const area = document.getElementById('csv-output');
             area.value = "Data,Cwiczenie,Ciezar\n" + trainingLogs.map(l => `${l.date},${l.exercise},${l.weight}`).join('\n');
             const names = [...new Set(trainingLogs.map(l => l.exercise))].sort();
-            document.getElementById('progress-list').innerHTML = names.map(n => `<button class="w-full text-left p-4 bg-white/40 dark:bg-gray-800/40 rounded-2xl text-[10px] font-bold uppercase" onclick="showChart('${n}')">${n}</button>`).join('');
+            document.getElementById('progress-list').innerHTML = names.map(n => `<button class="w-full text-left p-4 bg-white/40 dark:bg-gray-800/40 rounded-2xl text-[10px] font-bold uppercase text-gray-900 dark:text-white" onclick="showChart('${n}')">${n}</button>`).join('');
         };
 
         document.getElementById('import-pasted-csv').onclick = () => {
