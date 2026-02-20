@@ -84,9 +84,10 @@
 </head>
 <body class="text-gray-800 dark:text-gray-300">
 
+    <!-- Auth Overlay -->
     <div id="auth-overlay" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-white/70 dark:bg-gray-900/70 text-gray-900 dark:text-white">
         <div class="w-full max-w-sm bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700 text-center relative">
-            <button id="auth-theme-toggle" class="absolute top-4 right-4 p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition auth-theme-icon">Tryb</button>
+            <button id="auth-theme-toggle" class="absolute top-4 right-4 p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition auth-theme-icon font-bold">Tryb</button>
 
             <h2 class="text-2xl font-bold mb-6">Witaj</h2>
             <div class="space-y-4">
@@ -110,6 +111,7 @@
         </div>
     </div>
 
+    <!-- App Content -->
     <div id="app-content" class="hidden pb-24">
         <header class="text-center p-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-b border-gray-200/50 dark:border-gray-700/50 relative">
             <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 uppercase tracking-tight">Plan Treningowy</h1>
@@ -118,7 +120,7 @@
                 <button id="logout-btn" class="text-[10px] font-bold text-red-500 uppercase mt-1 hover:underline">Wyloguj</button>
             </div>
             <button id="theme-toggle" class="p-2 absolute top-5 right-4 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">
-                <span id="theme-icon">Motyw</span>
+                <span id="theme-icon" class="font-bold">Motyw</span>
             </button>
         </header>
 
@@ -192,6 +194,7 @@
         </main>
     </div>
 
+    <!-- Navigation -->
     <nav id="app-nav" class="hidden fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t border-gray-200 dark:border-gray-800 flex justify-around p-2 z-50">
         <button class="nav-btn p-2 flex flex-col items-center" data-tab="harmonogram">🏠<span class="text-[9px] font-bold">START</span></button>
         <button class="nav-btn p-2 flex flex-col items-center" data-tab="push">💪<span class="text-[9px] font-bold">PUSH</span></button>
@@ -210,6 +213,7 @@
         import { getFirestore, doc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
         import { getAnalytics } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js';
 
+        // KONFIGURACJA
         const firebaseConfig = {
             apiKey: "AIzaSyAdWYZmp9zfQ7Rbvi91WBUSHPmgOWypAfM",
             authDomain: "training-assistant-44a28.firebaseapp.com",
@@ -248,24 +252,27 @@
             legs: [
                 { options: [{ name: "Przysiady ze sztangą na plecach", sets: "4x6-8" }, { name: "Wypychanie ciężaru na suwnicy", sets: "4x8-10" }, { name: "Przysiady na maszynie Hack", sets: "4x8-10" }]},
                 { options: [{ name: "Martwy ciąg na prostych nogach (RDL)", sets: "3x8-12" }, { name: "Uginanie nóg na maszynie leżąc", sets: "3x10-12" }, { name: "Uginanie nóg na maszynie siedząc", sets: "3x10-12" }]},
-                { options: [{ name: "Przysiady bułgarskie", sets: "3x8-12 (na nogę)" }, { name: "Wykroki z hantlami", sets: "3x10-12 (na nogę)" }, { name: "Zakroki ze sztangą/hantlami", sets: "3x10-12 (na nogę)" }]},
+                { options: [{ name: "Przysiady bułgarskie", sets: "3x8-12 (na noga)" }, { name: "Wykroki z hantlami", sets: "3x10-12 (na noga)" }, { name: "Zakroki ze sztangą/hantlami", sets: "3x10-12 (na noga)" }]},
                 { options: [{ name: "Prostowanie nóg na maszynie siedząc", sets: "3x12-15" }, { name: "Przysiad Goblet", sets: "3x12-15" }, { name: "Przysiad syzyfowy (Sissy Squat)", sets: "3xMAX" }]},
                 { options: [{ name: "Hip Thrust ze sztangą", sets: "4x8-12" }, { name: "'Żuraw' (Glute Ham Raise)", sets: "3xMAX" }, { name: "Wyprosty tułowia na ławce rzymskiej (pod pośladki)", sets: "3x12-15" }]},
                 { options: [{ name: "Wspięcia na palce (stojąc)", sets: "4x12-20" }, { name: "Wspięcia na palce na suwnicy", sets: "4x15-25" }, { name: "Wspięcia na palce siedząc", sets: "4x15-25" }]}
             ],
             brzuch: [
-                { options: [{ name: "'Allahy' (linka wyciągu)", sets: "4x10-15" }, { name: "Spięcia brzucha na maszynie", sets: "4x10-15" }, { name: "Spięcia leżąc z talerzem na klatce", sets: "4x12-15" }]},
+                { options: [{ name: "Allahy (linka wyciągu)", sets: "4x10-15" }, { name: "Spięcia brzucha na maszynie", sets: "4x10-15" }, { name: "Spięcia leżąc z talerzem na klatce", sets: "4x12-15" }]},
                 { options: [{ name: "Unoszenie nóg w zwisie na drążku", sets: "4xMAX" }, { name: "Unoszenie kolan do klatki piersiowej w zwisie", sets: "4xMAX" }, { name: "Scyzoryki (V-ups)", sets: "4x15-20" }]},
                 { options: [{ name: "Plank", sets: "4x60-90s" }, { name: "Plank boczny", sets: "3x45-60s (na str.)" }, { name: "Ab Wheel (kółko)", sets: "3x10-15" }]},
-                { options: [{ name: "'Wood choppers' (rąbanie drewna)", sets: "3x12-15 (na str.)" }, { name: "'Russian Twist' (skręty tułowia)", sets: "3x15 (na stronę)" }, { name: "Pallof Press (antyrotacja z gumą/linką)", sets: "3x12-15 (na str.)" }]}
+                { options: [{ name: "Wood choppers (rąbanie drewna)", sets: "3x12-15 (na str.)" }, { name: "Russian Twist (skręty tułowia)", sets: "3x15 (na stronę)" }, { name: "Pallof Press (antyrotacja z gumą/linką)", sets: "3x12-15 (na str.)" }]}
             ]
         };
+
+        // Normalizacja nazw ćwiczeń dla mapowania kategorii
+        const normalizeName = (name) => name.replace(/['"]/g, "").trim();
 
         const exerciseMap = {};
         Object.keys(workouts).forEach(cat => {
             workouts[cat].forEach(slot => {
                 slot.options.forEach(opt => {
-                    exerciseMap[opt.name] = cat.toUpperCase();
+                    exerciseMap[normalizeName(opt.name)] = cat.toUpperCase();
                 });
             });
         });
@@ -350,7 +357,7 @@
         };
 
         const getStats = (name) => {
-            const filtered = trainingLogs.filter(l => l.exercise === name);
+            const filtered = trainingLogs.filter(l => normalizeName(l.exercise) === normalizeName(name));
             if (!filtered.length) return null;
             return { pb: Math.max(...filtered.map(l => l.weight)), last: filtered[filtered.length - 1].weight };
         };
@@ -400,8 +407,9 @@
                 const entries = [];
                 const now = new Date().toISOString().split('T')[0];
                 container.querySelectorAll('.card').forEach(card => {
-                    const weight = parseFloat(card.querySelector('.weight-input').value);
-                    if(weight > 0) {
+                    const weightValue = card.querySelector('.weight-input').value;
+                    const weight = parseFloat(weightValue);
+                    if(!isNaN(weight) && weight > 0) {
                         entries.push({ date: now, category: category, exercise: card.querySelector('.ex-select').value, weight });
                         card.querySelector('.weight-input').value = '';
                     }
@@ -411,14 +419,21 @@
         });
 
         const updateHistoryUI = () => {
-            document.getElementById('csv-output').value = "Data,Kategoria,Cwiczenie,Ciezar\n" + trainingLogs.map(l => `${l.date},${l.category || exerciseMap[l.exercise] || 'INNE'},${l.exercise},${l.weight}`).join('\n');
+            document.getElementById('csv-output').value = "Data,Kategoria,Cwiczenie,Ciezar\n" + trainingLogs.map(l => {
+                const cat = l.category || exerciseMap[normalizeName(l.exercise)] || 'INNE';
+                return `${l.date},${cat},${l.exercise},${l.weight}`;
+            }).join('\n');
             
             const accordion = document.getElementById('progress-accordion');
             accordion.innerHTML = '';
             
             const categories = ['PUSH', 'PULL', 'LEGS', 'BRZUCH'];
             categories.forEach(cat => {
-                const exInCat = [...new Set(trainingLogs.filter(l => (l.category || exerciseMap[l.exercise]) === cat).map(l => l.exercise))].sort();
+                const exInCat = [...new Set(trainingLogs.filter(l => {
+                    const mappedCat = l.category || exerciseMap[normalizeName(l.exercise)];
+                    return mappedCat === cat;
+                }).map(l => l.exercise))].sort();
+                
                 if(exInCat.length === 0) return;
                 
                 const details = document.createElement('details');
@@ -426,7 +441,7 @@
                 details.innerHTML = `
                     <summary class="p-4 font-bold text-sm uppercase tracking-widest cursor-pointer">${cat}</summary>
                     <div class="p-2 space-y-1 bg-white/20 dark:bg-black/10">
-                        ${exInCat.map(n => `<button class="w-full text-left p-3 rounded-xl text-[10px] font-bold uppercase text-gray-900 dark:text-white hover:bg-white/50 dark:hover:bg-gray-700/50" onclick="showChart('${n}')">${n}</button>`).join('')}
+                        ${exInCat.map(n => `<button class="w-full text-left p-3 rounded-xl text-[10px] font-bold uppercase text-gray-900 dark:text-white hover:bg-white/50 dark:hover:bg-gray-700/50" onclick="showChart('${n.replace(/'/g, "\\'")}')">${n}</button>`).join('')}
                     </div>
                 `;
                 accordion.appendChild(details);
@@ -449,9 +464,11 @@
                     } else {
                         exercise = parts[1].trim();
                         weight = parseFloat(parts[2]);
-                        category = exerciseMap[exercise] || 'INNE';
+                        category = exerciseMap[normalizeName(exercise)] || 'INNE';
                     }
-                    newEntries.push({ date, category, exercise, weight });
+                    if(!isNaN(weight)) {
+                        newEntries.push({ date, category, exercise, weight });
+                    }
                 }
             });
             if (newEntries.length) saveToCloud(newEntries);
@@ -461,7 +478,7 @@
             document.getElementById('chart-container').classList.remove('hidden');
             const ctx = document.getElementById('progress-chart').getContext('2d');
             if(chartInstance) chartInstance.destroy();
-            const data = trainingLogs.filter(l => l.exercise === name).sort((a,b) => new Date(a.date) - new Date(b.date));
+            const data = trainingLogs.filter(l => normalizeName(l.exercise) === normalizeName(name)).sort((a,b) => new Date(a.date) - new Date(b.date));
             chartInstance = new Chart(ctx, {
                 type: 'line',
                 data: { labels: data.map(l => l.date), datasets: [{ data: data.map(l => l.weight), borderColor: '#2563eb', tension: 0.4 }] },
