@@ -69,6 +69,10 @@
             background-color: #1f2937;
             color: #f9fafb;
         }
+
+        .markdown-content p { margin-bottom: 0.5rem; }
+        .markdown-content strong { color: #2563eb; }
+        html.dark .markdown-content strong { color: #60a5fa; }
     </style>
     <script>
         (function() {
@@ -126,6 +130,7 @@
 
         <main class="p-4 max-w-lg mx-auto">
             <div id="tab-content">
+                <!-- Harmonogram -->
                 <div class="page-pane" id="harmonogram">
                     <div class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-4 rounded-xl shadow-sm mb-4 text-gray-900 dark:text-white">
                         <details>
@@ -151,39 +156,55 @@
                     </div>
                 </div>
 
+                <!-- Treningi -->
                 <div class="page-pane hidden" id="push">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white font-bold uppercase tracking-widest text-sm">Push <button data-workout="push" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
                     <div id="push-cards" class="space-y-4"></div>
                 </div>
-
                 <div class="page-pane hidden" id="pull">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white font-bold uppercase tracking-widest text-sm">Pull <button data-workout="pull" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
                     <div id="pull-cards" class="space-y-4"></div>
                 </div>
-
                 <div class="page-pane hidden" id="legs">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white font-bold uppercase tracking-widest text-sm">Legs <button data-workout="legs" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
                     <div id="legs-cards" class="space-y-4"></div>
                 </div>
-
                 <div class="page-pane hidden" id="brzuch">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white font-bold uppercase tracking-widest text-sm">Brzuch <button data-workout="brzuch" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
                     <div id="brzuch-cards" class="space-y-4"></div>
                 </div>
                 
+                <!-- Analityka -->
                 <div class="page-pane hidden" id="postepy">
-                    <h3 class="font-bold mb-4 uppercase text-center tracking-widest text-gray-900 dark:text-white text-sm">Analityka</h3>
+                    <h3 class="font-bold mb-4 uppercase text-center tracking-widest text-gray-900 dark:text-white text-sm">Postępy Siłowe</h3>
                     <div id="progress-accordion" class="space-y-3 mb-6"></div>
                     <div id="chart-container" class="hidden bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-4 rounded-3xl shadow-sm border border-white/10 h-64">
                         <canvas id="progress-chart"></canvas>
                     </div>
                 </div>
 
+                <!-- AI Analiza -->
+                <div class="page-pane hidden" id="ai-analiza">
+                    <h3 class="font-bold mb-4 uppercase text-center tracking-widest text-gray-900 dark:text-white text-sm">Inteligentna Analiza</h3>
+                    <div class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-6 rounded-3xl shadow-sm border border-blue-500/10 mb-4">
+                        <p class="text-[10px] text-center opacity-70 mb-4">AI przeanalizuje Twoją historię logów, aby obliczyć 1RM, wykryć stagnację i zasugerować obciążenia.</p>
+                        <button id="generate-ai-insight" class="w-full bg-blue-600 text-white py-3 rounded-2xl font-bold uppercase text-xs shadow-md hover:bg-blue-700 transition-colors disabled:opacity-50">Generuj Raport AI</button>
+                    </div>
+                    <div id="ai-result-container" class="hidden bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl p-6 rounded-3xl shadow-xl border border-blue-500/20">
+                        <div id="ai-loading" class="flex flex-col items-center gap-3 py-8">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                            <span class="text-xs font-bold animate-pulse uppercase tracking-tighter">Analizowanie danych...</span>
+                        </div>
+                        <div id="ai-text" class="text-xs leading-relaxed markdown-content"></div>
+                    </div>
+                </div>
+
+                <!-- Dziennik -->
                 <div class="page-pane hidden" id="dziennik">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white">
                         <h3 class="font-bold uppercase tracking-widest text-sm text-bold">Logi</h3>
                         <div class="flex gap-2">
-                            <button id="import-pasted-csv" class="text-[10px] bg-blue-600 text-white px-3 py-1 rounded-lg font-bold uppercase">Synchronizuj</button>
+                            <button id="import-pasted-csv" class="text-[10px] bg-blue-600 text-white px-3 py-1 rounded-lg font-bold uppercase">Sync</button>
                             <button id="copy-log" class="text-[10px] bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded-lg font-bold uppercase">Kopiuj</button>
                         </div>
                     </div>
@@ -200,8 +221,8 @@
         <button class="nav-btn p-2 flex flex-col items-center" data-tab="push">💪<span class="text-[9px] font-bold">PUSH</span></button>
         <button class="nav-btn p-2 flex flex-col items-center" data-tab="pull">🏋️<span class="text-[9px] font-bold">PULL</span></button>
         <button class="nav-btn p-2 flex flex-col items-center" data-tab="legs">🦵<span class="text-[9px] font-bold">LEGS</span></button>
-        <button class="nav-btn p-2 flex flex-col items-center" data-tab="brzuch">🔥<span class="text-[9px] font-bold">CORE</span></button>
-        <button class="nav-btn p-2 flex flex-col items-center" data-tab="postepy">📈<span class="text-[9px] font-bold">CHARTS</span></button>
+        <button class="nav-btn p-2 flex flex-col items-center" data-tab="postepy">📈<span class="text-[9px] font-bold">STATS</span></button>
+        <button class="nav-btn p-2 flex flex-col items-center" data-tab="ai-analiza">🤖<span class="text-[9px] font-bold">AI</span></button>
         <button class="nav-btn p-2 flex flex-col items-center" data-tab="dziennik">📖<span class="text-[9px] font-bold">LOGS</span></button>
     </nav>
 
@@ -213,7 +234,6 @@
         import { getFirestore, doc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
         import { getAnalytics } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js';
 
-        // KONFIGURACJA
         const firebaseConfig = {
             apiKey: "AIzaSyAdWYZmp9zfQ7Rbvi91WBUSHPmgOWypAfM",
             authDomain: "training-assistant-44a28.firebaseapp.com",
@@ -227,10 +247,11 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const apiKey = ""; // API key wstrzykiwany przez środowisko
         
         try { getAnalytics(app); } catch (e) {}
 
-        const appId = 'training-pro-v2';
+        const appId = 'training-pro-v3';
 
         const workouts = {
             push: [
@@ -265,7 +286,6 @@
             ]
         };
 
-        // Normalizacja nazw ćwiczeń dla mapowania kategorii
         const normalizeName = (name) => name.replace(/['"]/g, "").trim();
 
         const exerciseMap = {};
@@ -301,9 +321,7 @@
             const provider = new GoogleAuthProvider();
             provider.setCustomParameters({ prompt: 'select_account' });
             try { await signInWithPopup(auth, provider); } catch (e) {
-                let msg = `Błąd: ${e.code}`;
-                if (e.code === 'auth/unauthorized-domain') msg = `Domeny nie ma w Firebase Auth.`;
-                showError(msg);
+                showError(`Błąd: ${e.code}`);
             }
         };
 
@@ -407,8 +425,7 @@
                 const entries = [];
                 const now = new Date().toISOString().split('T')[0];
                 container.querySelectorAll('.card').forEach(card => {
-                    const weightValue = card.querySelector('.weight-input').value;
-                    const weight = parseFloat(weightValue);
+                    const weight = parseFloat(card.querySelector('.weight-input').value);
                     if(!isNaN(weight) && weight > 0) {
                         entries.push({ date: now, category: category, exercise: card.querySelector('.ex-select').value, weight });
                         card.querySelector('.weight-input').value = '';
@@ -487,7 +504,66 @@
             window.scrollTo({ top: document.getElementById('chart-container').offsetTop - 20, behavior: 'smooth' });
         };
 
-        const tabOrder = ['harmonogram', 'push', 'pull', 'legs', 'brzuch', 'postepy', 'dziennik'];
+        // --- AI Progress Analysis Logic ---
+        const callGemini = async (prompt, systemPrompt) => {
+            let delay = 1000;
+            for (let i = 0; i < 5; i++) {
+                try {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: prompt }] }],
+                            systemInstruction: { parts: [{ text: systemPrompt }] }
+                        })
+                    });
+                    if (!response.ok) throw new Error('API Error');
+                    const result = await response.json();
+                    return result.candidates?.[0]?.content?.parts?.[0]?.text;
+                } catch (e) {
+                    if (i === 4) throw e;
+                    await new Promise(r => setTimeout(r, delay));
+                    delay *= 2;
+                }
+            }
+        };
+
+        document.getElementById('generate-ai-insight').onclick = async () => {
+            if (trainingLogs.length < 5) {
+                showToast("Za mało danych do analizy (min. 5 wpisów)");
+                return;
+            }
+
+            const btn = document.getElementById('generate-ai-insight');
+            const container = document.getElementById('ai-result-container');
+            const loading = document.getElementById('ai-loading');
+            const textArea = document.getElementById('ai-text');
+
+            btn.disabled = true;
+            container.classList.remove('hidden');
+            loading.classList.remove('hidden');
+            textArea.textContent = '';
+
+            const systemPrompt = "Jesteś trenerem personalnym i ekspertem od analizy danych treningowych. Analizujesz logi użytkownika (Data, Kategoria, Ćwiczenie, Ciężar). Cel: Wylicz szacowane 1RM dla głównych bojów, wykryj stagnację (brak progresu od 3 sesji) i zasugeruj konkretne ciężary na następny tydzień. Odpowiadaj krótko, konkretnie, w punktach, używając Markdown (pogrubienia). Nie używaj wstępów.";
+            const dataStr = trainingLogs.map(l => `${l.date},${l.category},${l.exercise},${l.weight}kg`).join('\n');
+            const prompt = `Przeanalizuj poniższe logi:\n${dataStr}`;
+
+            try {
+                const result = await callGemini(prompt, systemPrompt);
+                loading.classList.add('hidden');
+                // Prosty parser markdown do HTML
+                textArea.innerHTML = result
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\n/g, '<br>');
+            } catch (e) {
+                loading.classList.add('hidden');
+                textArea.innerHTML = '<span class="text-red-500 font-bold">Wystąpił błąd podczas analizy. Spróbuj ponownie później.</span>';
+            } finally {
+                btn.disabled = false;
+            }
+        };
+
+        const tabOrder = ['harmonogram', 'push', 'pull', 'legs', 'brzuch', 'postepy', 'ai-analiza', 'dziennik'];
         const navigate = (id, dir = null) => {
             const curr = document.querySelector('.page-pane:not(.hidden)');
             const dest = document.getElementById(id);
