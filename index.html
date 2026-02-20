@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plan Treningowy Pro</title>
+    <!-- Biblioteki zewnętrzne: Tailwind CSS do stylizacji, Chart.js do wykresów -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -16,6 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
+        /* Definicja kolorów gradientu dla trybu jasnego i ciemnego */
         :root {
           --grad-color-1: #e0f2fe; --grad-color-2: #f0f9ff;
           --grad-color-3: #fefce8; --grad-color-4: #ecfdf5;
@@ -24,6 +26,7 @@
           --grad-color-1: #1e3a8a; --grad-color-2: #1e1b4b;
           --grad-color-3: #4a044e; --grad-color-4: #312e81;
         }
+        /* Stylizacja tła z animowanym gradientem */
         body {
             font-family: 'Poppins', sans-serif;
             -webkit-tap-highlight-color: transparent;
@@ -44,6 +47,7 @@
         html.dark .nav-btn.active { color: #60a5fa; }
         .page-pane { transition: transform 0.3s ease-out, opacity 0.3s ease-out; }
         
+        /* Animacje przejść między zakładkami (swipe) */
         @keyframes slide-in-from-right { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes slide-out-to-left { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
         @keyframes slide-in-from-left { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
@@ -53,6 +57,7 @@
         .animate-slide-in-from-left { animation: slide-in-from-left 0.3s forwards; }
         .animate-slide-out-to-right { animation: slide-out-to-right 0.3s forwards; }
 
+        /* Stylizacja elementu details - akordeon zasad */
         details > summary { list-style: none; }
         details > summary::-webkit-details-marker { display: none; }
         details summary:after { content: '+'; float: right; font-weight: bold; transition: transform 0.2s; }
@@ -61,6 +66,7 @@
         #auth-overlay { backdrop-filter: blur(10px); }
     </style>
     <script>
+        // Natychmiastowe wykrywanie motywu przed renderowaniem
         (function() {
             const savedTheme = localStorage.getItem('theme');
             const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -74,7 +80,7 @@
 </head>
 <body class="text-gray-800 dark:text-gray-300">
 
-    <!-- Nakładka autoryzacji -->
+    <!-- Ekran logowania/rejestracji -->
     <div id="auth-overlay" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-white/70 dark:bg-gray-900/70 text-gray-900 dark:text-white">
         <div class="w-full max-w-sm bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700 text-center relative">
             <button id="auth-theme-toggle" class="absolute top-4 right-4 p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition auth-theme-icon">
@@ -88,17 +94,17 @@
                     Google SSO
                 </button>
                 <div class="relative flex items-center py-2">
-                    <div class="flex-grow border-t border-gray-200 dark:border-gray-600"></div><span class="px-3 text-xs text-gray-400">lub email</span><div class="flex-grow border-t border-gray-200 dark:border-gray-600"></div>
+                    <div class="flex-grow border-t border-gray-200 dark:border-gray-600"></div><span class="px-3 text-xs text-gray-400 font-medium">lub email</span><div class="flex-grow border-t border-gray-200 dark:border-gray-600"></div>
                 </div>
-                <input type="email" id="auth-email" placeholder="Email" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-900 border-none outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white">
-                <input type="password" id="auth-password" placeholder="Hasło" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-900 border-none outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white">
+                <input type="email" id="auth-email" placeholder="Email" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white">
+                <input type="password" id="auth-password" placeholder="Hasło" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white">
                 <div class="flex gap-2">
-                    <button id="email-login" class="flex-1 bg-blue-600 text-white p-3 rounded-xl font-bold hover:bg-blue-700">Logowanie</button>
-                    <button id="email-register" class="flex-1 border border-blue-600 text-blue-600 p-3 rounded-xl font-bold hover:bg-blue-50 dark:hover:bg-blue-900/10">Rejestracja</button>
+                    <button id="email-login" class="flex-1 bg-blue-600 text-white p-3 rounded-xl font-bold hover:bg-blue-700 shadow-lg transition">Logowanie</button>
+                    <button id="email-register" class="flex-1 border border-blue-600 text-blue-600 p-3 rounded-xl font-bold hover:bg-blue-50 dark:hover:bg-blue-900/10 transition">Rejestracja</button>
                 </div>
             </div>
             <div id="auth-error-container" class="mt-4 p-3 bg-red-50 dark:bg-red-900/20 rounded-xl hidden text-left border border-red-200 dark:border-red-800">
-                <p id="auth-error" class="text-[10px] text-red-600 dark:text-red-400 font-medium leading-tight whitespace-pre-wrap"></p>
+                <p id="auth-error" class="text-[10px] text-red-600 dark:text-red-400 font-bold leading-tight whitespace-pre-wrap"></p>
             </div>
         </div>
     </div>
@@ -109,7 +115,7 @@
             <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 uppercase tracking-tight">Plan Treningowy</h1>
             <div class="flex flex-col items-center mt-2">
                 <span id="user-id-display" class="text-[8px] opacity-50 font-mono"></span>
-                <button id="logout-btn" class="text-[10px] font-bold text-red-500 uppercase mt-1">Wyloguj</button>
+                <button id="logout-btn" class="text-[10px] font-bold text-red-500 uppercase mt-1 hover:underline">Wyloguj</button>
             </div>
             <button id="theme-toggle" class="p-2 absolute top-5 right-4 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">
                 <span id="theme-icon">🌙</span>
@@ -121,7 +127,7 @@
                 <div class="page-pane" id="harmonogram">
                     <div class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-4 rounded-xl shadow-sm mb-4">
                         <details>
-                            <summary class="font-bold cursor-pointer">Zasady Progresji</summary>
+                            <summary class="font-bold cursor-pointer text-gray-900 dark:text-white">Zasady Progresji</summary>
                             <div class="mt-4 space-y-2 text-xs border-t pt-4">
                                 <p><strong class="text-blue-600">Technika:</strong> Pełny zakres ruchu przed ciężarem.</p>
                                 <p><strong class="text-blue-600">Przerwy:</strong> 90-120s (Główne), 60s (Izolacje).</p>
@@ -129,7 +135,7 @@
                         </details>
                     </div>
                     <div class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-6 rounded-3xl shadow-sm text-center">
-                        <h3 class="font-bold mb-4">Harmonogram</h3>
+                        <h3 class="font-bold mb-4 text-gray-900 dark:text-white">Harmonogram</h3>
                         <div class="flex items-center justify-center space-x-4 mb-4">
                             <span class="text-sm">3 dni</span>
                             <label class="relative inline-flex items-center cursor-pointer">
@@ -144,27 +150,27 @@
                 </div>
 
                 <div class="page-pane hidden" id="push">
-                    <div class="flex justify-between items-center mb-4"><h3 class="font-bold uppercase tracking-widest text-gray-900 dark:text-white">Push</h3><button data-workout="push" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase">Zapisz</button></div>
+                    <div class="flex justify-between items-center mb-4"><h3 class="font-bold uppercase tracking-widest text-gray-900 dark:text-white">Push</h3><button data-workout="push" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
                     <div id="push-cards" class="space-y-4"></div>
                 </div>
 
                 <div class="page-pane hidden" id="pull">
-                    <div class="flex justify-between items-center mb-4"><h3 class="font-bold uppercase tracking-widest text-gray-900 dark:text-white">Pull</h3><button data-workout="pull" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase">Zapisz</button></div>
+                    <div class="flex justify-between items-center mb-4"><h3 class="font-bold uppercase tracking-widest text-gray-900 dark:text-white">Pull</h3><button data-workout="pull" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
                     <div id="pull-cards" class="space-y-4"></div>
                 </div>
 
                 <div class="page-pane hidden" id="legs">
-                    <div class="flex justify-between items-center mb-4"><h3 class="font-bold uppercase tracking-widest text-gray-900 dark:text-white">Legs</h3><button data-workout="legs" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase">Zapisz</button></div>
+                    <div class="flex justify-between items-center mb-4"><h3 class="font-bold uppercase tracking-widest text-gray-900 dark:text-white">Legs</h3><button data-workout="legs" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
                     <div id="legs-cards" class="space-y-4"></div>
                 </div>
 
                 <div class="page-pane hidden" id="brzuch">
-                    <div class="flex justify-between items-center mb-4"><h3 class="font-bold uppercase tracking-widest text-gray-900 dark:text-white">Brzuch</h3><button data-workout="brzuch" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase">Zapisz</button></div>
+                    <div class="flex justify-between items-center mb-4"><h3 class="font-bold uppercase tracking-widest text-gray-900 dark:text-white">Brzuch</h3><button data-workout="brzuch" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
                     <div id="brzuch-cards" class="space-y-4"></div>
                 </div>
 
                 <div class="page-pane hidden" id="postepy">
-                    <h3 class="font-bold mb-4 uppercase text-center tracking-widest">Wykresy</h3>
+                    <h3 class="font-bold mb-4 uppercase text-center tracking-widest text-gray-900 dark:text-white">Wykresy</h3>
                     <div id="progress-list" class="space-y-2 mb-4"></div>
                     <div id="chart-container" class="hidden bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-4 rounded-3xl shadow-sm border border-white/10">
                         <canvas id="progress-chart"></canvas>
@@ -172,14 +178,14 @@
                 </div>
 
                 <div class="page-pane hidden" id="dziennik">
-                    <div class="flex justify-between items-center mb-4">
+                    <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white">
                         <h3 class="font-bold uppercase tracking-widest">Logi</h3>
                         <div class="flex gap-2">
                             <button id="import-pasted-csv" class="text-[10px] bg-blue-600 text-white px-3 py-1 rounded-lg font-bold uppercase">Synchronizuj tekst</button>
                             <button id="copy-log" class="text-[10px] bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded-lg font-bold uppercase">Kopiuj</button>
                         </div>
                     </div>
-                    <textarea id="csv-output" placeholder="Data,Cwiczenie,Ciezar" class="w-full h-80 p-4 text-[10px] font-mono rounded-3xl bg-gray-100/50 dark:bg-gray-900/50 outline-none resize-none border border-blue-500/20"></textarea>
+                    <textarea id="csv-output" placeholder="Data,Cwiczenie,Ciezar" class="w-full h-80 p-4 text-[10px] font-mono rounded-3xl bg-gray-100/50 dark:bg-gray-900/50 outline-none resize-none border border-blue-500/20 text-gray-900 dark:text-blue-300"></textarea>
                     <button id="clear-log" class="w-full mt-4 bg-red-500/10 text-red-500 py-3 rounded-2xl text-xs font-bold uppercase tracking-wider">Wyczyść historię w chmurze</button>
                 </div>
             </div>
@@ -204,7 +210,7 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithCustomToken, signInAnonymously } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
         import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
-        // --- KONFIGURACJA ---
+        // --- KONFIGURACJA PRODUKCYJNA (Firebase Console > Settings > Your apps) ---
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
 		  apiKey: "AIzaSyAdWYZmp9zfQ7Rbvi91WBUSHPmgOWypAfM",
 		  authDomain: "training-assistant-44a28.firebaseapp.com",
@@ -215,15 +221,9 @@
 		  measurementId: "G-PBPMKQLKT8"
         };
         
-        let app, auth, db;
-        try {
-            app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = getFirestore(app);
-        } catch (e) {
-            console.error("Inicjalizacja Firebase nieudana:", e);
-        }
-
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'training-pro-v1';
 
         const workouts = {
@@ -263,6 +263,7 @@
         let chartInstance = null;
         let currentUser = null;
 
+        // MOTYW
         const updateThemeUI = () => {
             const isDark = document.documentElement.classList.contains('dark');
             document.querySelectorAll('.auth-theme-icon, #theme-icon').forEach(icon => icon.textContent = isDark ? '☀️' : '🌙');
@@ -278,31 +279,52 @@
         document.getElementById('theme-toggle').onclick = toggleTheme;
         updateThemeUI();
 
+        // BŁĘDY
         const showError = (msg) => {
             document.getElementById('auth-error-container').classList.remove('hidden');
             document.getElementById('auth-error').textContent = msg;
         };
 
+        const hideError = () => {
+            document.getElementById('auth-error-container').classList.add('hidden');
+        };
+
+        // AUTH
         const loginWithEmail = async () => {
+            hideError();
             const email = document.getElementById('auth-email').value;
             const password = document.getElementById('auth-password').value;
             if (!email || !password) return showError("Wprowadź dane.");
-            try { await signInWithEmailAndPassword(auth, email, password); } catch (e) { showError(e.message); }
+            try { 
+                await signInWithEmailAndPassword(auth, email, password); 
+            } catch (e) { 
+                showError(`Logowanie nieudane: ${e.code}`); 
+            }
         };
 
         const registerWithEmail = async () => {
+            hideError();
             const email = document.getElementById('auth-email').value;
             const password = document.getElementById('auth-password').value;
             if (!email || !password) return showError("Wprowadź dane.");
-            try { await createUserWithEmailAndPassword(auth, email, password); } catch (e) { showError(e.message); }
+            try { 
+                await createUserWithEmailAndPassword(auth, email, password); 
+            } catch (e) { 
+                showError(`Rejestracja nieudana: ${e.code}`); 
+            }
         };
 
         const loginWithGoogle = async () => {
+            hideError();
             const provider = new GoogleAuthProvider();
             provider.setCustomParameters({ prompt: 'select_account' });
-            try { await signInWithPopup(auth, provider); } catch (e) {
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (e) {
                 let msg = `Błąd Google: ${e.code}`;
-                if (e.code === 'auth/unauthorized-domain') msg = `Domena ${window.location.hostname} nie jest zautoryzowana w konsoli Firebase (Auth > Settings > Authorized domains).`;
+                if (e.code === 'auth/unauthorized-domain') {
+                    msg = `DOMENA NIEZAUTORYZOWANA: ${window.location.hostname}\n\nKONFIGURACJA GCP:\n1. Branding > Authorized domains > Dodaj domenę.\n2. Clients > Web client > JavaScript origins > Dodaj domenę.\n3. Clients > Web client > Redirect URIs > Dodaj https://${firebaseConfig.authDomain}/__/auth/handler`;
+                }
                 showError(msg);
             }
         };
@@ -313,7 +335,9 @@
         document.getElementById('logout-btn').onclick = () => signOut(auth);
 
         const initAuth = async () => {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token);
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                try { await signInWithCustomToken(auth, __initial_auth_token); } catch (e) {}
+            }
         };
         initAuth();
 
@@ -332,6 +356,7 @@
             }
         });
 
+        // SYNC
         const syncLogs = (uid) => {
             onSnapshot(doc(db, 'artifacts', appId, 'users', uid, 'data', 'logs'), (snap) => {
                 trainingLogs = snap.exists() ? (snap.data().entries || []) : [];
@@ -356,7 +381,8 @@
                 const container = document.getElementById(`${type}-cards`);
                 if(!container) return;
                 container.innerHTML = workouts[type].map((slot, i) => {
-                    const stats = getStats(slot.options[0].name);
+                    const first = slot.options[0];
+                    const stats = getStats(first.name);
                     return `
                         <div class="card bg-white/60 dark:bg-gray-800/60 p-5 rounded-3xl border border-white/20">
                             <select class="ex-select w-full bg-transparent font-bold text-sm outline-none mb-2 text-gray-900 dark:text-white" data-type="${type}" data-idx="${i}">
