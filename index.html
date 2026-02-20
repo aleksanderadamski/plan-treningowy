@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plan Treningowy Pro</title>
-    <!-- Biblioteki zewnętrzne -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -77,24 +76,22 @@
 
     <div id="auth-overlay" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-white/70 dark:bg-gray-900/70 text-gray-900 dark:text-white">
         <div class="w-full max-w-sm bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700 text-center relative">
-            <button id="auth-theme-toggle" class="absolute top-4 right-4 p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition auth-theme-icon">
-                🌙
-            </button>
+            <button id="auth-theme-toggle" class="absolute top-4 right-4 p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition auth-theme-icon">Tryb</button>
 
             <h2 class="text-2xl font-bold mb-6">Witaj</h2>
             <div class="space-y-4">
-                <button id="google-login" class="w-full flex items-center justify-center gap-3 p-3 border border-gray-200 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition font-semibold text-gray-900 dark:text-white">
+                <button id="google-login" class="w-full flex items-center justify-center gap-3 p-3 border border-gray-200 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition font-semibold text-gray-900 dark:text-white text-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.55 10.78l7.98-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path><path fill="none" d="M0 0h48v48H0z"></path></svg>
-                    Google SSO
+                    Logowanie Google
                 </button>
                 <div class="relative flex items-center py-2">
-                    <div class="flex-grow border-t border-gray-200 dark:border-gray-600"></div><span class="px-3 text-xs text-gray-400 font-medium">lub email</span><div class="flex-grow border-t border-gray-200 dark:border-gray-600"></div>
+                    <div class="flex-grow border-t border-gray-200 dark:border-gray-600"></div><span class="px-3 text-xs text-gray-400 font-medium lowercase">lub email</span><div class="flex-grow border-t border-gray-200 dark:border-gray-600"></div>
                 </div>
                 <input type="email" id="auth-email" placeholder="Email" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white">
                 <input type="password" id="auth-password" placeholder="Hasło" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white">
                 <div class="flex gap-2">
-                    <button id="email-login" class="flex-1 bg-blue-600 text-white p-3 rounded-xl font-bold hover:bg-blue-700 shadow-lg transition">Logowanie</button>
-                    <button id="email-register" class="flex-1 border border-blue-600 text-blue-600 p-3 rounded-xl font-bold hover:bg-blue-50 dark:hover:bg-blue-900/10 transition">Rejestracja</button>
+                    <button id="email-login" class="flex-1 bg-blue-600 text-white p-3 rounded-xl font-bold hover:bg-blue-700 shadow-lg transition text-sm">Logowanie</button>
+                    <button id="email-register" class="flex-1 border border-blue-600 text-blue-600 p-3 rounded-xl font-bold hover:bg-blue-50 dark:hover:bg-blue-900/10 transition text-sm">Rejestracja</button>
                 </div>
             </div>
             <div id="auth-error-container" class="mt-4 p-3 bg-red-50 dark:bg-red-900/20 rounded-xl hidden text-left border border-red-200 dark:border-red-800">
@@ -111,7 +108,7 @@
                 <button id="logout-btn" class="text-[10px] font-bold text-red-500 uppercase mt-1 hover:underline">Wyloguj</button>
             </div>
             <button id="theme-toggle" class="p-2 absolute top-5 right-4 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">
-                <span id="theme-icon">🌙</span>
+                <span id="theme-icon">Motyw</span>
             </button>
         </header>
 
@@ -122,19 +119,19 @@
                         <details>
                             <summary class="font-bold cursor-pointer">Zasady Progresji</summary>
                             <div class="mt-4 space-y-2 text-xs border-t pt-4">
-                                <p><strong class="text-blue-600">Technika:</strong> Pełny zakres ruchu przed ciężarem.</p>
-                                <p><strong class="text-blue-600">Przerwy:</strong> 90-120s (Główne), 60s (Izolacje).</p>
+                                <p><strong class="text-blue-600 font-bold">Technika:</strong> Pełny zakres ruchu przed ciężarem.</p>
+                                <p><strong class="text-blue-600 font-bold">Przerwy:</strong> 90-120s (Główne), 60s (Izolacje).</p>
                             </div>
                         </details>
                     </div>
                     <div class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-6 rounded-3xl shadow-sm text-center">
-                        <h3 class="font-bold mb-4 text-gray-900 dark:text-white">Harmonogram</h3>
+                        <h3 class="font-bold mb-4 text-gray-900 dark:text-white uppercase tracking-wider text-sm">Harmonogram</h3>
                         <div class="flex items-center justify-center space-x-4 mb-4">
                             <span class="text-sm">3 dni</span>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="scheduleToggle" class="sr-only">
                                 <div class="w-11 h-6 bg-gray-200 rounded-full dark:bg-gray-700"></div>
-                                <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition"></div>
+                                <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition shadow-sm"></div>
                             </label>
                             <span class="text-sm">4 dni</span>
                         </div>
@@ -143,61 +140,65 @@
                 </div>
 
                 <div class="page-pane hidden" id="push">
-                    <div class="flex justify-between items-center mb-4"><h3 class="font-bold uppercase tracking-widest text-gray-900 dark:text-white">Push</h3><button data-workout="push" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
+                    <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white font-bold uppercase tracking-widest text-sm">Push <button data-workout="push" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
                     <div id="push-cards" class="space-y-4"></div>
                 </div>
 
                 <div class="page-pane hidden" id="pull">
-                    <div class="flex justify-between items-center mb-4"><h3 class="font-bold uppercase tracking-widest text-gray-900 dark:text-white">Pull</h3><button data-workout="pull" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
+                    <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white font-bold uppercase tracking-widest text-sm">Pull <button data-workout="pull" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
                     <div id="pull-cards" class="space-y-4"></div>
                 </div>
 
                 <div class="page-pane hidden" id="legs">
-                    <div class="flex justify-between items-center mb-4"><h3 class="font-bold uppercase tracking-widest text-gray-900 dark:text-white">Legs</h3><button data-workout="legs" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
+                    <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white font-bold uppercase tracking-widest text-sm">Legs <button data-workout="legs" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
                     <div id="legs-cards" class="space-y-4"></div>
+                </div>
+                
+                <div class="page-pane hidden" id="brzuch">
+                    <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white font-bold uppercase tracking-widest text-sm">Brzuch <button data-workout="brzuch" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
+                    <div id="brzuch-cards" class="space-y-4"></div>
                 </div>
 
                 <div class="page-pane hidden" id="postepy">
-                    <h3 class="font-bold mb-4 uppercase text-center tracking-widest text-gray-900 dark:text-white">Wykresy</h3>
-                    <div id="progress-list" class="space-y-2 mb-4"></div>
-                    <div id="chart-container" class="hidden bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-4 rounded-3xl shadow-sm border border-white/10">
+                    <h3 class="font-bold mb-4 uppercase text-center tracking-widest text-gray-900 dark:text-white text-sm">Analityka</h3>
+                    <div id="progress-accordion" class="space-y-3 mb-6"></div>
+                    <div id="chart-container" class="hidden bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-4 rounded-3xl shadow-sm border border-white/10 h-64">
                         <canvas id="progress-chart"></canvas>
                     </div>
                 </div>
 
                 <div class="page-pane hidden" id="dziennik">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white">
-                        <h3 class="font-bold uppercase tracking-widest">Logi</h3>
+                        <h3 class="font-bold uppercase tracking-widest text-sm text-bold">Logi</h3>
                         <div class="flex gap-2">
-                            <button id="import-pasted-csv" class="text-[10px] bg-blue-600 text-white px-3 py-1 rounded-lg font-bold uppercase">Synchronizuj tekst</button>
+                            <button id="import-pasted-csv" class="text-[10px] bg-blue-600 text-white px-3 py-1 rounded-lg font-bold uppercase">Synchronizuj</button>
                             <button id="copy-log" class="text-[10px] bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded-lg font-bold uppercase">Kopiuj</button>
                         </div>
                     </div>
-                    <textarea id="csv-output" placeholder="Data,Cwiczenie,Ciezar" class="w-full h-80 p-4 text-[10px] font-mono rounded-3xl bg-gray-100/50 dark:bg-gray-900/50 outline-none resize-none border border-blue-500/20 text-gray-900 dark:text-blue-300"></textarea>
-                    <button id="clear-log" class="w-full mt-4 bg-red-500/10 text-red-500 py-3 rounded-2xl text-xs font-bold uppercase tracking-wider">Wyczyść historię w chmurze</button>
+                    <textarea id="csv-output" placeholder="Data,Kategoria,Cwiczenie,Ciezar" class="w-full h-80 p-4 text-[10px] font-mono rounded-3xl bg-gray-100/50 dark:bg-gray-900/50 outline-none resize-none border border-blue-500/20 text-gray-900 dark:text-blue-300"></textarea>
+                    <button id="clear-log" class="w-full mt-4 bg-red-500/10 text-red-500 py-3 rounded-2xl text-xs font-bold uppercase tracking-wider">Wyczyść chmurę</button>
                 </div>
             </div>
         </main>
     </div>
 
     <nav id="app-nav" class="hidden fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t border-gray-200 dark:border-gray-800 flex justify-around p-2 z-50">
-        <button class="nav-btn p-2 flex flex-col items-center" data-tab="harmonogram"><span>🏠</span><span class="text-[9px] font-bold">START</span></button>
-        <button class="nav-btn p-2 flex flex-col items-center" data-tab="push"><span>💪</span><span class="text-[9px] font-bold">PUSH</span></button>
-        <button class="nav-btn p-2 flex flex-col items-center" data-tab="pull"><span>🏋️</span><span class="text-[9px] font-bold">PULL</span></button>
-        <button class="nav-btn p-2 flex flex-col items-center" data-tab="legs"><span>🦵</span><span class="text-[9px] font-bold">LEGS</span></button>
-        <button class="nav-btn p-2 flex flex-col items-center" data-tab="postepy"><span>📈</span><span class="text-[9px] font-bold">ANALYTICS</span></button>
-        <button class="nav-btn p-2 flex flex-col items-center" data-tab="dziennik"><span>📖</span><span class="text-[9px] font-bold">LOGS</span></button>
+        <button class="nav-btn p-2 flex flex-col items-center" data-tab="harmonogram">START</button>
+        <button class="nav-btn p-2 flex flex-col items-center" data-tab="push">PUSH</button>
+        <button class="nav-btn p-2 flex flex-col items-center" data-tab="pull">PULL</button>
+        <button class="nav-btn p-2 flex flex-col items-center" data-tab="legs">LEGS</button>
+        <button class="nav-btn p-2 flex flex-col items-center" data-tab="postepy">ANALYTICS</button>
+        <button class="nav-btn p-2 flex flex-col items-center" data-tab="dziennik">LOGS</button>
     </nav>
 
     <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] px-6 py-2 rounded-full font-bold opacity-0 transition-opacity z-[110]"></div>
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithCustomToken, signInAnonymously } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
-        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithCustomToken } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+        import { getFirestore, doc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
         import { getAnalytics } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js';
 
-        // KONFIGURACJA SDK
         const firebaseConfig = {
             apiKey: "AIzaSyAdWYZmp9zfQ7Rbvi91WBUSHPmgOWypAfM",
             authDomain: "training-assistant-44a28.firebaseapp.com",
@@ -212,13 +213,9 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         
-        try {
-            getAnalytics(app);
-        } catch (e) {
-            console.warn("Analityka zablokowana.");
-        }
+        try { getAnalytics(app); } catch (e) {}
 
-        const appId = 'training-assistant-44a28';
+        const appId = 'training-pro-v2';
 
         const workouts = {
             push: [
@@ -244,22 +241,31 @@
                 { options: [{ name: "Prostowanie nóg na maszynie siedząc", sets: "3x12-15" }, { name: "Przysiad Goblet", sets: "3x12-15" }, { name: "Przysiad syzyfowy (Sissy Squat)", sets: "3xMAX" }]},
                 { options: [{ name: "Hip Thrust ze sztangą", sets: "4x8-12" }, { name: "'Żuraw' (Glute Ham Raise)", sets: "3xMAX" }, { name: "Wyprosty tułowia na ławce rzymskiej (pod pośladki)", sets: "3x12-15" }]},
                 { options: [{ name: "Wspięcia na palce (stojąc)", sets: "4x12-20" }, { name: "Wspięcia na palce na suwnicy", sets: "4x15-25" }, { name: "Wspięcia na palce siedząc", sets: "4x15-25" }]}
+            ],
+            brzuch: [
+                { options: [{ name: "'Allahy' (linka wyciągu)", sets: "4x10-15" }, { name: "Spięcia brzucha na maszynie", sets: "4x10-15" }, { name: "Spięcia leżąc z talerzem na klatce", sets: "4x12-15" }]},
+                { options: [{ name: "Unoszenie nóg w zwisie na drążku", sets: "4xMAX" }, { name: "Unoszenie kolan do klatki piersiowej w zwisie", sets: "4xMAX" }, { name: "Scyzoryki (V-ups)", sets: "4x15-20" }]},
+                { options: [{ name: "Plank (z obciążeniem na plecach)", sets: "4x60-90s" }, { name: "Plank boczny", sets: "3x45-60s (na str.)" }, { name: "Ab Wheel (kółko)", sets: "3x10-15" }]},
+                { options: [{ name: "'Wood choppers' (rąbanie drewna)", sets: "3x12-15 (na str.)" }, { name: "'Russian Twist' (skręty tułowia)", sets: "3x15 (na stronę)" }, { name: "Pallof Press (antyrotacja z gumą/linką)", sets: "3x12-15 (na str.)" }]}
             ]
         };
+
+        const exerciseMap = {};
+        Object.keys(workouts).forEach(cat => {
+            workouts[cat].forEach(slot => {
+                slot.options.forEach(opt => {
+                    exerciseMap[opt.name] = cat.toUpperCase();
+                });
+            });
+        });
 
         let trainingLogs = [];
         let chartInstance = null;
         let currentUser = null;
 
-        const updateThemeUI = () => {
-            const isDark = document.documentElement.classList.contains('dark');
-            document.querySelectorAll('.auth-theme-icon, #theme-icon').forEach(icon => icon.textContent = isDark ? '☀️' : '🌙');
-        };
-
         const toggleTheme = () => {
             const isDark = document.documentElement.classList.toggle('dark');
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            updateThemeUI();
         };
 
         document.getElementById('auth-theme-toggle').onclick = toggleTheme;
@@ -270,52 +276,38 @@
             document.getElementById('auth-error').textContent = msg;
         };
 
-        const hideError = () => {
-            document.getElementById('auth-error-container').classList.add('hidden');
-        };
-
-        const loginWithEmail = async () => {
-            hideError();
-            const email = document.getElementById('auth-email').value;
-            const password = document.getElementById('auth-password').value;
-            if (!email || !password) return showError("Wprowadź dane.");
-            try { 
-                await signInWithEmailAndPassword(auth, email, password); 
-            } catch (e) { 
-                showError(`Błąd: ${e.code}`); 
-            }
-        };
-
-        const registerWithEmail = async () => {
-            hideError();
-            const email = document.getElementById('auth-email').value;
-            const password = document.getElementById('auth-password').value;
-            if (!email || !password) return showError("Wprowadź dane.");
-            try { 
-                await createUserWithEmailAndPassword(auth, email, password); 
-            } catch (e) { 
-                showError(`Błąd: ${e.code}`); 
-            }
-        };
+        const hideError = () => { document.getElementById('auth-error-container').classList.add('hidden'); };
 
         const loginWithGoogle = async () => {
             hideError();
             const provider = new GoogleAuthProvider();
             provider.setCustomParameters({ prompt: 'select_account' });
-            try {
-                await signInWithPopup(auth, provider);
-            } catch (e) {
-                let msg = `Błąd Google: ${e.code}\n${e.message}`;
-                if (e.code === 'auth/unauthorized-domain') {
-                    msg = `DOMENA NIEZAUTORYZOWANA: ${window.location.hostname}. Dodaj ją w Google Cloud (Branding) ORAZ Firebase Auth.`;
-                }
+            try { await signInWithPopup(auth, provider); } catch (e) {
+                let msg = `Błąd: ${e.code}`;
+                if (e.code === 'auth/unauthorized-domain') msg = `Domeny nie ma w Firebase Auth.`;
                 showError(msg);
             }
         };
 
+        const loginWithEmail = async () => {
+            hideError();
+            const e = document.getElementById('auth-email').value;
+            const p = document.getElementById('auth-password').value;
+            if (!e || !p) return showError("Brak danych.");
+            try { await signInWithEmailAndPassword(auth, e, p); } catch (err) { showError(err.message); }
+        };
+
+        const registerWithEmail = async () => {
+            hideError();
+            const e = document.getElementById('auth-email').value;
+            const p = document.getElementById('auth-password').value;
+            if (!e || !p) return showError("Brak danych.");
+            try { await createUserWithEmailAndPassword(auth, e, p); } catch (err) { showError(err.message); }
+        };
+
+        document.getElementById('google-login').onclick = loginWithGoogle;
         document.getElementById('email-login').onclick = loginWithEmail;
         document.getElementById('email-register').onclick = registerWithEmail;
-        document.getElementById('google-login').onclick = loginWithGoogle;
         document.getElementById('logout-btn').onclick = () => signOut(auth);
 
         onAuthStateChanged(auth, (user) => {
@@ -337,8 +329,6 @@
             onSnapshot(doc(db, 'artifacts', appId, 'users', uid, 'data', 'logs'), (snap) => {
                 trainingLogs = snap.exists() ? (snap.data().entries || []) : [];
                 renderAll();
-            }, (err) => {
-                if (err.code === 'permission-denied') showToast("Błąd uprawnień Firestore");
             });
         };
 
@@ -366,7 +356,7 @@
                                 ${slot.options.map(o => `<option value="${o.name}">${o.name}</option>`).join('')}
                             </select>
                             <div class="stats-box text-[10px] font-bold text-blue-500 dark:text-blue-400 mb-4 px-1 flex gap-4">
-                                ${stats ? `<span>🏆 PB: ${stats.pb}kg</span><span>⏮ Ost: ${stats.last}kg</span>` : ''}
+                                ${stats ? `<span>🏆 Max: ${stats.pb}kg</span><span>⏮ Ost: ${stats.last}kg</span>` : ''}
                             </div>
                             <div class="flex items-center justify-between">
                                 <span class="sets-display text-[10px] font-mono opacity-50 uppercase">${slot.options[0].sets}</span>
@@ -388,19 +378,20 @@
                 const selected = workouts[e.target.dataset.type][e.target.dataset.idx].options[e.target.selectedIndex];
                 card.querySelector('.sets-display').textContent = selected.sets;
                 const stats = getStats(selected.name);
-                card.querySelector('.stats-box').innerHTML = stats ? `<span>🏆 PB: ${stats.pb}kg</span><span>⏮ Ost: ${stats.last}kg</span>` : '';
+                card.querySelector('.stats-box').innerHTML = stats ? `<span>🏆 Max: ${stats.pb}kg</span><span>⏮ Ost: ${stats.last}kg</span>` : '';
             }
         });
 
         document.querySelectorAll('.save-btn').forEach(btn => {
             btn.onclick = () => {
-                const type = btn.dataset.workout;
+                const category = btn.dataset.workout.toUpperCase();
+                const container = document.getElementById(`${btn.dataset.workout}-cards`);
                 const entries = [];
                 const now = new Date().toISOString().split('T')[0];
-                document.getElementById(`${type}-cards`).querySelectorAll('.card').forEach(card => {
+                container.querySelectorAll('.card').forEach(card => {
                     const weight = parseFloat(card.querySelector('.weight-input').value);
                     if(weight > 0) {
-                        entries.push({ date: now, exercise: card.querySelector('.ex-select').value, weight });
+                        entries.push({ date: now, category: category, exercise: card.querySelector('.ex-select').value, weight });
                         card.querySelector('.weight-input').value = '';
                     }
                 });
@@ -409,9 +400,26 @@
         });
 
         const updateHistoryUI = () => {
-            document.getElementById('csv-output').value = "Data,Cwiczenie,Ciezar\n" + trainingLogs.map(l => `${l.date},${l.exercise},${l.weight}`).join('\n');
-            const names = [...new Set(trainingLogs.map(l => l.exercise))].sort();
-            document.getElementById('progress-list').innerHTML = names.map(n => `<button class="w-full text-left p-4 bg-white/40 dark:bg-gray-800/40 rounded-2xl text-[10px] font-bold uppercase text-gray-900 dark:text-white" onclick="showChart('${n}')">${n}</button>`).join('');
+            document.getElementById('csv-output').value = "Data,Kategoria,Cwiczenie,Ciezar\n" + trainingLogs.map(l => `${l.date},${l.category || exerciseMap[l.exercise] || 'INNE'},${l.exercise},${l.weight}`).join('\n');
+            
+            const accordion = document.getElementById('progress-accordion');
+            accordion.innerHTML = '';
+            
+            const categories = ['PUSH', 'PULL', 'LEGS', 'BRZUCH'];
+            categories.forEach(cat => {
+                const exInCat = [...new Set(trainingLogs.filter(l => (l.category || exerciseMap[l.exercise]) === cat).map(l => l.exercise))].sort();
+                if(exInCat.length === 0) return;
+                
+                const details = document.createElement('details');
+                details.className = 'bg-white/40 dark:bg-gray-800/40 rounded-2xl overflow-hidden';
+                details.innerHTML = `
+                    <summary class="p-4 font-bold text-sm uppercase tracking-widest cursor-pointer">${cat}</summary>
+                    <div class="p-2 space-y-1 bg-white/20 dark:bg-black/10">
+                        ${exInCat.map(n => `<button class="w-full text-left p-3 rounded-xl text-[10px] font-bold uppercase text-gray-900 dark:text-white hover:bg-white/50 dark:hover:bg-gray-700/50" onclick="showChart('${n}')">${n}</button>`).join('')}
+                    </div>
+                `;
+                accordion.appendChild(details);
+            });
         };
 
         document.getElementById('import-pasted-csv').onclick = () => {
@@ -420,7 +428,20 @@
             lines.forEach((line, i) => {
                 if (i === 0 || !line.trim()) return;
                 const parts = line.split(',');
-                if (parts.length >= 3) newEntries.push({ date: parts[0].trim(), exercise: parts[1].trim(), weight: parseFloat(parts[2]) });
+                if (parts.length >= 3) {
+                    const date = parts[0].trim();
+                    let category, exercise, weight;
+                    if(parts.length === 4) {
+                        category = parts[1].trim().toUpperCase();
+                        exercise = parts[2].trim();
+                        weight = parseFloat(parts[3]);
+                    } else {
+                        exercise = parts[1].trim();
+                        weight = parseFloat(parts[2]);
+                        category = exerciseMap[exercise] || 'INNE';
+                    }
+                    newEntries.push({ date, category, exercise, weight });
+                }
             });
             if (newEntries.length) saveToCloud(newEntries);
         };
@@ -433,8 +454,9 @@
             chartInstance = new Chart(ctx, {
                 type: 'line',
                 data: { labels: data.map(l => l.date), datasets: [{ data: data.map(l => l.weight), borderColor: '#2563eb', tension: 0.4 }] },
-                options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: false } } }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: false } } }
             });
+            window.scrollTo({ top: document.getElementById('chart-container').offsetTop - 20, behavior: 'smooth' });
         };
 
         const tabOrder = ['harmonogram', 'push', 'pull', 'legs', 'postepy', 'dziennik'];
