@@ -71,7 +71,7 @@
         }
 
         .markdown-content p { margin-bottom: 0.5rem; }
-        .markdown-content strong { color: #2563eb; }
+        .markdown-content strong { color: #2563eb; font-weight: 700; }
         html.dark .markdown-content strong { color: #60a5fa; }
     </style>
     <script>
@@ -154,7 +154,6 @@
                     </div>
                 </div>
 
-                <!-- Treningi -->
                 <div class="page-pane hidden" id="push">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white font-bold uppercase tracking-widest text-sm">Push <button data-workout="push" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
                     <div id="push-cards" class="space-y-4 workout-cards-container"></div>
@@ -184,15 +183,15 @@
                 </div>
 
                 <div class="page-pane hidden" id="ai-analiza">
-                    <h3 class="font-bold mb-4 uppercase text-center tracking-widest text-gray-900 dark:text-white text-sm">Raport AI</h3>
+                    <h3 class="font-bold mb-4 uppercase text-center tracking-widest text-gray-900 dark:text-white text-sm">Inteligentny Raport</h3>
                     <div class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-6 rounded-3xl shadow-sm border border-blue-500/10 mb-4">
-                        <p class="text-[10px] text-center opacity-70 mb-4 text-gray-700 dark:text-gray-300 uppercase font-bold tracking-tight">Ekspert Gemini przeanalizuje historię treningów</p>
+                        <p class="text-[10px] text-center opacity-70 mb-4 text-gray-700 dark:text-gray-300 uppercase font-bold tracking-tight">Analiza Gemini 2.5 Flash</p>
                         <button id="generate-ai-insight" class="w-full bg-blue-600 text-white py-3 rounded-2xl font-bold uppercase text-xs shadow-md hover:bg-blue-700 transition-colors disabled:opacity-50">Generuj Raport</button>
                     </div>
                     <div id="ai-result-container" class="hidden bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl p-6 rounded-3xl shadow-xl border border-blue-500/20">
                         <div id="ai-loading" class="flex flex-col items-center gap-3 py-8 hidden">
                             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                            <span class="text-xs font-bold animate-pulse uppercase tracking-tighter">Analizowanie danych...</span>
+                            <span class="text-xs font-bold animate-pulse uppercase tracking-tighter">Przetwarzanie danych...</span>
                         </div>
                         <div id="ai-text" class="text-xs leading-relaxed markdown-content text-gray-800 dark:text-gray-200"></div>
                     </div>
@@ -213,6 +212,7 @@
         </main>
     </div>
 
+    <!-- Navigation -->
     <nav id="app-nav" class="hidden fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t border-gray-200 dark:border-gray-800 flex justify-around p-2 z-50">
         <button class="nav-btn p-2 flex flex-col items-center" data-tab="harmonogram">🏠<span class="text-[9px] font-bold">START</span></button>
         <button class="nav-btn p-2 flex flex-col items-center" data-tab="push">💪<span class="text-[9px] font-bold">PUSH</span></button>
@@ -232,8 +232,8 @@
         import { getFirestore, doc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
         import { getAnalytics } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js';
 
-        // Klucz dostarczany przez środowisko Google. Jeśli pusty, system użyje klucza z konfiguracji Firebase (wymaga włączonej usługi Generative Language API w GCP).
-        const apiKey = ""; 
+        // Klucz wstrzykiwany w środowisku Canvas.
+        const apiKey = "AIzaSyAdWYZmp9zfQ7Rbvi91WBUSHPmgOWypAfM"; 
 
         const firebaseConfig = {
             apiKey: "AIzaSyAdWYZmp9zfQ7Rbvi91WBUSHPmgOWypAfM",
@@ -502,8 +502,7 @@
         };
 
         const callGemini = async (prompt, systemPrompt) => {
-            // Używa klucza ze środowiska lub klucza z firebaseConfig
-            const activeKey = apiKey || firebaseConfig.apiKey;
+            const activeKey = apiKey || ""; // Klucz ze środowiska Canvas
             let delay = 1000;
             for (let i = 0; i < 5; i++) {
                 try {
@@ -574,7 +573,7 @@
         document.querySelectorAll('.nav-btn').forEach(b => b.onclick = () => navigate(b.dataset.tab));
         const showToast = (m) => { const t = document.getElementById('toast'); t.textContent = m; t.style.opacity = '1'; setTimeout(() => t.style.opacity = '0', 2000); };
         window.onscroll = () => document.body.style.setProperty('--scroll-y', `${window.scrollY / -15}px`);
-        document.getElementById('clear-log').onclick = async () => { if(confirm('Wyczyścić chmurę?') && currentUser) await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs'), { entries: [] }); };
+        document.getElementById('clear-log').onclick = async () => { if(confirm('Wyczyścić historię?') && currentUser) await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs'), { entries: [] }); };
         document.getElementById('copy-log').onclick = () => { document.getElementById('csv-output').select(); document.execCommand('copy'); showToast('Kopia OK'); };
         const scheduleToggle = document.getElementById('scheduleToggle');
         scheduleToggle.onchange = () => {
