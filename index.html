@@ -89,15 +89,15 @@
 <body class="text-gray-800 dark:text-gray-300">
 
     <!-- Auth Overlay -->
-    <div id="auth-overlay" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-white/70 dark:bg-gray-900/70 text-gray-900 dark:text-white">
-        <div class="w-full max-w-sm bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700 text-center relative">
-            <button id="auth-theme-toggle" class="absolute top-4 right-4 p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition auth-theme-icon font-bold">Tryb</button>
+    <div id="auth-overlay" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-white/70 dark:bg-gray-900/70 text-gray-900 dark:text-white text-center">
+        <div class="w-full max-w-sm bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700 relative">
+            <button id="auth-theme-toggle" class="absolute top-4 right-4 p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition font-bold">Tryb</button>
 
             <h2 class="text-2xl font-bold mb-6">Witaj</h2>
             <div class="space-y-4">
                 <button id="google-login" class="w-full flex items-center justify-center gap-3 p-3 border border-gray-200 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition font-semibold text-gray-900 dark:text-white text-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.55 10.78l7.98-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path><path fill="none" d="M0 0h48v48H0z"></path></svg>
-                    Logowanie Google
+                    Google SSO
                 </button>
                 <div class="relative flex items-center py-2">
                     <div class="flex-grow border-t border-gray-200 dark:border-gray-600"></div><span class="px-3 text-xs text-gray-400 font-medium lowercase">lub email</span><div class="flex-grow border-t border-gray-200 dark:border-gray-600"></div>
@@ -115,7 +115,7 @@
         </div>
     </div>
 
-    <!-- App Content -->
+    <!-- Main Content -->
     <div id="app-content" class="hidden pb-24">
         <header class="text-center p-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-b border-gray-200/50 dark:border-gray-700/50 relative">
             <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 uppercase tracking-tight">Plan Treningowy</h1>
@@ -128,14 +128,13 @@
             </button>
         </header>
 
-        <main class="p-4 max-w-lg mx-auto">
+        <main class="p-4 max-w-lg mx-auto" id="main-content">
             <div id="tab-content">
-                <!-- Harmonogram -->
                 <div class="page-pane" id="harmonogram">
                     <div class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-4 rounded-xl shadow-sm mb-4 text-gray-900 dark:text-white">
                         <details>
                             <summary class="font-bold cursor-pointer">Zasady Progresji</summary>
-                            <div class="mt-4 space-y-2 text-xs border-t pt-4">
+                            <div class="mt-4 space-y-2 text-xs border-t pt-4 text-gray-600 dark:text-gray-300">
                                 <p><strong class="text-blue-600 font-bold">Technika:</strong> Pełny zakres ruchu przed ciężarem.</p>
                                 <p><strong class="text-blue-600 font-bold">Przerwy:</strong> 90-120s (Główne), 60s (Izolacje).</p>
                             </div>
@@ -156,50 +155,49 @@
                     </div>
                 </div>
 
-                <!-- Treningi -->
                 <div class="page-pane hidden" id="push">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white font-bold uppercase tracking-widest text-sm">Push <button data-workout="push" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
-                    <div id="push-cards" class="space-y-4"></div>
+                    <div id="push-cards" class="space-y-4 workout-cards-container"></div>
                 </div>
+
                 <div class="page-pane hidden" id="pull">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white font-bold uppercase tracking-widest text-sm">Pull <button data-workout="pull" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
-                    <div id="pull-cards" class="space-y-4"></div>
+                    <div id="pull-cards" class="space-y-4 workout-cards-container"></div>
                 </div>
+
                 <div class="page-pane hidden" id="legs">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white font-bold uppercase tracking-widest text-sm">Legs <button data-workout="legs" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
-                    <div id="legs-cards" class="space-y-4"></div>
+                    <div id="legs-cards" class="space-y-4 workout-cards-container"></div>
                 </div>
+
                 <div class="page-pane hidden" id="brzuch">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white font-bold uppercase tracking-widest text-sm">Brzuch <button data-workout="brzuch" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
-                    <div id="brzuch-cards" class="space-y-4"></div>
+                    <div id="brzuch-cards" class="space-y-4 workout-cards-container"></div>
                 </div>
                 
-                <!-- Analityka -->
                 <div class="page-pane hidden" id="postepy">
-                    <h3 class="font-bold mb-4 uppercase text-center tracking-widest text-gray-900 dark:text-white text-sm">Postępy Siłowe</h3>
+                    <h3 class="font-bold mb-4 uppercase text-center tracking-widest text-gray-900 dark:text-white text-sm">Analityka</h3>
                     <div id="progress-accordion" class="space-y-3 mb-6"></div>
                     <div id="chart-container" class="hidden bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-4 rounded-3xl shadow-sm border border-white/10 h-64">
                         <canvas id="progress-chart"></canvas>
                     </div>
                 </div>
 
-                <!-- AI Analiza -->
                 <div class="page-pane hidden" id="ai-analiza">
                     <h3 class="font-bold mb-4 uppercase text-center tracking-widest text-gray-900 dark:text-white text-sm">Inteligentna Analiza</h3>
                     <div class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-6 rounded-3xl shadow-sm border border-blue-500/10 mb-4">
-                        <p class="text-[10px] text-center opacity-70 mb-4">AI przeanalizuje Twoją historię logów, aby obliczyć 1RM, wykryć stagnację i zasugerować obciążenia.</p>
+                        <p class="text-[10px] text-center opacity-70 mb-4 text-gray-700 dark:text-gray-300">AI obliczy 1RM, wykryje stagnację (plateau) i zasugeruje ciężary na kolejną sesję na podstawie Twojej historii.</p>
                         <button id="generate-ai-insight" class="w-full bg-blue-600 text-white py-3 rounded-2xl font-bold uppercase text-xs shadow-md hover:bg-blue-700 transition-colors disabled:opacity-50">Generuj Raport AI</button>
                     </div>
-                    <div id="ai-result-container" class="hidden bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl p-6 rounded-3xl shadow-xl border border-blue-500/20">
+                    <div id="ai-result-container" class="hidden bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl p-6 rounded-3xl shadow-xl border border-blue-500/20">
                         <div id="ai-loading" class="flex flex-col items-center gap-3 py-8">
                             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                            <span class="text-xs font-bold animate-pulse uppercase tracking-tighter">Analizowanie danych...</span>
+                            <span class="text-xs font-bold animate-pulse uppercase tracking-tighter">Analizowanie...</span>
                         </div>
-                        <div id="ai-text" class="text-xs leading-relaxed markdown-content"></div>
+                        <div id="ai-text" class="text-xs leading-relaxed markdown-content text-gray-800 dark:text-gray-200"></div>
                     </div>
                 </div>
 
-                <!-- Dziennik -->
                 <div class="page-pane hidden" id="dziennik">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white">
                         <h3 class="font-bold uppercase tracking-widest text-sm text-bold">Logi</h3>
@@ -226,7 +224,7 @@
         <button class="nav-btn p-2 flex flex-col items-center" data-tab="dziennik">📖<span class="text-[9px] font-bold">LOGS</span></button>
     </nav>
 
-    <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] px-6 py-2 rounded-full font-bold opacity-0 transition-opacity z-[110]"></div>
+    <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] px-6 py-2 rounded-full font-bold opacity-0 transition-opacity z-[200]"></div>
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
@@ -247,7 +245,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const apiKey = ""; // API key wstrzykiwany przez środowisko
+        const apiKey = ""; // API key wstrzykiwany przez środowisko Canvas
         
         try { getAnalytics(app); } catch (e) {}
 
@@ -286,7 +284,7 @@
             ]
         };
 
-        const normalizeName = (name) => name.replace(/['"]/g, "").trim();
+        const normalizeName = (name) => (name || "").replace(/['"]/g, "").trim();
 
         const exerciseMap = {};
         Object.keys(workouts).forEach(cat => {
@@ -314,30 +312,23 @@
             document.getElementById('auth-error').textContent = msg;
         };
 
-        const hideError = () => { document.getElementById('auth-error-container').classList.add('hidden'); };
-
         const loginWithGoogle = async () => {
-            hideError();
             const provider = new GoogleAuthProvider();
             provider.setCustomParameters({ prompt: 'select_account' });
-            try { await signInWithPopup(auth, provider); } catch (e) {
-                showError(`Błąd: ${e.code}`);
-            }
+            try { await signInWithPopup(auth, provider); } catch (e) { showError(`Google Error: ${e.code}`); }
         };
 
         const loginWithEmail = async () => {
-            hideError();
             const e = document.getElementById('auth-email').value;
             const p = document.getElementById('auth-password').value;
-            if (!e || !p) return showError("Brak danych.");
+            if (!e || !p) return showError("Wprowadź dane.");
             try { await signInWithEmailAndPassword(auth, e, p); } catch (err) { showError(err.message); }
         };
 
         const registerWithEmail = async () => {
-            hideError();
             const e = document.getElementById('auth-email').value;
             const p = document.getElementById('auth-password').value;
-            if (!e || !p) return showError("Brak danych.");
+            if (!e || !p) return showError("Wprowadź dane.");
             try { await createUserWithEmailAndPassword(auth, e, p); } catch (err) { showError(err.message); }
         };
 
@@ -371,7 +362,7 @@
         const saveToCloud = async (entries) => {
             if (!currentUser) return;
             await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs'), { entries: entries });
-            showToast("Zsynchronizowano");
+            showToast("Chmura zaktualizowana");
         };
 
         const getStats = (name) => {
@@ -427,7 +418,13 @@
                 container.querySelectorAll('.card').forEach(card => {
                     const weight = parseFloat(card.querySelector('.weight-input').value);
                     if(!isNaN(weight) && weight > 0) {
-                        entries.push({ date: now, category: category, exercise: card.querySelector('.ex-select').value, weight });
+                        entries.push({ 
+                            date: now, 
+                            category: category, 
+                            exercise: card.querySelector('.ex-select').value, 
+                            sets: card.querySelector('.sets-display').textContent,
+                            weight 
+                        });
                         card.querySelector('.weight-input').value = '';
                     }
                 });
@@ -436,27 +433,22 @@
         });
 
         const updateHistoryUI = () => {
-            document.getElementById('csv-output').value = "Data,Kategoria,Cwiczenie,Ciezar\n" + trainingLogs.map(l => {
+            document.getElementById('csv-output').value = "Data,Kategoria,Cwiczenie,Serie x Powt.,Ciezar\n" + trainingLogs.map(l => {
                 const cat = l.category || exerciseMap[normalizeName(l.exercise)] || 'INNE';
-                return `${l.date},${cat},${l.exercise},${l.weight}`;
+                return `${l.date},${cat},${l.exercise},${l.sets || ''},${l.weight}`;
             }).join('\n');
             
             const accordion = document.getElementById('progress-accordion');
             accordion.innerHTML = '';
             
-            const categories = ['PUSH', 'PULL', 'LEGS', 'BRZUCH'];
-            categories.forEach(cat => {
-                const exInCat = [...new Set(trainingLogs.filter(l => {
-                    const mappedCat = l.category || exerciseMap[normalizeName(l.exercise)];
-                    return mappedCat === cat;
-                }).map(l => l.exercise))].sort();
-                
+            ['PUSH', 'PULL', 'LEGS', 'BRZUCH'].forEach(cat => {
+                const exInCat = [...new Set(trainingLogs.filter(l => (l.category || exerciseMap[normalizeName(l.exercise)]) === cat).map(l => l.exercise))].sort();
                 if(exInCat.length === 0) return;
                 
                 const details = document.createElement('details');
                 details.className = 'bg-white/40 dark:bg-gray-800/40 rounded-2xl overflow-hidden';
                 details.innerHTML = `
-                    <summary class="p-4 font-bold text-sm uppercase tracking-widest cursor-pointer">${cat}</summary>
+                    <summary class="p-4 font-bold text-sm uppercase tracking-widest cursor-pointer text-gray-800 dark:text-white">${cat}</summary>
                     <div class="p-2 space-y-1 bg-white/20 dark:bg-black/10">
                         ${exInCat.map(n => `<button class="w-full text-left p-3 rounded-xl text-[10px] font-bold uppercase text-gray-900 dark:text-white hover:bg-white/50 dark:hover:bg-gray-700/50" onclick="showChart('${n.replace(/'/g, "\\'")}')">${n}</button>`).join('')}
                     </div>
@@ -473,8 +465,13 @@
                 const parts = line.split(',');
                 if (parts.length >= 3) {
                     const date = parts[0].trim();
-                    let category, exercise, weight;
-                    if(parts.length === 4) {
+                    let category, exercise, sets, weight;
+                    if(parts.length === 5) {
+                        category = parts[1].trim().toUpperCase();
+                        exercise = parts[2].trim();
+                        sets = parts[3].trim();
+                        weight = parseFloat(parts[4]);
+                    } else if(parts.length === 4) {
                         category = parts[1].trim().toUpperCase();
                         exercise = parts[2].trim();
                         weight = parseFloat(parts[3]);
@@ -483,9 +480,7 @@
                         weight = parseFloat(parts[2]);
                         category = exerciseMap[normalizeName(exercise)] || 'INNE';
                     }
-                    if(!isNaN(weight)) {
-                        newEntries.push({ date, category, exercise, weight });
-                    }
+                    if(!isNaN(weight)) newEntries.push({ date, category, exercise, sets: sets || '', weight });
                 }
             });
             if (newEntries.length) saveToCloud(newEntries);
@@ -498,18 +493,18 @@
             const data = trainingLogs.filter(l => normalizeName(l.exercise) === normalizeName(name)).sort((a,b) => new Date(a.date) - new Date(b.date));
             chartInstance = new Chart(ctx, {
                 type: 'line',
-                data: { labels: data.map(l => l.date), datasets: [{ data: data.map(l => l.weight), borderColor: '#2563eb', tension: 0.4 }] },
+                data: { labels: data.map(l => l.date), datasets: [{ data: data.map(l => l.weight), borderColor: '#2563eb', tension: 0.4, fill: false }] },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: false } } }
             });
             window.scrollTo({ top: document.getElementById('chart-container').offsetTop - 20, behavior: 'smooth' });
         };
 
-        // --- AI Progress Analysis Logic ---
         const callGemini = async (prompt, systemPrompt) => {
+            const activeKey = apiKey || firebaseConfig.apiKey;
             let delay = 1000;
             for (let i = 0; i < 5; i++) {
                 try {
-                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${activeKey}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -529,38 +524,30 @@
         };
 
         document.getElementById('generate-ai-insight').onclick = async () => {
-            if (trainingLogs.length < 5) {
-                showToast("Za mało danych do analizy (min. 5 wpisów)");
-                return;
-            }
-
+            if (trainingLogs.length < 5) return showToast("Zbyt mało danych (min. 5 wpisów)");
+            
             const btn = document.getElementById('generate-ai-insight');
-            const container = document.getElementById('ai-result-container');
+            const resultBox = document.getElementById('ai-result-container');
             const loading = document.getElementById('ai-loading');
-            const textArea = document.getElementById('ai-text');
+            const textEl = document.getElementById('ai-text');
 
             btn.disabled = true;
-            container.classList.remove('hidden');
+            resultBox.classList.remove('hidden');
             loading.classList.remove('hidden');
-            textArea.textContent = '';
+            textEl.innerHTML = '';
 
-            const systemPrompt = "Jesteś trenerem personalnym i ekspertem od analizy danych treningowych. Analizujesz logi użytkownika (Data, Kategoria, Ćwiczenie, Ciężar). Cel: Wylicz szacowane 1RM dla głównych bojów, wykryj stagnację (brak progresu od 3 sesji) i zasugeruj konkretne ciężary na następny tydzień. Odpowiadaj krótko, konkretnie, w punktach, używając Markdown (pogrubienia). Nie używaj wstępów.";
-            const dataStr = trainingLogs.map(l => `${l.date},${l.category},${l.exercise},${l.weight}kg`).join('\n');
-            const prompt = `Przeanalizuj poniższe logi:\n${dataStr}`;
+            const dataSummary = trainingLogs.slice(-30).map(l => `${l.date}, ${l.exercise}, ${l.weight}kg`).join('\n');
+            const systemPrompt = "Jesteś trenerem personalnym. Analizujesz historię treningową (CSV). Cel: 1. Szacuj 1RM głównych bojów (np. wyciskanie, przysiad). 2. Wykryj stagnację (brak wzrostu w min. 3 sesjach). 3. Zasugeruj obciążenia na kolejny trening (+2.5kg lub +5%). Formatuj w punktach, używaj **pogrubień**. Pisz krótko i konkretnie po polsku.";
+            const prompt = `Analizuj ostatnie treningi:\n${dataSummary}`;
 
             try {
-                const result = await callGemini(prompt, systemPrompt);
+                const response = await callGemini(prompt, systemPrompt);
                 loading.classList.add('hidden');
-                // Prosty parser markdown do HTML
-                textArea.innerHTML = result
-                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                    .replace(/\n/g, '<br>');
+                textEl.innerHTML = response.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
             } catch (e) {
                 loading.classList.add('hidden');
-                textArea.innerHTML = '<span class="text-red-500 font-bold">Wystąpił błąd podczas analizy. Spróbuj ponownie później.</span>';
-            } finally {
-                btn.disabled = false;
-            }
+                textEl.innerHTML = '<span class="text-red-500 font-bold">Błąd: Klucz API jest zablokowany przez restrykcje domenowe. Usuń ograniczenia HTTP Referer w GCP Console dla klucza API.</span>';
+            } finally { btn.disabled = false; }
         };
 
         const tabOrder = ['harmonogram', 'push', 'pull', 'legs', 'brzuch', 'postepy', 'ai-analiza', 'dziennik'];
@@ -574,22 +561,19 @@
                 dest.classList.add(dir === 'L' ? 'animate-slide-in-from-right' : 'animate-slide-in-from-left');
             }
             dest.classList.remove('hidden');
-            setTimeout(() => { 
-                curr.className = 'page-pane hidden'; 
-                dest.className = 'page-pane'; 
-                if(id === 'postepy') updateHistoryUI(); 
-            }, 300);
+            setTimeout(() => { curr.className = 'page-pane hidden'; dest.className = 'page-pane'; if(id === 'postepy') updateHistoryUI(); }, 300);
         };
 
         document.querySelectorAll('.nav-btn').forEach(b => b.onclick = () => navigate(b.dataset.tab));
 
         const showToast = (m) => { const t = document.getElementById('toast'); t.textContent = m; t.style.opacity = '1'; setTimeout(() => t.style.opacity = '0', 2000); };
-        document.getElementById('clear-log').onclick = async () => { if(confirm('Wyczyścić historię?') && currentUser) await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs'), { entries: [] }); };
-        document.getElementById('copy-log').onclick = () => { document.getElementById('csv-output').select(); document.execCommand('copy'); showToast('Skopiowano!'); };
+        window.onscroll = () => document.body.style.setProperty('--scroll-y', `${window.scrollY / -15}px`);
+        document.getElementById('clear-log').onclick = async () => { if(confirm('Usunąć dane z chmury?') && currentUser) await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs'), { entries: [] }); };
+        document.getElementById('copy-log').onclick = () => { document.getElementById('csv-output').select(); document.execCommand('copy'); showToast('Kopia gotowa'); };
 
         const scheduleToggle = document.getElementById('scheduleToggle');
         scheduleToggle.onchange = () => {
-            document.getElementById('schedule-display').textContent = scheduleToggle.checked ? "Pon: PUSH | Wt: PULL | Czw: LEGS | Pt: PUSH" : "Pon: PUSH | Śr: PULL | Pt: LEGS";
+            document.getElementById('schedule-display').textContent = scheduleToggle.checked ? "T1: PUSH, PULL, LEGS, PUSH | T2: PULL, LEGS, PUSH, PULL" : "Pon: PUSH | Śr: PULL | Pt: LEGS";
             document.querySelector('.dot').style.transform = scheduleToggle.checked ? 'translateX(1.25rem)' : 'translateX(0)';
         };
 
