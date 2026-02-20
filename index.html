@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plan Treningowy Pro</title>
+    <!-- Biblioteki zewnętrzne -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -59,6 +60,15 @@
         details[open] summary:after { transform: rotate(45deg); }
         
         #auth-overlay { backdrop-filter: blur(10px); }
+
+        select option {
+            background-color: #ffffff;
+            color: #111827;
+        }
+        html.dark select option {
+            background-color: #1f2937;
+            color: #f9fafb;
+        }
     </style>
     <script>
         (function() {
@@ -153,12 +163,12 @@
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white font-bold uppercase tracking-widest text-sm">Legs <button data-workout="legs" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
                     <div id="legs-cards" class="space-y-4"></div>
                 </div>
-                
+
                 <div class="page-pane hidden" id="brzuch">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white font-bold uppercase tracking-widest text-sm">Brzuch <button data-workout="brzuch" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
                     <div id="brzuch-cards" class="space-y-4"></div>
                 </div>
-
+                
                 <div class="page-pane hidden" id="postepy">
                     <h3 class="font-bold mb-4 uppercase text-center tracking-widest text-gray-900 dark:text-white text-sm">Analityka</h3>
                     <div id="progress-accordion" class="space-y-3 mb-6"></div>
@@ -183,12 +193,13 @@
     </div>
 
     <nav id="app-nav" class="hidden fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t border-gray-200 dark:border-gray-800 flex justify-around p-2 z-50">
-        <button class="nav-btn p-2 flex flex-col items-center" data-tab="harmonogram">START</button>
-        <button class="nav-btn p-2 flex flex-col items-center" data-tab="push">PUSH</button>
-        <button class="nav-btn p-2 flex flex-col items-center" data-tab="pull">PULL</button>
-        <button class="nav-btn p-2 flex flex-col items-center" data-tab="legs">LEGS</button>
-        <button class="nav-btn p-2 flex flex-col items-center" data-tab="postepy">ANALYTICS</button>
-        <button class="nav-btn p-2 flex flex-col items-center" data-tab="dziennik">LOGS</button>
+        <button class="nav-btn p-2 flex flex-col items-center" data-tab="harmonogram">🏠<span class="text-[9px] font-bold">START</span></button>
+        <button class="nav-btn p-2 flex flex-col items-center" data-tab="push">💪<span class="text-[9px] font-bold">PUSH</span></button>
+        <button class="nav-btn p-2 flex flex-col items-center" data-tab="pull">🏋️<span class="text-[9px] font-bold">PULL</span></button>
+        <button class="nav-btn p-2 flex flex-col items-center" data-tab="legs">🦵<span class="text-[9px] font-bold">LEGS</span></button>
+        <button class="nav-btn p-2 flex flex-col items-center" data-tab="brzuch">🔥<span class="text-[9px] font-bold">CORE</span></button>
+        <button class="nav-btn p-2 flex flex-col items-center" data-tab="postepy">📈<span class="text-[9px] font-bold">CHARTS</span></button>
+        <button class="nav-btn p-2 flex flex-col items-center" data-tab="dziennik">📖<span class="text-[9px] font-bold">LOGS</span></button>
     </nav>
 
     <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] px-6 py-2 rounded-full font-bold opacity-0 transition-opacity z-[110]"></div>
@@ -245,7 +256,7 @@
             brzuch: [
                 { options: [{ name: "'Allahy' (linka wyciągu)", sets: "4x10-15" }, { name: "Spięcia brzucha na maszynie", sets: "4x10-15" }, { name: "Spięcia leżąc z talerzem na klatce", sets: "4x12-15" }]},
                 { options: [{ name: "Unoszenie nóg w zwisie na drążku", sets: "4xMAX" }, { name: "Unoszenie kolan do klatki piersiowej w zwisie", sets: "4xMAX" }, { name: "Scyzoryki (V-ups)", sets: "4x15-20" }]},
-                { options: [{ name: "Plank (z obciążeniem na plecach)", sets: "4x60-90s" }, { name: "Plank boczny", sets: "3x45-60s (na str.)" }, { name: "Ab Wheel (kółko)", sets: "3x10-15" }]},
+                { options: [{ name: "Plank", sets: "4x60-90s" }, { name: "Plank boczny", sets: "3x45-60s (na str.)" }, { name: "Ab Wheel (kółko)", sets: "3x10-15" }]},
                 { options: [{ name: "'Wood choppers' (rąbanie drewna)", sets: "3x12-15 (na str.)" }, { name: "'Russian Twist' (skręty tułowia)", sets: "3x15 (na stronę)" }, { name: "Pallof Press (antyrotacja z gumą/linką)", sets: "3x12-15 (na str.)" }]}
             ]
         };
@@ -351,7 +362,7 @@
                 container.innerHTML = workouts[type].map((slot, i) => {
                     const stats = getStats(slot.options[0].name);
                     return `
-                        <div class="card bg-white/60 dark:bg-gray-800/60 p-5 rounded-3xl border border-white/20">
+                        <div class="card bg-white/60 dark:bg-gray-800/60 p-5 rounded-3xl border border-white/20 shadow-sm">
                             <select class="ex-select w-full bg-transparent font-bold text-sm outline-none mb-2 text-gray-900 dark:text-white" data-type="${type}" data-idx="${i}">
                                 ${slot.options.map(o => `<option value="${o.name}">${o.name}</option>`).join('')}
                             </select>
@@ -459,15 +470,22 @@
             window.scrollTo({ top: document.getElementById('chart-container').offsetTop - 20, behavior: 'smooth' });
         };
 
-        const tabOrder = ['harmonogram', 'push', 'pull', 'legs', 'postepy', 'dziennik'];
-        const navigate = (id) => {
+        const tabOrder = ['harmonogram', 'push', 'pull', 'legs', 'brzuch', 'postepy', 'dziennik'];
+        const navigate = (id, dir = null) => {
             const curr = document.querySelector('.page-pane:not(.hidden)');
             const dest = document.getElementById(id);
             if(curr === dest) return;
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === id));
-            curr.classList.add('hidden');
+            if(dir) {
+                curr.classList.add(dir === 'L' ? 'animate-slide-out-to-left' : 'animate-slide-out-to-right');
+                dest.classList.add(dir === 'L' ? 'animate-slide-in-from-right' : 'animate-slide-in-from-left');
+            }
             dest.classList.remove('hidden');
-            if(id === 'postepy') updateHistoryUI();
+            setTimeout(() => { 
+                curr.className = 'page-pane hidden'; 
+                dest.className = 'page-pane'; 
+                if(id === 'postepy') updateHistoryUI(); 
+            }, 300);
         };
 
         document.querySelectorAll('.nav-btn').forEach(b => b.onclick = () => navigate(b.dataset.tab));
