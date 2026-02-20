@@ -225,7 +225,15 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const analytics = getAnalytics(app);
+        
+        // Bezpieczna inicjalizacja Analytics - błędy domenowe (referer) nie zatrzymają aplikacji
+        let analytics;
+        try {
+            analytics = getAnalytics(app);
+        } catch (e) {
+            console.warn("Firebase Analytics nie zainicjalizowane (prawdopodobnie przez restrykcje klucza API dla domeny referer). To nie wpływa na działanie aplikacji.");
+        }
+
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'training-assistant-44a28';
 
         const workouts = {
@@ -281,7 +289,7 @@
         document.getElementById('theme-toggle').onclick = toggleTheme;
         updateThemeUI();
 
-        // BŁĘDY
+        // OBSŁUGA BŁĘDÓW
         const showError = (msg) => {
             document.getElementById('auth-error-container').classList.remove('hidden');
             document.getElementById('auth-error').textContent = msg;
@@ -300,7 +308,7 @@
             try { 
                 await signInWithEmailAndPassword(auth, email, password); 
             } catch (e) { 
-                showError(`Logowanie nieudane: ${e.code}`); 
+                showError(`Logowanie email nieudane: ${e.code}\n${e.message}`); 
             }
         };
 
@@ -312,7 +320,7 @@
             try { 
                 await createUserWithEmailAndPassword(auth, email, password); 
             } catch (e) { 
-                showError(`Rejestracja nieudana: ${e.code}`); 
+                showError(`Rejestracja nieudana: ${e.code}\n${e.message}`); 
             }
         };
 
@@ -323,9 +331,9 @@
             try {
                 await signInWithPopup(auth, provider);
             } catch (e) {
-                let msg = `Błąd Google SSO: ${e.code}\n\n${e.message}`;
+                let msg = `Błąd Google: ${e.code}\n\n${e.message}`;
                 if (e.code === 'auth/unauthorized-domain') {
-                    msg = `DOMENA NIEZAUTORYZOWANA: ${window.location.hostname}\n\nKONFIGURACJA GCP:\n1. Branding > Authorized domains > Dodaj domenę.\n2. Clients > Web client > JavaScript origins > Dodaj domenę.\n3. Clients > Web client > Redirect URIs > Dodaj https://${firebaseConfig.authDomain}/__/auth/handler`;
+                    msg = `DOMENA NIEZAUTORYZOWANA: ${window.location.hostname}\n\nKONFIGURACJA GCP:\n1. Branding > Authorized domains > Dodaj domenę.\n2. Clients > Web client > JavaScript origins > Dodaj domenę.\n3. Klucz API: Jeśli ograniczasz klucz API do konkretnych domen, musisz dodać "${window.location.hostname}" do listy dozwolonych w Google Cloud Console (Credentials).`;
                 } else if (e.code === 'auth/popup-blocked') {
                     msg = "Pop-up zablokowany przez przeglądarkę.";
                 }
@@ -365,13 +373,23 @@
             onSnapshot(doc(db, 'artifacts', appId, 'users', uid, 'data', 'logs'), (snap) => {
                 trainingLogs = snap.exists() ? (snap.data().entries || []) : [];
                 renderAll();
+            }, (err) => {
+                console.error("Błąd synchronizacji Firestore:", err);
+                if (err.code === 'permission-denied') {
+                    showToast("Błąd uprawnień Firestore. Sprawdź reguły bazy danych.");
+                }
             });
         };
 
         const saveToCloud = async (entries) => {
             if (!currentUser) return;
-            await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs'), { entries: entries });
-            showToast("Zsynchronizowano");
+            try {
+                await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs'), { entries: entries });
+                showToast("Zsynchronizowano");
+            } catch (e) {
+                console.error("Błąd zapisu w Firestore:", e);
+                showToast("Błąd zapisu");
+            }
         };
 
         const getStats = (name) => {
