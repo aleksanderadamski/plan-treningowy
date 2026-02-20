@@ -154,6 +154,7 @@
                     </div>
                 </div>
 
+                <!-- Workout Sections -->
                 <div class="page-pane hidden" id="push">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white font-bold uppercase tracking-widest text-sm">Push <button data-workout="push" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
                     <div id="push-cards" class="space-y-4 workout-cards-container"></div>
@@ -175,7 +176,7 @@
                 </div>
                 
                 <div class="page-pane hidden" id="postepy">
-                    <h3 class="font-bold mb-4 uppercase text-center tracking-widest text-gray-900 dark:text-white text-sm">Analityka</h3>
+                    <h3 class="font-bold mb-4 uppercase text-center tracking-widest text-gray-900 dark:text-white text-sm">Statystyki</h3>
                     <div id="progress-accordion" class="space-y-3 mb-6"></div>
                     <div id="chart-container" class="hidden bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-4 rounded-3xl shadow-sm border border-white/10 h-64">
                         <canvas id="progress-chart"></canvas>
@@ -183,15 +184,15 @@
                 </div>
 
                 <div class="page-pane hidden" id="ai-analiza">
-                    <h3 class="font-bold mb-4 uppercase text-center tracking-widest text-gray-900 dark:text-white text-sm">Inteligentny Raport</h3>
+                    <h3 class="font-bold mb-4 uppercase text-center tracking-widest text-gray-900 dark:text-white text-sm">Raport Gemini AI</h3>
                     <div class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-6 rounded-3xl shadow-sm border border-blue-500/10 mb-4">
-                        <p class="text-[10px] text-center opacity-70 mb-4 text-gray-700 dark:text-gray-300 uppercase font-bold tracking-tight">Analiza Gemini 2.5 Flash</p>
+                        <p class="text-[10px] text-center opacity-70 mb-4 text-gray-700 dark:text-gray-300 uppercase font-bold tracking-tight text-balance">AI obliczy 1RM, wykryje stagnację i zasugeruje ciężary na podstawie historii</p>
                         <button id="generate-ai-insight" class="w-full bg-blue-600 text-white py-3 rounded-2xl font-bold uppercase text-xs shadow-md hover:bg-blue-700 transition-colors disabled:opacity-50">Generuj Raport</button>
                     </div>
                     <div id="ai-result-container" class="hidden bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl p-6 rounded-3xl shadow-xl border border-blue-500/20">
                         <div id="ai-loading" class="flex flex-col items-center gap-3 py-8 hidden">
                             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                            <span class="text-xs font-bold animate-pulse uppercase tracking-tighter">Przetwarzanie danych...</span>
+                            <span class="text-xs font-bold animate-pulse uppercase tracking-tighter">Analizowanie...</span>
                         </div>
                         <div id="ai-text" class="text-xs leading-relaxed markdown-content text-gray-800 dark:text-gray-200"></div>
                     </div>
@@ -199,14 +200,14 @@
 
                 <div class="page-pane hidden" id="dziennik">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white">
-                        <h3 class="font-bold uppercase tracking-widest text-sm">Logi CSV</h3>
+                        <h3 class="font-bold uppercase tracking-widest text-sm">Baza Logów</h3>
                         <div class="flex gap-2">
                             <button id="import-pasted-csv" class="text-[10px] bg-blue-600 text-white px-3 py-1 rounded-lg font-bold uppercase">Sync</button>
                             <button id="copy-log" class="text-[10px] bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded-lg font-bold uppercase">Kopiuj</button>
                         </div>
                     </div>
                     <textarea id="csv-output" placeholder="Data,Kategoria,Cwiczenie,Serie x Powt.,Ciezar" class="w-full h-80 p-4 text-[10px] font-mono rounded-3xl bg-gray-100/50 dark:bg-gray-900/50 outline-none resize-none border border-blue-500/20 text-gray-900 dark:text-blue-300"></textarea>
-                    <button id="clear-log" class="w-full mt-4 bg-red-500/10 text-red-500 py-3 rounded-2xl text-xs font-bold uppercase tracking-wider">Wyczyść historię</button>
+                    <button id="clear-log" class="w-full mt-4 bg-red-500/10 text-red-500 py-3 rounded-2xl text-xs font-bold uppercase tracking-wider">Wyczyść chmurę</button>
                 </div>
             </div>
         </main>
@@ -228,11 +229,11 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithCustomToken } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
-        import { getFirestore, doc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithCustomToken, signInAnonymously } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+        import { getFirestore, doc, setDoc, onSnapshot, collection, query, getDoc } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
         import { getAnalytics } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js';
 
-        // Klucz wstrzykiwany w środowisku Canvas.
+        // Klucz API dla Gemini (pozostaw pusty w Canvas, system wstrzyknie go automatycznie)
         const apiKey = "AIzaSyAdWYZmp9zfQ7Rbvi91WBUSHPmgOWypAfM"; 
 
         const firebaseConfig = {
@@ -248,10 +249,9 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'training-assistant-44a28';
         
         try { getAnalytics(app); } catch (e) {}
-
-        const appId = 'training-pro-v3';
 
         const workouts = {
             push: [
@@ -339,7 +339,7 @@
         document.getElementById('email-register').onclick = registerWithEmail;
         document.getElementById('logout-btn').onclick = () => signOut(auth);
 
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             currentUser = user;
             if (user && !user.isAnonymous) {
                 document.getElementById('auth-overlay').classList.add('hidden');
@@ -347,7 +347,7 @@
                 document.getElementById('app-nav').classList.remove('hidden');
                 document.getElementById('user-id-display').textContent = user.email;
                 syncLogs(user.uid);
-            } else {
+            } else if (!user) {
                 document.getElementById('auth-overlay').classList.remove('hidden');
                 document.getElementById('app-content').classList.add('hidden');
                 document.getElementById('app-nav').classList.add('hidden');
@@ -502,7 +502,9 @@
         };
 
         const callGemini = async (prompt, systemPrompt) => {
-            const activeKey = apiKey || ""; // Klucz ze środowiska Canvas
+            // W środowisku produkcyjnym (GitHub Pages) klucz z firebaseConfig musi mieć włączone "Generative Language API"
+            // oraz brak restrykcji API ograniczających klucz tylko do Identity Toolkit/Firestore.
+            const activeKey = apiKey || firebaseConfig.apiKey;
             let delay = 1000;
             for (let i = 0; i < 5; i++) {
                 try {
@@ -520,7 +522,7 @@
                     }
                     const result = await response.json();
                     const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                    if (!text) throw new Error('Pusta odpowiedź');
+                    if (!text) throw new Error('Model zwrócił pustą odpowiedź');
                     return text;
                 } catch (e) {
                     if (i === 4) throw e;
@@ -531,7 +533,7 @@
         };
 
         document.getElementById('generate-ai-insight').onclick = async () => {
-            if (trainingLogs.length < 5) return showToast("Zbyt mało danych");
+            if (trainingLogs.length < 5) return showToast("Zbyt mało danych (min. 5)");
             const btn = document.getElementById('generate-ai-insight');
             const resultBox = document.getElementById('ai-result-container');
             const loading = document.getElementById('ai-loading');
@@ -573,11 +575,11 @@
         document.querySelectorAll('.nav-btn').forEach(b => b.onclick = () => navigate(b.dataset.tab));
         const showToast = (m) => { const t = document.getElementById('toast'); t.textContent = m; t.style.opacity = '1'; setTimeout(() => t.style.opacity = '0', 2000); };
         window.onscroll = () => document.body.style.setProperty('--scroll-y', `${window.scrollY / -15}px`);
-        document.getElementById('clear-log').onclick = async () => { if(confirm('Wyczyścić historię?') && currentUser) await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs'), { entries: [] }); };
+        document.getElementById('clear-log').onclick = async () => { if(confirm('Usunąć dane?') && currentUser) await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs'), { entries: [] }); };
         document.getElementById('copy-log').onclick = () => { document.getElementById('csv-output').select(); document.execCommand('copy'); showToast('Kopia OK'); };
         const scheduleToggle = document.getElementById('scheduleToggle');
         scheduleToggle.onchange = () => {
-            document.getElementById('schedule-display').textContent = scheduleToggle.checked ? "PUSH, PULL, LEGS, PUSH (itd.)" : "Pon: PUSH | Śr: PULL | Pt: LEGS";
+            document.getElementById('schedule-display').textContent = scheduleToggle.checked ? "PUSH, PULL, LEGS..." : "Pon: PUSH | Śr: PULL | Pt: LEGS";
             document.querySelector('.dot').style.transform = scheduleToggle.checked ? 'translateX(1.25rem)' : 'translateX(0)';
         };
         renderAll();
