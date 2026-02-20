@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plan Treningowy Pro</title>
-    <!-- Biblioteki zewnętrzne: Tailwind CSS do stylizacji, Chart.js do wykresów -->
+    <!-- Biblioteki zewnętrzne -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -17,7 +17,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* Definicja kolorów gradientu dla trybu jasnego i ciemnego */
         :root {
           --grad-color-1: #e0f2fe; --grad-color-2: #f0f9ff;
           --grad-color-3: #fefce8; --grad-color-4: #ecfdf5;
@@ -26,7 +25,6 @@
           --grad-color-1: #1e3a8a; --grad-color-2: #1e1b4b;
           --grad-color-3: #4a044e; --grad-color-4: #312e81;
         }
-        /* Stylizacja tła z animowanym gradientem */
         body {
             font-family: 'Poppins', sans-serif;
             -webkit-tap-highlight-color: transparent;
@@ -47,7 +45,6 @@
         html.dark .nav-btn.active { color: #60a5fa; }
         .page-pane { transition: transform 0.3s ease-out, opacity 0.3s ease-out; }
         
-        /* Animacje przejść między zakładkami (swipe) */
         @keyframes slide-in-from-right { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes slide-out-to-left { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
         @keyframes slide-in-from-left { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
@@ -57,7 +54,6 @@
         .animate-slide-in-from-left { animation: slide-in-from-left 0.3s forwards; }
         .animate-slide-out-to-right { animation: slide-out-to-right 0.3s forwards; }
 
-        /* Stylizacja elementu details - akordeon zasad */
         details > summary { list-style: none; }
         details > summary::-webkit-details-marker { display: none; }
         details summary:after { content: '+'; float: right; font-weight: bold; transition: transform 0.2s; }
@@ -66,7 +62,6 @@
         #auth-overlay { backdrop-filter: blur(10px); }
     </style>
     <script>
-        // Natychmiastowe wykrywanie motywu przed renderowaniem
         (function() {
             const savedTheme = localStorage.getItem('theme');
             const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -80,14 +75,13 @@
 </head>
 <body class="text-gray-800 dark:text-gray-300">
 
-    <!-- Ekran logowania/rejestracji -->
     <div id="auth-overlay" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-white/70 dark:bg-gray-900/70 text-gray-900 dark:text-white">
         <div class="w-full max-w-sm bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700 text-center relative">
             <button id="auth-theme-toggle" class="absolute top-4 right-4 p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition auth-theme-icon">
                 🌙
             </button>
 
-            <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Witaj</h2>
+            <h2 class="text-2xl font-bold mb-6">Witaj</h2>
             <div class="space-y-4">
                 <button id="google-login" class="w-full flex items-center justify-center gap-3 p-3 border border-gray-200 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition font-semibold text-gray-900 dark:text-white">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.55 10.78l7.98-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path><path fill="none" d="M0 0h48v48H0z"></path></svg>
@@ -109,7 +103,6 @@
         </div>
     </div>
 
-    <!-- Zawartość główna -->
     <div id="app-content" class="hidden pb-24">
         <header class="text-center p-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-b border-gray-200/50 dark:border-gray-700/50 relative">
             <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 uppercase tracking-tight">Plan Treningowy</h1>
@@ -125,9 +118,9 @@
         <main class="p-4 max-w-lg mx-auto">
             <div id="tab-content">
                 <div class="page-pane" id="harmonogram">
-                    <div class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-4 rounded-xl shadow-sm mb-4">
+                    <div class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-4 rounded-xl shadow-sm mb-4 text-gray-900 dark:text-white">
                         <details>
-                            <summary class="font-bold cursor-pointer text-gray-900 dark:text-white">Zasady Progresji</summary>
+                            <summary class="font-bold cursor-pointer">Zasady Progresji</summary>
                             <div class="mt-4 space-y-2 text-xs border-t pt-4">
                                 <p><strong class="text-blue-600">Technika:</strong> Pełny zakres ruchu przed ciężarem.</p>
                                 <p><strong class="text-blue-600">Przerwy:</strong> 90-120s (Główne), 60s (Izolacje).</p>
@@ -164,11 +157,6 @@
                     <div id="legs-cards" class="space-y-4"></div>
                 </div>
 
-                <div class="page-pane hidden" id="brzuch">
-                    <div class="flex justify-between items-center mb-4"><h3 class="font-bold uppercase tracking-widest text-gray-900 dark:text-white">Brzuch</h3><button data-workout="brzuch" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
-                    <div id="brzuch-cards" class="space-y-4"></div>
-                </div>
-
                 <div class="page-pane hidden" id="postepy">
                     <h3 class="font-bold mb-4 uppercase text-center tracking-widest text-gray-900 dark:text-white">Wykresy</h3>
                     <div id="progress-list" class="space-y-2 mb-4"></div>
@@ -192,13 +180,11 @@
         </main>
     </div>
 
-    <!-- Nawigacja -->
     <nav id="app-nav" class="hidden fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t border-gray-200 dark:border-gray-800 flex justify-around p-2 z-50">
         <button class="nav-btn p-2 flex flex-col items-center" data-tab="harmonogram"><span>🏠</span><span class="text-[9px] font-bold">START</span></button>
         <button class="nav-btn p-2 flex flex-col items-center" data-tab="push"><span>💪</span><span class="text-[9px] font-bold">PUSH</span></button>
         <button class="nav-btn p-2 flex flex-col items-center" data-tab="pull"><span>🏋️</span><span class="text-[9px] font-bold">PULL</span></button>
         <button class="nav-btn p-2 flex flex-col items-center" data-tab="legs"><span>🦵</span><span class="text-[9px] font-bold">LEGS</span></button>
-        <button class="nav-btn p-2 flex flex-col items-center" data-tab="brzuch"><span>🔥</span><span class="text-[9px] font-bold">CORE</span></button>
         <button class="nav-btn p-2 flex flex-col items-center" data-tab="postepy"><span>📈</span><span class="text-[9px] font-bold">ANALYTICS</span></button>
         <button class="nav-btn p-2 flex flex-col items-center" data-tab="dziennik"><span>📖</span><span class="text-[9px] font-bold">LOGS</span></button>
     </nav>
@@ -211,7 +197,7 @@
         import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
         import { getAnalytics } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js';
 
-        // --- KONFIGURACJA PRODUKCYJNA ---
+        // KONFIGURACJA SDK
         const firebaseConfig = {
             apiKey: "AIzaSyAdWYZmp9zfQ7Rbvi91WBUSHPmgOWypAfM",
             authDomain: "training-assistant-44a28.firebaseapp.com",
@@ -226,15 +212,13 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         
-        // Zabezpieczona inicjalizacja Analytics
-        // Błąd referer (403) w tym środowisku jest ignorowany, aby aplikacja mogła działać bez analityki
         try {
-            const analytics = getAnalytics(app);
+            getAnalytics(app);
         } catch (e) {
-            console.warn("Analytics zablokowane przez restrykcje klucza API (referer). Kontynuacja bez analityki.");
+            console.warn("Analityka zablokowana.");
         }
 
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'training-assistant-44a28';
+        const appId = 'training-assistant-44a28';
 
         const workouts = {
             push: [
@@ -260,12 +244,6 @@
                 { options: [{ name: "Prostowanie nóg na maszynie siedząc", sets: "3x12-15" }, { name: "Przysiad Goblet", sets: "3x12-15" }, { name: "Przysiad syzyfowy (Sissy Squat)", sets: "3xMAX" }]},
                 { options: [{ name: "Hip Thrust ze sztangą", sets: "4x8-12" }, { name: "'Żuraw' (Glute Ham Raise)", sets: "3xMAX" }, { name: "Wyprosty tułowia na ławce rzymskiej (pod pośladki)", sets: "3x12-15" }]},
                 { options: [{ name: "Wspięcia na palce (stojąc)", sets: "4x12-20" }, { name: "Wspięcia na palce na suwnicy", sets: "4x15-25" }, { name: "Wspięcia na palce siedząc", sets: "4x15-25" }]}
-            ],
-            brzuch: [
-                { options: [{ name: "'Allahy' (linka wyciągu)", sets: "4x10-15" }, { name: "Spięcia brzucha na maszynie", sets: "4x10-15" }, { name: "Spięcia leżąc z talerzem na klatce", sets: "4x12-15" }]},
-                { options: [{ name: "Unoszenie nóg w zwisie na drążku", sets: "4xMAX" }, { name: "Unoszenie kolan do klatki piersiowej w zwisie", sets: "4xMAX" }, { name: "Scyzoryki (V-ups)", sets: "4x15-20" }]},
-                { options: [{ name: "Plank (z obciążeniem na plecach)", sets: "4x60-90s" }, { name: "Plank boczny", sets: "3x45-60s (na str.)" }, { name: "Ab Wheel (kółko)", sets: "3x10-15" }]},
-                { options: [{ name: "'Wood choppers' (rąbanie drewna)", sets: "3x12-15 (na str.)" }, { name: "'Russian Twist' (skręty tułowia)", sets: "3x15 (na stronę)" }, { name: "Pallof Press (antyrotacja z gumą/linką)", sets: "3x12-15 (na str.)" }]}
             ]
         };
 
@@ -273,7 +251,6 @@
         let chartInstance = null;
         let currentUser = null;
 
-        // MOTYW
         const updateThemeUI = () => {
             const isDark = document.documentElement.classList.contains('dark');
             document.querySelectorAll('.auth-theme-icon, #theme-icon').forEach(icon => icon.textContent = isDark ? '☀️' : '🌙');
@@ -287,9 +264,7 @@
 
         document.getElementById('auth-theme-toggle').onclick = toggleTheme;
         document.getElementById('theme-toggle').onclick = toggleTheme;
-        updateThemeUI();
 
-        // OBSŁUGA BŁĘDÓW
         const showError = (msg) => {
             document.getElementById('auth-error-container').classList.remove('hidden');
             document.getElementById('auth-error').textContent = msg;
@@ -299,7 +274,6 @@
             document.getElementById('auth-error-container').classList.add('hidden');
         };
 
-        // AUTH
         const loginWithEmail = async () => {
             hideError();
             const email = document.getElementById('auth-email').value;
@@ -308,7 +282,7 @@
             try { 
                 await signInWithEmailAndPassword(auth, email, password); 
             } catch (e) { 
-                showError(`Logowanie email nieudane: ${e.code}\n${e.message}`); 
+                showError(`Błąd: ${e.code}`); 
             }
         };
 
@@ -320,7 +294,7 @@
             try { 
                 await createUserWithEmailAndPassword(auth, email, password); 
             } catch (e) { 
-                showError(`Rejestracja nieudana: ${e.code}\n${e.message}`); 
+                showError(`Błąd: ${e.code}`); 
             }
         };
 
@@ -331,11 +305,9 @@
             try {
                 await signInWithPopup(auth, provider);
             } catch (e) {
-                let msg = `Błąd Google: ${e.code}\n\n${e.message}`;
+                let msg = `Błąd Google: ${e.code}\n${e.message}`;
                 if (e.code === 'auth/unauthorized-domain') {
-                    msg = `DOMENA NIEZAUTORYZOWANA: ${window.location.hostname}\n\nKONFIGURACJA GCP:\n1. Branding > Authorized domains > Dodaj domenę.\n2. Clients > Web client > JavaScript origins > Dodaj domenę.\n3. Klucz API: Jeśli ograniczasz klucz API do konkretnych domen, musisz dodać "${window.location.hostname}" do listy dozwolonych w Google Cloud Console (Credentials).`;
-                } else if (e.code === 'auth/popup-blocked') {
-                    msg = "Pop-up zablokowany przez przeglądarkę.";
+                    msg = `DOMENA NIEZAUTORYZOWANA: ${window.location.hostname}. Dodaj ją w Google Cloud (Branding) ORAZ Firebase Auth.`;
                 }
                 showError(msg);
             }
@@ -346,20 +318,13 @@
         document.getElementById('google-login').onclick = loginWithGoogle;
         document.getElementById('logout-btn').onclick = () => signOut(auth);
 
-        const initAuth = async () => {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                try { await signInWithCustomToken(auth, __initial_auth_token); } catch (e) {}
-            }
-        };
-        initAuth();
-
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
             if (user && !user.isAnonymous) {
                 document.getElementById('auth-overlay').classList.add('hidden');
                 document.getElementById('app-content').classList.remove('hidden');
                 document.getElementById('app-nav').classList.remove('hidden');
-                document.getElementById('user-id-display').textContent = user.email || user.uid;
+                document.getElementById('user-id-display').textContent = user.email;
                 syncLogs(user.uid);
             } else {
                 document.getElementById('auth-overlay').classList.remove('hidden');
@@ -368,28 +333,19 @@
             }
         });
 
-        // SYNC
         const syncLogs = (uid) => {
             onSnapshot(doc(db, 'artifacts', appId, 'users', uid, 'data', 'logs'), (snap) => {
                 trainingLogs = snap.exists() ? (snap.data().entries || []) : [];
                 renderAll();
             }, (err) => {
-                console.error("Błąd synchronizacji Firestore:", err);
-                if (err.code === 'permission-denied') {
-                    showToast("Błąd uprawnień Firestore. Sprawdź reguły bazy danych.");
-                }
+                if (err.code === 'permission-denied') showToast("Błąd uprawnień Firestore");
             });
         };
 
         const saveToCloud = async (entries) => {
             if (!currentUser) return;
-            try {
-                await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs'), { entries: entries });
-                showToast("Zsynchronizowano");
-            } catch (e) {
-                console.error("Błąd zapisu w Firestore:", e);
-                showToast("Błąd zapisu");
-            }
+            await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs'), { entries: entries });
+            showToast("Zsynchronizowano");
         };
 
         const getStats = (name) => {
@@ -403,8 +359,7 @@
                 const container = document.getElementById(`${type}-cards`);
                 if(!container) return;
                 container.innerHTML = workouts[type].map((slot, i) => {
-                    const first = slot.options[0];
-                    const stats = getStats(first.name);
+                    const stats = getStats(slot.options[0].name);
                     return `
                         <div class="card bg-white/60 dark:bg-gray-800/60 p-5 rounded-3xl border border-white/20">
                             <select class="ex-select w-full bg-transparent font-bold text-sm outline-none mb-2 text-gray-900 dark:text-white" data-type="${type}" data-idx="${i}">
@@ -465,9 +420,7 @@
             lines.forEach((line, i) => {
                 if (i === 0 || !line.trim()) return;
                 const parts = line.split(',');
-                if (parts.length >= 3) {
-                    newEntries.push({ date: parts[0].trim(), exercise: parts[1].trim(), weight: parseFloat(parts[2]) });
-                }
+                if (parts.length >= 3) newEntries.push({ date: parts[0].trim(), exercise: parts[1].trim(), weight: parseFloat(parts[2]) });
             });
             if (newEntries.length) saveToCloud(newEntries);
         };
@@ -484,34 +437,20 @@
             });
         };
 
-        const tabOrder = ['harmonogram', 'push', 'pull', 'legs', 'brzuch', 'postepy', 'dziennik'];
-        let tStart = 0;
-        const navigate = (id, dir = null) => {
+        const tabOrder = ['harmonogram', 'push', 'pull', 'legs', 'postepy', 'dziennik'];
+        const navigate = (id) => {
             const curr = document.querySelector('.page-pane:not(.hidden)');
             const dest = document.getElementById(id);
             if(curr === dest) return;
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === id));
-            if(dir) {
-                curr.classList.add(dir === 'L' ? 'animate-slide-out-to-left' : 'animate-slide-out-to-right');
-                dest.classList.add(dir === 'L' ? 'animate-slide-in-from-right' : 'animate-slide-in-from-left');
-            }
+            curr.classList.add('hidden');
             dest.classList.remove('hidden');
-            setTimeout(() => { curr.className = 'page-pane hidden'; dest.className = 'page-pane'; if(id === 'postepy') updateHistoryUI(); }, 300);
+            if(id === 'postepy') updateHistoryUI();
         };
 
         document.querySelectorAll('.nav-btn').forEach(b => b.onclick = () => navigate(b.dataset.tab));
-        window.addEventListener('touchstart', e => tStart = e.touches[0].clientX);
-        window.addEventListener('touchend', e => {
-            const dx = e.changedTouches[0].clientX - tStart;
-            if(Math.abs(dx) > 100) {
-                const idx = tabOrder.indexOf(document.querySelector('.page-pane:not(.hidden)').id);
-                if(dx < 0 && idx < tabOrder.length - 1) navigate(tabOrder[idx+1], 'L');
-                if(dx > 0 && idx > 0) navigate(tabOrder[idx-1], 'R');
-            }
-        });
 
         const showToast = (m) => { const t = document.getElementById('toast'); t.textContent = m; t.style.opacity = '1'; setTimeout(() => t.style.opacity = '0', 2000); };
-        window.onscroll = () => document.body.style.setProperty('--scroll-y', `${window.scrollY / -15}px`);
         document.getElementById('clear-log').onclick = async () => { if(confirm('Wyczyścić historię?') && currentUser) await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs'), { entries: [] }); };
         document.getElementById('copy-log').onclick = () => { document.getElementById('csv-output').select(); document.execCommand('copy'); showToast('Skopiowano!'); };
 
