@@ -88,11 +88,9 @@
 </head>
 <body class="text-gray-800 dark:text-gray-300">
 
-    <!-- Auth Overlay -->
     <div id="auth-overlay" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-white/70 dark:bg-gray-900/70 text-gray-900 dark:text-white text-center">
         <div class="w-full max-w-sm bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700 relative">
             <button id="auth-theme-toggle" class="absolute top-4 right-4 p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition font-bold">Tryb</button>
-
             <h2 class="text-2xl font-bold mb-6">Witaj</h2>
             <div class="space-y-4">
                 <button id="google-login" class="w-full flex items-center justify-center gap-3 p-3 border border-gray-200 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition font-semibold text-gray-900 dark:text-white text-sm">
@@ -115,12 +113,11 @@
         </div>
     </div>
 
-    <!-- Main Content -->
     <div id="app-content" class="hidden pb-24">
         <header class="text-center p-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-b border-gray-200/50 dark:border-gray-700/50 relative">
             <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 uppercase tracking-tight">Plan Treningowy</h1>
             <div class="flex flex-col items-center mt-2">
-                <span id="user-id-display" class="text-[8px] opacity-50 font-mono"></span>
+                <span id="user-id-display" class="text-[8px] opacity-50 font-mono text-gray-800 dark:text-gray-200"></span>
                 <button id="logout-btn" class="text-[10px] font-bold text-red-500 uppercase mt-1 hover:underline">Wyloguj</button>
             </div>
             <button id="theme-toggle" class="p-2 absolute top-5 right-4 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">
@@ -171,7 +168,7 @@
                 </div>
 
                 <div class="page-pane hidden" id="brzuch">
-                    <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white font-bold uppercase tracking-widest text-sm">Brzuch <button data-workout="brzuch" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
+                    <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white font-bold uppercase tracking-widest text-sm">Core <button data-workout="brzuch" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
                     <div id="brzuch-cards" class="space-y-4 workout-cards-container"></div>
                 </div>
                 
@@ -184,15 +181,15 @@
                 </div>
 
                 <div class="page-pane hidden" id="ai-analiza">
-                    <h3 class="font-bold mb-4 uppercase text-center tracking-widest text-gray-900 dark:text-white text-sm">Inteligentna Analiza</h3>
+                    <h3 class="font-bold mb-4 uppercase text-center tracking-widest text-gray-900 dark:text-white text-sm">Raport AI</h3>
                     <div class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-6 rounded-3xl shadow-sm border border-blue-500/10 mb-4">
-                        <p class="text-[10px] text-center opacity-70 mb-4 text-gray-700 dark:text-gray-300">AI obliczy 1RM, wykryje stagnację (plateau) i zasugeruje ciężary na kolejną sesję na podstawie Twojej historii.</p>
-                        <button id="generate-ai-insight" class="w-full bg-blue-600 text-white py-3 rounded-2xl font-bold uppercase text-xs shadow-md hover:bg-blue-700 transition-colors disabled:opacity-50">Generuj Raport AI</button>
+                        <p class="text-[10px] text-center opacity-70 mb-4 text-gray-700 dark:text-gray-300 uppercase font-bold tracking-tight">Ekspert Gemini przeanalizuje historię treningów</p>
+                        <button id="generate-ai-insight" class="w-full bg-blue-600 text-white py-3 rounded-2xl font-bold uppercase text-xs shadow-md hover:bg-blue-700 transition-colors disabled:opacity-50">Generuj Raport</button>
                     </div>
-                    <div id="ai-result-container" class="hidden bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl p-6 rounded-3xl shadow-xl border border-blue-500/20">
-                        <div id="ai-loading" class="flex flex-col items-center gap-3 py-8">
+                    <div id="ai-result-container" class="hidden bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl p-6 rounded-3xl shadow-xl border border-blue-500/20">
+                        <div id="ai-loading" class="flex flex-col items-center gap-3 py-8 hidden">
                             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                            <span class="text-xs font-bold animate-pulse uppercase tracking-tighter">Analizowanie...</span>
+                            <span class="text-xs font-bold animate-pulse uppercase tracking-tighter">Analizowanie danych...</span>
                         </div>
                         <div id="ai-text" class="text-xs leading-relaxed markdown-content text-gray-800 dark:text-gray-200"></div>
                     </div>
@@ -200,25 +197,25 @@
 
                 <div class="page-pane hidden" id="dziennik">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white">
-                        <h3 class="font-bold uppercase tracking-widest text-sm text-bold">Logi</h3>
+                        <h3 class="font-bold uppercase tracking-widest text-sm">Logi CSV</h3>
                         <div class="flex gap-2">
                             <button id="import-pasted-csv" class="text-[10px] bg-blue-600 text-white px-3 py-1 rounded-lg font-bold uppercase">Sync</button>
                             <button id="copy-log" class="text-[10px] bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded-lg font-bold uppercase">Kopiuj</button>
                         </div>
                     </div>
-                    <textarea id="csv-output" placeholder="Data,Kategoria,Cwiczenie,Ciezar" class="w-full h-80 p-4 text-[10px] font-mono rounded-3xl bg-gray-100/50 dark:bg-gray-900/50 outline-none resize-none border border-blue-500/20 text-gray-900 dark:text-blue-300"></textarea>
-                    <button id="clear-log" class="w-full mt-4 bg-red-500/10 text-red-500 py-3 rounded-2xl text-xs font-bold uppercase tracking-wider">Wyczyść chmurę</button>
+                    <textarea id="csv-output" placeholder="Data,Kategoria,Cwiczenie,Serie x Powt.,Ciezar" class="w-full h-80 p-4 text-[10px] font-mono rounded-3xl bg-gray-100/50 dark:bg-gray-900/50 outline-none resize-none border border-blue-500/20 text-gray-900 dark:text-blue-300"></textarea>
+                    <button id="clear-log" class="w-full mt-4 bg-red-500/10 text-red-500 py-3 rounded-2xl text-xs font-bold uppercase tracking-wider">Wyczyść historię</button>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Navigation -->
     <nav id="app-nav" class="hidden fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t border-gray-200 dark:border-gray-800 flex justify-around p-2 z-50">
         <button class="nav-btn p-2 flex flex-col items-center" data-tab="harmonogram">🏠<span class="text-[9px] font-bold">START</span></button>
         <button class="nav-btn p-2 flex flex-col items-center" data-tab="push">💪<span class="text-[9px] font-bold">PUSH</span></button>
         <button class="nav-btn p-2 flex flex-col items-center" data-tab="pull">🏋️<span class="text-[9px] font-bold">PULL</span></button>
         <button class="nav-btn p-2 flex flex-col items-center" data-tab="legs">🦵<span class="text-[9px] font-bold">LEGS</span></button>
+        <button class="nav-btn p-2 flex flex-col items-center" data-tab="brzuch">🔥<span class="text-[9px] font-bold">CORE</span></button>
         <button class="nav-btn p-2 flex flex-col items-center" data-tab="postepy">📈<span class="text-[9px] font-bold">STATS</span></button>
         <button class="nav-btn p-2 flex flex-col items-center" data-tab="ai-analiza">🤖<span class="text-[9px] font-bold">AI</span></button>
         <button class="nav-btn p-2 flex flex-col items-center" data-tab="dziennik">📖<span class="text-[9px] font-bold">LOGS</span></button>
@@ -231,6 +228,8 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithCustomToken } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
         import { getFirestore, doc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
         import { getAnalytics } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js';
+
+        const apiKey = ""; 
 
         const firebaseConfig = {
             apiKey: "AIzaSyAdWYZmp9zfQ7Rbvi91WBUSHPmgOWypAfM",
@@ -245,7 +244,6 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const apiKey = ""; // Klucz wstrzykiwany przez środowisko
         
         try { getAnalytics(app); } catch (e) {}
 
@@ -315,7 +313,7 @@
         const loginWithGoogle = async () => {
             const provider = new GoogleAuthProvider();
             provider.setCustomParameters({ prompt: 'select_account' });
-            try { await signInWithPopup(auth, provider); } catch (e) { showError(`Google Error: ${e.code}`); }
+            try { await signInWithPopup(auth, provider); } catch (e) { showError(`Auth Error: ${e.code}`); }
         };
 
         const loginWithEmail = async () => {
@@ -362,7 +360,7 @@
         const saveToCloud = async (entries) => {
             if (!currentUser) return;
             await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs'), { entries: entries });
-            showToast("Chmura zaktualizowana");
+            showToast("Zsynchronizowano");
         };
 
         const getStats = (name) => {
@@ -529,28 +527,24 @@
 
         document.getElementById('generate-ai-insight').onclick = async () => {
             if (trainingLogs.length < 5) return showToast("Zbyt mało danych (min. 5 wpisów)");
-            
             const btn = document.getElementById('generate-ai-insight');
             const resultBox = document.getElementById('ai-result-container');
             const loading = document.getElementById('ai-loading');
             const textEl = document.getElementById('ai-text');
-
             btn.disabled = true;
             resultBox.classList.remove('hidden');
             loading.classList.remove('hidden');
             textEl.innerHTML = '';
-
             const dataSummary = trainingLogs.slice(-30).map(l => `${l.date}, ${l.exercise}, ${l.weight}kg`).join('\n');
-            const systemPrompt = "Jesteś trenerem personalnym. Analizujesz historię treningową (CSV). Cel: 1. Szacuj 1RM głównych bojów (np. wyciskanie, przysiad). 2. Wykryj stagnację (brak wzrostu w min. 3 sesjach). 3. Zasugeruj obciążenia na kolejny trening (+2.5kg lub +5%). Formatuj w punktach, używaj **pogrubień**. Pisz krótko i konkretnie po polsku.";
-            const prompt = `Analizuj ostatnie treningi:\n${dataSummary}`;
-
+            const systemPrompt = "Jesteś trenerem personalnym. Analizujesz historię treningową. Cel: 1. Szacuj 1RM głównych bojów. 2. Wykryj stagnację. 3. Zasugeruj obciążenia na kolejny trening (+2.5kg lub +5%). Formatuj w punktach, używaj **pogrubień**. Pisz krótko i konkretnie po polsku.";
+            const prompt = `Analizuj logi:\n${dataSummary}`;
             try {
                 const response = await callGemini(prompt, systemPrompt);
                 loading.classList.add('hidden');
                 textEl.innerHTML = response.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
             } catch (e) {
                 loading.classList.add('hidden');
-                textEl.innerHTML = `<span class="text-red-500 font-bold">Wystąpił błąd podczas analizy: ${e.message}</span>`;
+                textEl.innerHTML = `<span class="text-red-500 font-bold">Błąd: ${e.message}</span>`;
             } finally { btn.disabled = false; }
         };
 
@@ -571,20 +565,16 @@
                 if(id === 'postepy') updateHistoryUI(); 
             }, 300);
         };
-
         document.querySelectorAll('.nav-btn').forEach(b => b.onclick = () => navigate(b.dataset.tab));
-
         const showToast = (m) => { const t = document.getElementById('toast'); t.textContent = m; t.style.opacity = '1'; setTimeout(() => t.style.opacity = '0', 2000); };
         window.onscroll = () => document.body.style.setProperty('--scroll-y', `${window.scrollY / -15}px`);
-        document.getElementById('clear-log').onclick = async () => { if(confirm('Usunąć dane z chmury?') && currentUser) await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs'), { entries: [] }); };
-        document.getElementById('copy-log').onclick = () => { document.getElementById('csv-output').select(); document.execCommand('copy'); showToast('Kopia gotowa'); };
-
+        document.getElementById('clear-log').onclick = async () => { if(confirm('Wyczyścić chmurę?') && currentUser) await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs'), { entries: [] }); };
+        document.getElementById('copy-log').onclick = () => { document.getElementById('csv-output').select(); document.execCommand('copy'); showToast('Kopia OK'); };
         const scheduleToggle = document.getElementById('scheduleToggle');
         scheduleToggle.onchange = () => {
-            document.getElementById('schedule-display').textContent = scheduleToggle.checked ? "T1: PUSH, PULL, LEGS, PUSH | T2: PULL, LEGS, PUSH, PULL" : "Pon: PUSH | Śr: PULL | Pt: LEGS";
+            document.getElementById('schedule-display').textContent = scheduleToggle.checked ? "PUSH, PULL, LEGS, PUSH (itd.)" : "Pon: PUSH | Śr: PULL | Pt: LEGS";
             document.querySelector('.dot').style.transform = scheduleToggle.checked ? 'translateX(1.25rem)' : 'translateX(0)';
         };
-
         renderAll();
     </script>
 </body>
