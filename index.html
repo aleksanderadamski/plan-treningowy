@@ -89,7 +89,7 @@
 
             <h2 class="text-2xl font-bold mb-6">Witaj</h2>
             <div class="space-y-4">
-                <button id="google-login" class="w-full flex items-center justify-center gap-3 p-3 border border-gray-200 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition font-semibold">
+                <button id="google-login" class="w-full flex items-center justify-center gap-3 p-3 border border-gray-200 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition font-semibold text-gray-900 dark:text-white">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.55 10.78l7.98-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path><path fill="none" d="M0 0h48v48H0z"></path></svg>
                     Google SSO
                 </button>
@@ -145,7 +145,7 @@
                             </label>
                             <span class="text-sm">4 dni</span>
                         </div>
-                        <div id="schedule-display" class="text-xs font-medium italic opacity-60">Pon: PUSH | Śr: PULL | Pt: LEGS</div>
+                        <div id="schedule-display" class="text-xs font-medium italic opacity-60 text-gray-900 dark:text-white">Pon: PUSH | Śr: PULL | Pt: LEGS</div>
                     </div>
                 </div>
 
@@ -209,22 +209,24 @@
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithCustomToken, signInAnonymously } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
         import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+        import { getAnalytics } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js';
 
-        // --- KONFIGURACJA PRODUKCYJNA (Firebase Console > Settings > Your apps) ---
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-		  apiKey: "AIzaSyAdWYZmp9zfQ7Rbvi91WBUSHPmgOWypAfM",
-		  authDomain: "training-assistant-44a28.firebaseapp.com",
-		  projectId: "training-assistant-44a28",
-		  storageBucket: "training-assistant-44a28.firebasestorage.app",
-		  messagingSenderId: "385371344810",
-		  appId: "1:385371344810:web:ee262a94683b54ad58e5d3",
-		  measurementId: "G-PBPMKQLKT8"
+        // --- KONFIGURACJA PRODUKCYJNA ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyAdWYZmp9zfQ7Rbvi91WBUSHPmgOWypAfM",
+            authDomain: "training-assistant-44a28.firebaseapp.com",
+            projectId: "training-assistant-44a28",
+            storageBucket: "training-assistant-44a28.firebasestorage.app",
+            messagingSenderId: "385371344810",
+            appId: "1:385371344810:web:ee262a94683b54ad58e5d3",
+            measurementId: "G-PBPMKQLKT8"
         };
         
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'training-pro-v1';
+        const analytics = getAnalytics(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'training-assistant-44a28';
 
         const workouts = {
             push: [
@@ -321,9 +323,11 @@
             try {
                 await signInWithPopup(auth, provider);
             } catch (e) {
-                let msg = `Błąd Google: ${e.code}`;
+                let msg = `Błąd Google SSO: ${e.code}\n\n${e.message}`;
                 if (e.code === 'auth/unauthorized-domain') {
                     msg = `DOMENA NIEZAUTORYZOWANA: ${window.location.hostname}\n\nKONFIGURACJA GCP:\n1. Branding > Authorized domains > Dodaj domenę.\n2. Clients > Web client > JavaScript origins > Dodaj domenę.\n3. Clients > Web client > Redirect URIs > Dodaj https://${firebaseConfig.authDomain}/__/auth/handler`;
+                } else if (e.code === 'auth/popup-blocked') {
+                    msg = "Pop-up zablokowany przez przeglądarkę.";
                 }
                 showError(msg);
             }
@@ -443,7 +447,9 @@
             lines.forEach((line, i) => {
                 if (i === 0 || !line.trim()) return;
                 const parts = line.split(',');
-                if (parts.length >= 3) newEntries.push({ date: parts[0].trim(), exercise: parts[1].trim(), weight: parseFloat(parts[2]) });
+                if (parts.length >= 3) {
+                    newEntries.push({ date: parts[0].trim(), exercise: parts[1].trim(), weight: parseFloat(parts[2]) });
+                }
             });
             if (newEntries.length) saveToCloud(newEntries);
         };
