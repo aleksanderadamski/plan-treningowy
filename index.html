@@ -88,6 +88,7 @@
 </head>
 <body class="text-gray-800 dark:text-gray-300">
 
+    <!-- Auth Overlay -->
     <div id="auth-overlay" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-white/70 dark:bg-gray-900/70 text-gray-900 dark:text-white text-center">
         <div class="w-full max-w-sm bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700 relative">
             <button id="auth-theme-toggle" class="absolute top-4 right-4 p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition font-bold text-xs uppercase tracking-tighter">Tryb</button>
@@ -113,6 +114,7 @@
         </div>
     </div>
 
+    <!-- Main Content -->
     <div id="app-content" class="hidden pb-24">
         <header class="text-center p-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-b border-gray-200/50 dark:border-gray-700/50 relative">
             <h1 class="text-xl font-bold text-gray-900 dark:text-gray-100 uppercase tracking-widest">Plan Treningowy</h1>
@@ -152,6 +154,7 @@
                     </div>
                 </div>
 
+                <!-- Workout Sections -->
                 <div class="page-pane hidden" id="push">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white font-bold uppercase tracking-widest text-sm">Push <button data-workout="push" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
                     <div id="push-cards" class="space-y-4 workout-cards-container"></div>
@@ -173,7 +176,7 @@
                 </div>
                 
                 <div class="page-pane hidden" id="postepy">
-                    <h3 class="font-bold mb-4 uppercase text-center tracking-widest text-gray-900 dark:text-white text-sm">Postępy</h3>
+                    <h3 class="font-bold mb-4 uppercase text-center tracking-widest text-gray-900 dark:text-white text-sm">Postępy Siłowe</h3>
                     <div id="progress-accordion" class="space-y-3 mb-6"></div>
                     <div id="chart-container" class="hidden bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-4 rounded-3xl shadow-sm border border-white/10 h-64">
                         <canvas id="progress-chart"></canvas>
@@ -181,14 +184,15 @@
                 </div>
 
                 <div class="page-pane hidden" id="ai-analiza">
-                    <h3 class="font-bold mb-4 uppercase text-center tracking-widest text-gray-900 dark:text-white text-sm">Raport AI</h3>
+                    <h3 class="font-bold mb-4 uppercase text-center tracking-widest text-gray-900 dark:text-white text-sm">Analiza Gemini 3</h3>
                     <div class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-6 rounded-3xl shadow-sm border border-blue-500/10 mb-4">
+                        <p class="text-[10px] text-center opacity-70 mb-4 text-gray-700 dark:text-gray-300 uppercase font-bold tracking-tight text-balance">Model AI przeanalizuje logi treningowe, obliczy 1RM i wykryje stagnację</p>
                         <button id="generate-ai-insight" class="w-full bg-blue-600 text-white py-3 rounded-2xl font-bold uppercase text-xs shadow-md hover:bg-blue-700 transition-colors disabled:opacity-50">Generuj Raport</button>
                     </div>
                     <div id="ai-result-container" class="hidden bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl p-6 rounded-3xl shadow-xl border border-blue-500/20">
                         <div id="ai-loading" class="flex flex-col items-center gap-3 py-8 hidden">
                             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                            <span class="text-xs font-bold animate-pulse uppercase tracking-tighter">Analiza danych...</span>
+                            <span class="text-xs font-bold animate-pulse uppercase tracking-tighter">Analizowanie danych...</span>
                         </div>
                         <div id="ai-text" class="text-[11px] leading-relaxed markdown-content text-gray-800 dark:text-gray-200"></div>
                     </div>
@@ -196,19 +200,20 @@
 
                 <div class="page-pane hidden" id="dziennik">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white">
-                        <h3 class="font-bold uppercase tracking-widest text-sm">Dziennik</h3>
+                        <h3 class="font-bold uppercase tracking-widest text-sm">Baza Logów</h3>
                         <div class="flex gap-2">
                             <button id="import-pasted-csv" class="text-[10px] bg-blue-600 text-white px-3 py-1 rounded-lg font-bold uppercase">Sync</button>
                             <button id="copy-log" class="text-[10px] bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded-lg font-bold uppercase">Kopiuj</button>
                         </div>
                     </div>
                     <textarea id="csv-output" placeholder="Data,Kategoria,Cwiczenie,Serie x Powt.,Ciezar" class="w-full h-80 p-4 text-[10px] font-mono rounded-3xl bg-gray-100/50 dark:bg-gray-900/50 outline-none resize-none border border-blue-500/20 text-gray-900 dark:text-blue-300"></textarea>
-                    <button id="clear-log" class="w-full mt-4 bg-red-500/10 text-red-500 py-3 rounded-2xl text-xs font-bold uppercase tracking-wider">Wyczyść chmurę</button>
+                    <button id="clear-log" class="w-full mt-4 bg-red-500/10 text-red-500 py-3 rounded-2xl text-xs font-bold uppercase tracking-wider">Wyczyść historię</button>
                 </div>
             </div>
         </main>
     </div>
 
+    <!-- Navigation -->
     <nav id="app-nav" class="hidden fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t border-gray-200 dark:border-gray-800 flex justify-around p-1 z-50 overflow-x-auto no-scrollbar">
         <button class="nav-btn px-2 py-2 flex flex-col items-center flex-shrink-0" data-tab="harmonogram">🏠<span class="text-[8px] font-bold">START</span></button>
         <button class="nav-btn px-2 py-2 flex flex-col items-center flex-shrink-0" data-tab="push">💪<span class="text-[8px] font-bold">PUSH</span></button>
@@ -224,10 +229,11 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithCustomToken } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
-        import { getFirestore, doc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithCustomToken, signInAnonymously } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+        import { getFirestore, doc, setDoc, onSnapshot, collection, query, getDoc } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
         import { getAnalytics } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js';
 
+        // Klucz API dla Gemini - zapewniany przez środowisko Google Cloud/Canvas.
         const apiKey = "AIzaSyAdWYZmp9zfQ7Rbvi91WBUSHPmgOWypAfM"; 
 
         const firebaseConfig = {
@@ -496,14 +502,15 @@
 
         const callGemini = async (prompt, systemPrompt) => {
             const activeKey = apiKey || firebaseConfig.apiKey;
-            const modelName = 'gemini-1.5-flash';
-            const url = `https://generativelanguage.googleapis.com/v1/models/${modelName}:generateContent?key=${activeKey}`;
+            // Aktualizacja modelu na Gemini 3 Flash zgodnie z Twoją informacją
+            const modelName = 'gemini-3.0-flash';
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${activeKey}`;
             
             const payload = {
                 contents: [{
                     parts: [
-                        { text: `SYSTEM_INSTRUCTION: ${systemPrompt}` },
-                        { text: `USER_QUERY: ${prompt}` }
+                        { text: systemPrompt },
+                        { text: prompt }
                     ]
                 }]
             };
