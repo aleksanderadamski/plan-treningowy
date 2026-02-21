@@ -503,7 +503,7 @@
         const callGemini = async (prompt, systemPrompt) => {
             const activeKey = apiKey || firebaseConfig.apiKey;
             // Aktualizacja modelu na Gemini 3 Flash zgodnie z Twoją informacją
-            const modelName = 'gemini-3.0-flash';
+            const modelName = 'gemini-3-flash-preview';
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${activeKey}`;
             
             const payload = {
