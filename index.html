@@ -193,7 +193,7 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithCustomToken, signInAnonymously } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
         import { getFirestore, doc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
         import { getAnalytics } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js';
 
@@ -201,7 +201,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const appId = 'training-pro-v3';
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'training-pro-v3';
         
         try { getAnalytics(app); } catch (e) {}
 
@@ -250,6 +250,20 @@
         let chartInstance = null;
         let currentSystem = localStorage.getItem('trainingSystem') || 'PPL';
 
+        const showError = (msg) => {
+            const container = document.getElementById('auth-error-container');
+            const text = document.getElementById('auth-error');
+            if (container && text) {
+                container.classList.remove('hidden');
+                text.textContent = msg;
+            }
+        };
+
+        const hideError = () => {
+            const container = document.getElementById('auth-error-container');
+            if (container) container.classList.add('hidden');
+        };
+
         const switchSystem = (system) => {
             currentSystem = system;
             localStorage.setItem('trainingSystem', system);
@@ -262,9 +276,12 @@
             document.querySelectorAll('.ppl-nav').forEach(el => el.classList.toggle('hidden', !isPPL));
             document.querySelectorAll('.fbw-nav').forEach(el => el.classList.toggle('hidden', isPPL));
             
-            document.getElementById('schedule-display').textContent = isPPL 
-                ? "Pon: PUSH | Śr: PULL | Pt: LEGS" 
-                : "Tydzień: Trening A / Trening B / Trening A";
+            const scheduleDisplay = document.getElementById('schedule-display');
+            if (scheduleDisplay) {
+                scheduleDisplay.textContent = isPPL 
+                    ? "Pon: PUSH | Śr: PULL | Pt: LEGS" 
+                    : "Tydzień: Trening A / Trening B / Trening A";
+            }
 
             navigate('harmonogram');
             updateHistoryUI();
@@ -291,20 +308,30 @@
         document.getElementById('theme-toggle').onclick = toggleTheme;
 
         const loginWithGoogle = async () => {
+            hideError();
             const provider = new GoogleAuthProvider();
-            try { await signInWithPopup(auth, provider); } catch (e) { document.getElementById('auth-error').textContent = e.message; }
+            provider.setCustomParameters({ prompt: 'select_account' });
+            try { 
+                await signInWithPopup(auth, provider); 
+            } catch (e) { 
+                showError(`Błąd Google SSO: ${e.message}`); 
+            }
         };
 
         const loginWithEmail = async () => {
+            hideError();
             const e = document.getElementById('auth-email').value;
             const p = document.getElementById('auth-password').value;
-            try { await signInWithEmailAndPassword(auth, e, p); } catch (err) { document.getElementById('auth-error').textContent = err.message; }
+            if (!e || !p) return showError("Wprowadź dane.");
+            try { await signInWithEmailAndPassword(auth, e, p); } catch (err) { showError(err.message); }
         };
 
         const registerWithEmail = async () => {
+            hideError();
             const e = document.getElementById('auth-email').value;
             const p = document.getElementById('auth-password').value;
-            try { await createUserWithEmailAndPassword(auth, e, p); } catch (err) { document.getElementById('auth-error').textContent = err.message; }
+            if (!e || !p) return showError("Wprowadź dane.");
+            try { await createUserWithEmailAndPassword(auth, e, p); } catch (err) { showError(err.message); }
         };
 
         document.getElementById('google-login').onclick = loginWithGoogle;
@@ -328,10 +355,20 @@
             }
         });
 
+        // Environment Auth Handshake
+        const initAuth = async () => {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                try { await signInWithCustomToken(auth, __initial_auth_token); } catch(e) {}
+            }
+        };
+        initAuth();
+
         const syncLogs = (uid) => {
             onSnapshot(doc(db, 'artifacts', appId, 'users', uid, 'data', 'logs'), (snap) => {
                 trainingLogs = snap.exists() ? (snap.data().entries || []) : [];
                 renderAll();
+            }, (err) => {
+                console.error("Firestore sync error:", err);
             });
         };
 
@@ -418,7 +455,8 @@
 
         const navigate = (id) => {
             document.querySelectorAll('.page-pane').forEach(p => p.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
+            const dest = document.getElementById(id);
+            if (dest) dest.classList.remove('hidden');
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === id));
             if (id === 'postepy') updateHistoryUI();
         };
@@ -427,8 +465,10 @@
         
         const showToast = (m) => { 
             const t = document.getElementById('toast'); 
-            t.textContent = m; t.style.opacity = '1'; 
-            setTimeout(() => t.style.opacity = '0', 2000); 
+            if (t) {
+                t.textContent = m; t.style.opacity = '1'; 
+                setTimeout(() => t.style.opacity = '0', 2000); 
+            }
         };
 
         document.getElementById('clear-log').onclick = async () => { 
