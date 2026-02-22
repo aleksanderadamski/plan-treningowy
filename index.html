@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plan Treningowy Pro</title>
+    <!-- Biblioteki zewnętrzne -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -43,20 +44,34 @@
         html.dark .nav-btn.active { color: #60a5fa; }
         .page-pane { transition: transform 0.3s ease-out, opacity 0.3s ease-out; }
         
+        @keyframes slide-in-from-right { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slide-out-to-left { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+        @keyframes slide-in-from-left { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slide-out-to-right { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+        .animate-slide-in-from-right { animation: slide-in-from-right 0.3s forwards; }
+        .animate-slide-out-to-left { animation: slide-out-to-left 0.3s forwards; }
+        .animate-slide-in-from-left { animation: slide-in-from-left 0.3s forwards; }
+        .animate-slide-out-to-right { animation: slide-out-to-right 0.3s forwards; }
+
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        details summary:after { content: '+'; float: right; font-weight: bold; transition: transform 0.2s; }
+        details[open] summary:after { transform: rotate(45deg); }
+        
         #auth-overlay { backdrop-filter: blur(10px); }
+
+        select option {
+            background-color: #ffffff;
+            color: #111827;
+        }
+        html.dark select option {
+            background-color: #1f2937;
+            color: #f9fafb;
+        }
 
         .markdown-content p { margin-bottom: 0.5rem; }
         .markdown-content strong { color: #2563eb; font-weight: 700; }
         html.dark .markdown-content strong { color: #60a5fa; }
-
-        .system-select-btn.active {
-            background-color: #2563eb;
-            color: white;
-            border-color: #2563eb;
-        }
-        html.dark .system-select-btn.active {
-            background-color: #3b82f6;
-        }
     </style>
     <script>
         (function() {
@@ -72,12 +87,14 @@
 </head>
 <body class="text-gray-800 dark:text-gray-300">
 
+    <!-- Auth Overlay -->
     <div id="auth-overlay" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-white/70 dark:bg-gray-900/70 text-gray-900 dark:text-white text-center">
         <div class="w-full max-w-sm bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700 relative">
             <button id="auth-theme-toggle" class="absolute top-4 right-4 p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition font-bold text-xs uppercase tracking-tighter">Tryb</button>
             <h2 class="text-2xl font-bold mb-6 tracking-tight uppercase">Witaj</h2>
             <div class="space-y-4">
                 <button id="google-login" class="w-full flex items-center justify-center gap-3 p-3 border border-gray-200 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition font-bold text-gray-900 dark:text-white text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.55 10.78l7.98-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path><path fill="none" d="M0 0h48v48H0z"></path></svg>
                     Google SSO
                 </button>
                 <div class="relative flex items-center py-2">
@@ -96,6 +113,7 @@
         </div>
     </div>
 
+    <!-- Main Content -->
     <div id="app-content" class="hidden pb-24">
         <header class="text-center p-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-b border-gray-200/50 dark:border-gray-700/50 relative">
             <h1 class="text-xl font-bold text-gray-900 dark:text-gray-100 uppercase tracking-widest">Plan Treningowy</h1>
@@ -111,40 +129,63 @@
         <main class="p-4 max-w-lg mx-auto" id="main-content">
             <div id="tab-content">
                 <div class="page-pane" id="harmonogram">
-                    <div class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-6 rounded-3xl shadow-sm text-center mb-4">
-                        <h3 class="font-bold mb-4 text-gray-900 dark:text-white uppercase tracking-wider text-sm">System Treningowy</h3>
-                        <div class="flex gap-2 justify-center mb-6">
-                            <button class="system-select-btn flex-1 py-3 border border-gray-200 dark:border-gray-600 rounded-xl font-bold text-xs uppercase transition-all" data-system="PPL">Push/Pull/Legs</button>
-                            <button class="system-select-btn flex-1 py-3 border border-gray-200 dark:border-gray-600 rounded-xl font-bold text-xs uppercase transition-all" data-system="FBW">Full Body Workout</button>
+                    <div class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-4 rounded-xl shadow-sm mb-4 text-gray-900 dark:text-white">
+                        <h3 class="font-bold mb-4 text-center uppercase text-sm tracking-tight">Wybierz System</h3>
+                        <div class="flex gap-2 mb-4">
+                            <button id="select-ppl" class="flex-1 p-3 rounded-xl bg-blue-600 text-white font-bold text-[10px] uppercase shadow-md transition-all active:scale-95">Push Pull Legs</button>
+                            <button id="select-fbw" class="flex-1 p-3 rounded-xl bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white font-bold text-[10px] uppercase transition-all active:scale-95">Full Body Workout</button>
                         </div>
-                        <div id="schedule-display" class="text-[10px] font-bold italic opacity-60 text-gray-900 dark:text-white uppercase tracking-tighter">Wybierz system powyżej</div>
+                        <details>
+                            <summary class="font-bold cursor-pointer uppercase text-sm tracking-tight">Zasady Progresji</summary>
+                            <div class="mt-4 space-y-2 text-xs border-t pt-4 text-gray-600 dark:text-gray-300">
+                                <p><strong class="text-blue-600 font-bold uppercase">Technika:</strong> Pełny zakres ruchu przed ciężarem.</p>
+                                <p><strong class="text-blue-600 font-bold uppercase">Przerwy:</strong> 90-120s (Główne), 60s (Izolacje).</p>
+                            </div>
+                        </details>
+                    </div>
+                    <div class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-6 rounded-3xl shadow-sm text-center">
+                        <h3 class="font-bold mb-4 text-gray-900 dark:text-white uppercase tracking-wider text-sm">Harmonogram</h3>
+                        <div class="flex items-center justify-center space-x-4 mb-4">
+                            <span class="text-xs font-bold">3 DNI</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="scheduleToggle" class="sr-only">
+                                <div class="w-11 h-6 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+                                <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition shadow-sm"></div>
+                            </label>
+                            <span class="text-xs font-bold">4 DNI</span>
+                        </div>
+                        <div id="schedule-display" class="text-[10px] font-bold italic opacity-60 text-gray-900 dark:text-white uppercase tracking-tighter">Pon: PUSH | Śr: PULL | Pt: LEGS</div>
                     </div>
                 </div>
 
-                <!-- PPL Sections -->
-                <div class="page-pane hidden ppl-only" id="push">
+                <!-- PPL Workouts -->
+                <div class="page-pane hidden ppl-view" id="push">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white font-bold uppercase tracking-widest text-sm">Push <button data-workout="push" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
                     <div id="push-cards" class="space-y-4 workout-cards-container"></div>
                 </div>
-                <div class="page-pane hidden ppl-only" id="pull">
+
+                <div class="page-pane hidden ppl-view" id="pull">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white font-bold uppercase tracking-widest text-sm">Pull <button data-workout="pull" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
                     <div id="pull-cards" class="space-y-4 workout-cards-container"></div>
                 </div>
-                <div class="page-pane hidden ppl-only" id="legs">
+
+                <div class="page-pane hidden ppl-view" id="legs">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white font-bold uppercase tracking-widest text-sm">Legs <button data-workout="legs" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
                     <div id="legs-cards" class="space-y-4 workout-cards-container"></div>
                 </div>
-                <div class="page-pane hidden ppl-only" id="brzuch">
+
+                <div class="page-pane hidden ppl-view" id="brzuch">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white font-bold uppercase tracking-widest text-sm">Core <button data-workout="brzuch" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
                     <div id="brzuch-cards" class="space-y-4 workout-cards-container"></div>
                 </div>
 
-                <!-- FBW Sections -->
-                <div class="page-pane hidden fbw-only" id="trening-a">
+                <!-- FBW Workouts -->
+                <div class="page-pane hidden fbw-view" id="trening-a">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white font-bold uppercase tracking-widest text-sm">Trening A <button data-workout="trening-a" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
                     <div id="trening-a-cards" class="space-y-4 workout-cards-container"></div>
                 </div>
-                <div class="page-pane hidden fbw-only" id="trening-b">
+
+                <div class="page-pane hidden fbw-view" id="trening-b">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white font-bold uppercase tracking-widest text-sm">Trening B <button data-workout="trening-b" class="save-btn bg-blue-600 text-white px-4 py-1 rounded-lg text-xs font-bold uppercase shadow-sm">Zapisz</button></div>
                     <div id="trening-b-cards" class="space-y-4 workout-cards-container"></div>
                 </div>
@@ -159,34 +200,35 @@
 
                 <div class="page-pane hidden" id="dziennik">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white">
-                        <h3 class="font-bold uppercase tracking-widest text-sm text-bold">Logi CSV</h3>
+                        <h3 class="font-bold uppercase tracking-widest text-sm text-bold">Log</h3>
                         <div class="flex gap-2">
                             <button id="import-pasted-csv" class="text-[10px] bg-blue-600 text-white px-3 py-1 rounded-lg font-bold uppercase">Sync</button>
                             <button id="copy-log" class="text-[10px] bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded-lg font-bold uppercase">Kopiuj</button>
                         </div>
                     </div>
-                    <textarea id="csv-output" placeholder="Data,System,Kategoria,Ćwiczenie,Ciężar" class="w-full h-80 p-4 text-[10px] font-mono rounded-3xl bg-gray-100/50 dark:bg-gray-900/50 outline-none resize-none border border-blue-500/20 text-gray-900 dark:text-blue-300"></textarea>
+                    <textarea id="csv-output" placeholder="Data,Kategoria,Cwiczenie,Serie x Powt.,Ciezar" class="w-full h-80 p-4 text-[10px] font-mono rounded-3xl bg-gray-100/50 dark:bg-gray-900/50 outline-none resize-none border border-blue-500/20 text-gray-900 dark:text-blue-300"></textarea>
                     <button id="clear-log" class="w-full mt-4 bg-red-500/10 text-red-500 py-3 rounded-2xl text-xs font-bold uppercase tracking-wider">Wyczyść historię</button>
                 </div>
             </div>
         </main>
     </div>
 
+    <!-- Navigation -->
     <nav id="app-nav" class="hidden fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t border-gray-200 dark:border-gray-800 flex justify-around p-1 z-50 overflow-x-auto no-scrollbar">
-        <button class="nav-btn px-2 py-2 flex flex-col items-center flex-shrink-0" data-tab="harmonogram">🏠<span class="text-[8px] font-bold">START</span></button>
+        <button class="nav-btn px-2 py-2 flex flex-col items-center flex-shrink-0" data-tab="harmonogram">🏠<span class="text-[8px] font-bold uppercase">Start</span></button>
         
-        <!-- PPL Nav -->
-        <button class="nav-btn ppl-nav px-2 py-2 flex flex-col items-center flex-shrink-0" data-tab="push">💪<span class="text-[8px] font-bold">PUSH</span></button>
-        <button class="nav-btn ppl-nav px-2 py-2 flex flex-col items-center flex-shrink-0" data-tab="pull">🏋️<span class="text-[8px] font-bold">PULL</span></button>
-        <button class="nav-btn ppl-nav px-2 py-2 flex flex-col items-center flex-shrink-0" data-tab="legs">🦵<span class="text-[8px] font-bold">LEGS</span></button>
-        <button class="nav-btn ppl-nav px-2 py-2 flex flex-col items-center flex-shrink-0" data-tab="brzuch">🔥<span class="text-[8px] font-bold">CORE</span></button>
+        <!-- PPL Buttons -->
+        <button class="nav-btn ppl-btn px-2 py-2 flex flex-col items-center flex-shrink-0" data-tab="push">💪<span class="text-[8px] font-bold uppercase">Push</span></button>
+        <button class="nav-btn ppl-btn px-2 py-2 flex flex-col items-center flex-shrink-0" data-tab="pull">🏋️<span class="text-[8px] font-bold uppercase">Pull</span></button>
+        <button class="nav-btn ppl-btn px-2 py-2 flex flex-col items-center flex-shrink-0" data-tab="legs">🦵<span class="text-[8px] font-bold uppercase">Legs</span></button>
+        <button class="nav-btn ppl-btn px-2 py-2 flex flex-col items-center flex-shrink-0" data-tab="brzuch">🔥<span class="text-[8px] font-bold uppercase">Core</span></button>
 
-        <!-- FBW Nav -->
-        <button class="nav-btn fbw-nav px-2 py-2 flex flex-col items-center flex-shrink-0 hidden" data-tab="trening-a">🅰️<span class="text-[8px] font-bold">TRENING A</span></button>
-        <button class="nav-btn fbw-nav px-2 py-2 flex flex-col items-center flex-shrink-0 hidden" data-tab="trening-b">🅱️<span class="text-[8px] font-bold">TRENING B</span></button>
+        <!-- FBW Buttons -->
+        <button class="nav-btn fbw-btn px-2 py-2 flex flex-col items-center flex-shrink-0 hidden" data-tab="trening-a">🅰️<span class="text-[8px] font-bold uppercase">Trening A</span></button>
+        <button class="nav-btn fbw-btn px-2 py-2 flex flex-col items-center flex-shrink-0 hidden" data-tab="trening-b">🅱️<span class="text-[8px] font-bold uppercase">Trening B</span></button>
 
-        <button class="nav-btn px-2 py-2 flex flex-col items-center flex-shrink-0" data-tab="postepy">📈<span class="text-[8px] font-bold">STATS</span></button>
-        <button class="nav-btn px-2 py-2 flex flex-col items-center flex-shrink-0" data-tab="dziennik">📖<span class="text-[8px] font-bold">LOG</span></button>
+        <button class="nav-btn px-2 py-2 flex flex-col items-center flex-shrink-0" data-tab="postepy">📈<span class="text-[8px] font-bold uppercase">Stats</span></button>
+        <button class="nav-btn px-2 py-2 flex flex-col items-center flex-shrink-0" data-tab="dziennik">📖<span class="text-[8px] font-bold uppercase">Log</span></button>
     </nav>
 
     <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] px-6 py-2 rounded-full font-bold opacity-0 transition-opacity z-[200]"></div>
@@ -197,99 +239,77 @@
         import { getFirestore, doc, setDoc, onSnapshot, collection, query, getDoc } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
         import { getAnalytics } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js';
 
-        const firebaseConfig = JSON.parse(__firebase_config);
+        const firebaseConfig = {
+            apiKey: "AIzaSyAdWYZmp9zfQ7Rbvi91WBUSHPmgOWypAfM",
+            authDomain: "training-assistant-44a28.firebaseapp.com",
+            projectId: "training-assistant-44a28",
+            storageBucket: "training-assistant-44a28.firebasestorage.app",
+            messagingSenderId: "385371344810",
+            appId: "1:385371344810:web:ee262a94683b54ad58e5d3",
+            measurementId: "G-PBPMKQLKT8"
+        };
+        
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'training-pro-v3';
+        const appId = 'training-pro-v3';
         
         try { getAnalytics(app); } catch (e) {}
 
         const workouts = {
             push: [
-                { options: [{ name: "Wyciskanie sztangi płasko", sets: "4x6-8" }, { name: "Wyciskanie hantli płasko", sets: "4x8-10" }]},
-                { options: [{ name: "Wyciskanie hantli skos", sets: "3x10-12" }]},
-                { options: [{ name: "OHP sztanga", sets: "3x8-10" }]},
-                { options: [{ name: "Wznosy bokiem", sets: "4x15-20" }]},
-                { options: [{ name: "Pompki na poręczach", sets: "3x10-12" }]},
-                { options: [{ name: "Prostowanie linek", sets: "3x12-15" }]}
+                { options: [{ name: "Wyciskanie sztangi na ławce płaskiej", sets: "4x6-8" }, { name: "Wyciskanie hantli (płasko)", sets: "4x6-8" }, { name: "Wyciskanie na maszynie siedząc (klatka)", sets: "4x8-10" }]},
+                { options: [{ name: "Wyciskanie hantli (skośna)", sets: "3x8-12" }, { name: "Wyciskanie sztangi na ławce skośnej", sets: "3x8-12" }, { name: "Wyciskanie na maszynie Smitha (skos dodatni)", sets: "3x8-12" }]},
+                { options: [{ name: "Pompki na poręczach (z obciążeniem)", sets: "3x8-12" }, { name: "Wyciskanie hantli nad głowę (siedząc)", sets: "3x8-12" }, { name: "Wyciskanie żołnierskie (sztanga stojąc)", sets: "3x6-8" }]},
+                { options: [{ name: "Wznosy hantli bokiem", sets: "4x10-15" }, { name: "Wznosy linek wyciągu w bok", sets: "4x10-15" }, { name: "Wznosy bokiem na maszynie", sets: "4x12-15" }]},
+                { options: [{ name: "Rozpiętki z hantlami", sets: "3x8-12"}, { name: "Rozpiętki z linkami wyciągu (brama)", sets: "3x12-15" }, { name: "Rozpiętki na maszynie 'Butterfly'", sets: "3x12-15" }]}, 
+                { options: [{ name: "Prostowanie ramion (linka wyciągu) z dropsetem", sets: "3x10-15" }, { name: "Wyciskanie francuskie sztangą łamaną", sets: "3x8-12" }, { name: "Wyciskanie francuskie hantlami (młotkowo)", sets: "3x10-12" }]}
             ],
             pull: [
-                { options: [{ name: "Podciąganie", sets: "4xMAX" }]},
-                { options: [{ name: "Wiosłowanie sztangą", sets: "4x8-10" }]},
-                { options: [{ name: "Przyciąganie wyciąg dolny", sets: "3x10-12" }]},
-                { options: [{ name: "Facepulls", sets: "3x15-20" }]},
-                { options: [{ name: "Uginanie ramion sztanga", sets: "4x10-12" }]},
-                { options: [{ name: "Młotki", sets: "3x12-15" }]}
+                { options: [{ name: "Podciąganie na drążku (nachwyt)", sets: "4xMAX" }, { name: "Ściąganie drążka wyciągu", sets: "4x8-12" }, { name: "Ściąganie na maszynie typu Hammer", sets: "4x8-12" }]},
+                { options: [{ name: "Wiosłowanie sztangą (opad tułowia)", sets: "4x6-8" }, { name: "Wiosłowanie hantlem", sets: "4x8-10" }, { name: "Wiosłowanie półsztangą (T-Bar)", sets: "4x8-10" }]},
+                { options: [{ name: "Przyciąganie uchwytu V (siedząc)", sets: "3x10-12" }, { name: "Wiosłowanie na maszynie siedząc", sets: "3x10-12" }, { name: "Wiosłowanie hantlami leżąc na ławce (chest supported)", sets: "3x10-12" }]},
+                { options: [{ name: "Ściąganie drążka (proste ramiona)", sets: "3x12-15" }, { name: "Face pulls (linka)", sets: "3x15-20" }, { name: "Odwrotne rozpiętki na maszynie (tył barku)", sets: "3x12-15" }]},
+                { options: [{ name: "Uginanie ramion ze sztangą", sets: "4x8-10" }, { name: "Uginanie z hantlami (supinacja)", sets: "4x8-10" }, { name: "Uginanie ramion z linkami wyciągu dolnego", sets: "4x10-12" }]},
+                { options: [{ name: "Uginanie ramion z hantlami na ławce skośnej", sets: "3x10-15" }, { name: "Uginanie ramion na modlitewniku", sets: "3x10-15" }, { name: "Uginanie młotkowe z hantlami", sets: "3x10-12" }]}
             ],
             legs: [
-                { options: [{ name: "Przysiady", sets: "4x6-8" }]},
-                { options: [{ name: "RDL", sets: "4x10-12" }]},
-                { options: [{ name: "Suwnica", sets: "3x12-15" }]},
-                { options: [{ name: "Uginanie nóg", sets: "3x12-15" }]},
-                { options: [{ name: "Wspięcia stojąc", sets: "4x15-20" }]}
+                { options: [{ name: "Przysiady ze sztangą na plecach", sets: "4x6-8" }, { name: "Wypychanie ciężaru na suwnicy", sets: "4x8-10" }, { name: "Przysiady na maszynie Hack", sets: "4x8-10" }]},
+                { options: [{ name: "Martwy ciąg na prostych nogach (RDL)", sets: "3x8-12" }, { name: "Uginanie nóg na maszynie leżąc", sets: "3x10-12" }, { name: "Uginanie nóg na maszynie siedząc", sets: "3x10-12" }]},
+                { options: [{ name: "Przysiady bułgarskie", sets: "3x8-12 (na nogę)" }, { name: "Wykroki z hantlami", sets: "3x10-12 (na nogę)" }, { name: "Zakroki ze sztangą/hantlami", sets: "3x10-12 (na nogę)" }]},
+                { options: [{ name: "Prostowanie nóg na maszynie siedząc", sets: "3x12-15" }, { name: "Przysiad Goblet", sets: "3x12-15" }, { name: "Przysiad syzyfowy (Sissy Squat)", sets: "3xMAX" }]},
+                { options: [{ name: "Hip Thrust ze sztangą", sets: "4x8-12" }, { name: "'Żuraw' (Glute Ham Raise)", sets: "3xMAX" }, { name: "Wyprosty tułowia na ławce rzymskiej (pod pośladki)", sets: "3x12-15" }]},
+                { options: [{ name: "Wspięcia na palce (stojąc)", sets: "4x12-20" }, { name: "Wspięcia na palce na suwnicy", sets: "4x15-25" }, { name: "Wspięcia na palce siedząc", sets: "4x15-25" }]}
             ],
             brzuch: [
-                { options: [{ name: "Allahy", sets: "4x15" }]},
-                { options: [{ name: "Unoszenie nóg", sets: "4xMAX" }]}
+                { options: [{ name: "Allahy (linka wyciągu)", sets: "4x10-15" }, { name: "Spięcia brzucha na maszynie", sets: "4x10-15" }, { name: "Spięcia leżąc z talerzem na klatce", sets: "4x12-15" }]},
+                { options: [{ name: "Unoszenie nóg w zwisie na drążku", sets: "4xMAX" }, { name: "Unoszenie kolan do klatki piersiowej w zwisie", sets: "4xMAX" }, { name: "Scyzoryki (V-ups)", sets: "4x15-20" }]},
+                { options: [{ name: "Plank", sets: "4x60-90s" }, { name: "Plank boczny", sets: "3x45-60s (na str.)" }, { name: "Ab Wheel (kółko)", sets: "3x10-15" }]},
+                { options: [{ name: "Wood choppers (rąbanie drewna)", sets: "3x12-15 (na str.)" }, { name: "Russian Twist (skręty tułowia)", sets: "3x15 (na stronę)" }, { name: "Pallof Press (antyrotacja z gumą/linką)", sets: "3x12-15 (na str.)" }]}
             ],
             "trening-a": [
-                { options: [{ name: "FBW A: Przykładowe 1", sets: "3x8" }]},
-                { options: [{ name: "FBW A: Przykładowe 2", sets: "3x10" }]}
+                { options: [{ name: "FBW A: Ćwiczenie 1", sets: "3x10" }]}
             ],
             "trening-b": [
-                { options: [{ name: "FBW B: Przykładowe 1", sets: "3x8" }]},
-                { options: [{ name: "FBW B: Przykładowe 2", sets: "3x10" }]}
+                { options: [{ name: "FBW B: Ćwiczenie 1", sets: "3x10" }]}
             ]
         };
 
         const normalizeName = (name) => (name || "").replace(/['"]/g, "").trim();
 
-        let trainingLogs = [];
-        let currentUser = null;
-        let chartInstance = null;
-        let currentSystem = localStorage.getItem('trainingSystem') || 'PPL';
-
-        const showError = (msg) => {
-            const container = document.getElementById('auth-error-container');
-            const text = document.getElementById('auth-error');
-            if (container && text) {
-                container.classList.remove('hidden');
-                text.textContent = msg;
-            }
-        };
-
-        const hideError = () => {
-            const container = document.getElementById('auth-error-container');
-            if (container) container.classList.add('hidden');
-        };
-
-        const switchSystem = (system) => {
-            currentSystem = system;
-            localStorage.setItem('trainingSystem', system);
-            
-            document.querySelectorAll('.system-select-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.system === system);
+        const exerciseMap = {};
+        Object.keys(workouts).forEach(cat => {
+            workouts[cat].forEach(slot => {
+                slot.options.forEach(opt => {
+                    exerciseMap[normalizeName(opt.name)] = cat.toUpperCase();
+                });
             });
-
-            const isPPL = system === 'PPL';
-            document.querySelectorAll('.ppl-nav').forEach(el => el.classList.toggle('hidden', !isPPL));
-            document.querySelectorAll('.fbw-nav').forEach(el => el.classList.toggle('hidden', isPPL));
-            
-            const scheduleDisplay = document.getElementById('schedule-display');
-            if (scheduleDisplay) {
-                scheduleDisplay.textContent = isPPL 
-                    ? "Pon: PUSH | Śr: PULL | Pt: LEGS" 
-                    : "Tydzień: Trening A / Trening B / Trening A";
-            }
-
-            navigate('harmonogram');
-            updateHistoryUI();
-        };
-
-        document.querySelectorAll('.system-select-btn').forEach(btn => {
-            btn.onclick = () => switchSystem(btn.dataset.system);
         });
+
+        let trainingLogs = [];
+        let chartInstance = null;
+        let currentUser = null;
+        let currentSystem = localStorage.getItem('trainingSystem') || 'PPL';
 
         const toggleTheme = () => {
             const isDark = document.documentElement.classList.toggle('dark');
@@ -304,17 +324,27 @@
             if (authIcon) authIcon.textContent = isDark ? 'Jasny' : 'Ciemny';
         };
 
+        updateThemeUI(document.documentElement.classList.contains('dark'));
+
         document.getElementById('auth-theme-toggle').onclick = toggleTheme;
         document.getElementById('theme-toggle').onclick = toggleTheme;
+
+        const showError = (msg) => {
+            document.getElementById('auth-error-container').classList.remove('hidden');
+            document.getElementById('auth-error').textContent = msg;
+        };
+
+        const hideError = () => {
+            document.getElementById('auth-error-container').classList.add('hidden');
+        };
 
         const loginWithGoogle = async () => {
             hideError();
             const provider = new GoogleAuthProvider();
-            provider.setCustomParameters({ prompt: 'select_account' });
             try { 
                 await signInWithPopup(auth, provider); 
             } catch (e) { 
-                showError(`Błąd Google SSO: ${e.message}`); 
+                showError(`Błąd autoryzacji Google: ${e.message}`); 
             }
         };
 
@@ -347,7 +377,7 @@
                 document.getElementById('app-nav').classList.remove('hidden');
                 document.getElementById('user-id-display').textContent = user.email;
                 syncLogs(user.uid);
-                switchSystem(currentSystem);
+                updateSystemUI();
             } else {
                 document.getElementById('auth-overlay').classList.remove('hidden');
                 document.getElementById('app-content').classList.add('hidden');
@@ -355,48 +385,104 @@
             }
         });
 
-        const initAuth = async () => {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                try { await signInWithCustomToken(auth, __initial_auth_token); } catch(e) {}
-            }
-        };
-        initAuth();
-
         const syncLogs = (uid) => {
             onSnapshot(doc(db, 'artifacts', appId, 'users', uid, 'data', 'logs'), (snap) => {
                 trainingLogs = snap.exists() ? (snap.data().entries || []) : [];
                 renderAll();
             }, (err) => {
-                console.error("Firestore sync error:", err);
+                console.error("Błąd synchronizacji:", err);
             });
+        };
+
+        const saveToCloud = async (entries) => {
+            if (!currentUser) return;
+            await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs'), { entries: entries });
+            showToast("Zsynchronizowano");
+        };
+
+        const getStats = (name) => {
+            const filtered = trainingLogs.filter(l => normalizeName(l.exercise) === normalizeName(name));
+            if (!filtered.length) return null;
+            return { pb: Math.max(...filtered.map(l => l.weight)), last: filtered[filtered.length - 1].weight };
         };
 
         const renderAll = () => {
             Object.keys(workouts).forEach(type => {
                 const container = document.getElementById(`${type}-cards`);
                 if(!container) return;
-                container.innerHTML = workouts[type].map((slot, i) => `
-                    <div class="card bg-white/60 dark:bg-gray-800/60 p-5 rounded-3xl border border-white/20 shadow-sm">
-                        <select class="ex-select w-full bg-transparent font-bold text-xs outline-none mb-2 text-gray-900 dark:text-white" data-type="${type}" data-idx="${i}">
-                            ${slot.options.map(o => `<option value="${o.name}">${o.name}</option>`).join('')}
-                        </select>
-                        <div class="flex items-center justify-between">
-                            <span class="sets-display text-[9px] font-mono opacity-50 uppercase font-bold">${slot.options[0].sets}</span>
-                            <div class="flex items-center gap-2">
-                                <input type="number" step="0.5" class="weight-input w-16 p-1 bg-slate-100 dark:bg-gray-700 rounded-lg text-center font-bold text-xs text-gray-900 dark:text-white" placeholder="0">
-                                <span class="text-[9px] font-bold uppercase opacity-50">kg</span>
+                container.innerHTML = workouts[type].map((slot, i) => {
+                    const stats = getStats(slot.options[0].name);
+                    return `
+                        <div class="card bg-white/60 dark:bg-gray-800/60 p-5 rounded-3xl border border-white/20 shadow-sm">
+                            <select class="ex-select w-full bg-transparent font-bold text-xs outline-none mb-2 text-gray-900 dark:text-white" data-type="${type}" data-idx="${i}">
+                                ${slot.options.map(o => `<option value="${o.name}">${o.name}</option>`).join('')}
+                            </select>
+                            <div class="stats-box text-[9px] font-bold text-blue-500 dark:text-blue-400 mb-4 px-1 flex gap-4">
+                                ${stats ? `<span>🏆 MAX: ${stats.pb}KG</span><span>⏮ OST: ${stats.last}KG</span>` : ''}
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="sets-display text-[9px] font-mono opacity-50 uppercase font-bold">${slot.options[0].sets}</span>
+                                <div class="flex items-center gap-2">
+                                    <input type="number" step="0.5" class="weight-input w-16 p-1 bg-slate-100 dark:bg-gray-700 rounded-lg text-center font-bold text-xs text-gray-900 dark:text-white" placeholder="0">
+                                    <span class="text-[9px] font-bold uppercase opacity-50">kg</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             });
             updateHistoryUI();
         };
 
+        const updateSystemUI = () => {
+            const pplBtns = document.querySelectorAll('.ppl-btn');
+            const fbwBtns = document.querySelectorAll('.fbw-btn');
+            const pplSelect = document.getElementById('select-ppl');
+            const fbwSelect = document.getElementById('select-fbw');
+
+            if (currentSystem === 'PPL') {
+                pplBtns.forEach(b => b.classList.remove('hidden'));
+                fbwBtns.forEach(b => b.classList.add('hidden'));
+                pplSelect.classList.replace('bg-gray-200', 'bg-blue-600');
+                pplSelect.classList.add('text-white');
+                fbwSelect.classList.replace('bg-blue-600', 'bg-gray-200');
+                fbwSelect.classList.remove('text-white');
+            } else {
+                pplBtns.forEach(b => b.classList.add('hidden'));
+                fbwBtns.forEach(b => b.classList.remove('hidden'));
+                fbwSelect.classList.replace('bg-gray-200', 'bg-blue-600');
+                fbwSelect.classList.add('text-white');
+                pplSelect.classList.replace('bg-blue-600', 'bg-gray-200');
+                pplSelect.classList.remove('text-white');
+            }
+            updateHistoryUI();
+        };
+
+        document.getElementById('select-ppl').onclick = () => {
+            currentSystem = 'PPL';
+            localStorage.setItem('trainingSystem', 'PPL');
+            updateSystemUI();
+        };
+        document.getElementById('select-fbw').onclick = () => {
+            currentSystem = 'FBW';
+            localStorage.setItem('trainingSystem', 'FBW');
+            updateSystemUI();
+        };
+
+        document.body.addEventListener('change', (e) => {
+            if(e.target.classList.contains('ex-select')) {
+                const card = e.target.closest('.card');
+                const selected = workouts[e.target.dataset.type][e.target.dataset.idx].options[e.target.selectedIndex];
+                card.querySelector('.sets-display').textContent = selected.sets;
+                const stats = getStats(selected.name);
+                card.querySelector('.stats-box').innerHTML = stats ? `<span>🏆 MAX: ${stats.pb}KG</span><span>⏮ OST: ${stats.last}KG</span>` : '';
+            }
+        });
+
         document.querySelectorAll('.save-btn').forEach(btn => {
-            btn.onclick = async () => {
-                const type = btn.dataset.workout;
-                const container = document.getElementById(`${type}-cards`);
+            btn.onclick = () => {
+                const category = btn.dataset.workout.toUpperCase();
+                const container = document.getElementById(`${btn.dataset.workout}-cards`);
                 const entries = [];
                 const now = new Date().toISOString().split('T')[0];
                 container.querySelectorAll('.card').forEach(card => {
@@ -404,35 +490,40 @@
                     if(!isNaN(weight) && weight > 0) {
                         entries.push({ 
                             date: now, 
-                            system: currentSystem,
-                            category: type.toUpperCase(), 
+                            system: currentSystem, // Tagowanie danych systemem
+                            category: category, 
                             exercise: card.querySelector('.ex-select').value, 
+                            sets: card.querySelector('.sets-display').textContent,
                             weight 
                         });
                         card.querySelector('.weight-input').value = '';
                     }
                 });
-                if(entries.length) {
-                    await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs'), { entries: [...trainingLogs, ...entries] });
-                    showToast("Zsynchronizowano");
-                }
+                if(entries.length) saveToCloud([...trainingLogs, ...entries]);
             };
         });
 
         const updateHistoryUI = () => {
-            const filtered = trainingLogs.filter(l => l.system === currentSystem);
-            
-            document.getElementById('csv-output').value = "Data,System,Kategoria,Cwiczenie,Ciezar\n" + filtered.map(l => {
-                return `${l.date},${l.system || 'PPL'},${l.category},${l.exercise},${l.weight}`;
+            // Filtrowanie danych wg wybranego systemu
+            const filteredLogs = trainingLogs.filter(l => (l.system || 'PPL') === currentSystem);
+
+            document.getElementById('csv-output').value = "Data,Kategoria,Cwiczenie,Serie x Powt.,Ciezar\n" + filteredLogs.map(l => {
+                const cat = l.category || exerciseMap[normalizeName(l.exercise)] || 'INNE';
+                return `${l.date},${cat},${l.exercise},${l.sets || ''},${l.weight}`;
             }).join('\n');
             
             const accordion = document.getElementById('progress-accordion');
             accordion.innerHTML = '';
             
-            const exercises = [...new Set(filtered.map(l => l.exercise))].sort();
-            exercises.forEach(ex => {
+            const exerciseSet = [...new Set(filteredLogs.map(l => l.exercise))].sort();
+            if (exerciseSet.length === 0) {
+                accordion.innerHTML = '<p class="text-center opacity-50 text-[10px] uppercase font-bold">Brak danych dla tego systemu</p>';
+                return;
+            }
+
+            exerciseSet.forEach(ex => {
                 const btn = document.createElement('button');
-                btn.className = 'w-full text-left p-4 bg-white/40 dark:bg-gray-800/40 rounded-2xl font-bold text-xs uppercase tracking-widest mb-2';
+                btn.className = 'w-full text-left p-4 mb-2 bg-white/40 dark:bg-gray-800/40 rounded-2xl font-bold text-[10px] uppercase tracking-widest text-gray-800 dark:text-white hover:bg-white/60 dark:hover:bg-gray-700/60 transition-colors';
                 btn.textContent = ex;
                 btn.onclick = () => showChart(ex);
                 accordion.appendChild(btn);
@@ -447,16 +538,22 @@
             chartInstance = new Chart(ctx, {
                 type: 'line',
                 data: { labels: data.map(l => l.date), datasets: [{ data: data.map(l => l.weight), borderColor: '#2563eb', tension: 0.4, fill: false }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: false } } }
             });
             window.scrollTo({ top: document.getElementById('chart-container').offsetTop - 20, behavior: 'smooth' });
         };
+        window.showChart = showChart;
 
         const navigate = (id) => {
-            document.querySelectorAll('.page-pane').forEach(p => p.classList.add('hidden'));
-            const dest = document.getElementById(id);
-            if (dest) dest.classList.remove('hidden');
+            const currentPane = document.querySelector('.page-pane:not(.hidden)');
+            const newPane = document.getElementById(id);
+            if (currentPane === newPane) return;
+            
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === id));
+            
+            if (currentPane) currentPane.classList.add('hidden');
+            newPane.classList.remove('hidden');
+            
             if (id === 'postepy') updateHistoryUI();
         };
 
@@ -464,10 +561,9 @@
         
         const showToast = (m) => { 
             const t = document.getElementById('toast'); 
-            if (t) {
-                t.textContent = m; t.style.opacity = '1'; 
-                setTimeout(() => t.style.opacity = '0', 2000); 
-            }
+            t.textContent = m; 
+            t.style.opacity = '1'; 
+            setTimeout(() => t.style.opacity = '0', 2000); 
         };
 
         document.getElementById('clear-log').onclick = async () => { 
@@ -480,6 +576,12 @@
             document.getElementById('csv-output').select(); 
             document.execCommand('copy'); 
             showToast('Skopiowano!'); 
+        };
+
+        const scheduleToggle = document.getElementById('scheduleToggle');
+        scheduleToggle.onchange = () => {
+            document.getElementById('schedule-display').textContent = scheduleToggle.checked ? "PUSH, PULL, LEGS, PUSH (itd.)" : "Pon: PUSH | Śr: PULL | Pt: LEGS";
+            document.querySelector('.dot').style.transform = scheduleToggle.checked ? 'translateX(1.25rem)' : 'translateX(0)';
         };
 
         renderAll();
