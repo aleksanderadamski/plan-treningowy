@@ -19,84 +19,97 @@
             background-size: 400% 400%;
             animation: gradientFloat 25s ease infinite;
             min-height: 100vh;
+            overflow-x: hidden;
         }
         @keyframes gradientFloat { 0% { background-position-x: 0%; } 50% { background-position-x: 100%; } 100% { background-position-x: 0%; } }
         .nav-btn.active { color: #2563eb; }
         html.dark .nav-btn.active { color: #60a5fa; }
-        .page-pane { width: 100%; }
-        .hidden { display: none; }
-        #login-overlay { backdrop-filter: blur(20px); }
+        .page-pane { transition: transform 0.3s ease-out; width: 100%; }
+        #login-overlay { backdrop-filter: blur(20px); z-index: 100; }
+        .animate-slide-in-from-right { animation: slideIn 0.3s forwards; }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        details > summary { list-style: none; cursor: pointer; }
+        details summary:after { content: '+'; float: right; font-weight: bold; }
+        details[open] summary:after { content: '−'; }
     </style>
 </head>
 <body class="text-gray-800 dark:text-gray-300">
 
-    <div id="login-overlay" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-white/80 dark:bg-gray-900/80">
+    <div id="login-overlay" class="fixed inset-0 flex items-center justify-center p-6 bg-white/80 dark:bg-gray-900/80">
         <div class="w-full max-w-sm bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700 text-center">
-            <h2 class="text-2xl font-bold mb-6">Witaj</h2>
+            <h2 class="text-2xl font-bold mb-6 uppercase tracking-tight">Witaj</h2>
             <div class="space-y-4">
-                <button id="google-login" class="w-full flex items-center justify-center gap-3 p-3 border rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition font-bold">
-                    Google SSO
+                <button id="google-login" class="w-full flex items-center justify-center gap-3 p-3 border rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition font-bold text-sm">
+                    Logowanie Google
                 </button>
+                <div class="relative py-2"><hr class="opacity-10"></div>
+                <input type="email" id="email" placeholder="EMAIL" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-900 border-none outline-none text-xs">
+                <input type="password" id="password" placeholder="HASŁO" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-900 border-none outline-none text-xs">
                 <div class="flex gap-2">
-                    <input type="email" id="email" placeholder="Email" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-900 border-none outline-none focus:ring-2 focus:ring-blue-500">
-                    <input type="password" id="password" placeholder="Hasło" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-900 border-none outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div class="flex gap-2">
-                    <button id="email-login" class="flex-1 bg-blue-600 text-white p-3 rounded-xl font-bold">Logowanie</button>
-                    <button id="email-register" class="flex-1 border border-blue-600 text-blue-600 p-3 rounded-xl font-bold">Rejestracja</button>
+                    <button id="email-login" class="flex-1 bg-blue-600 text-white p-3 rounded-xl font-bold text-xs">LOGOWANIE</button>
+                    <button id="email-register" class="flex-1 border border-blue-600 text-blue-600 p-3 rounded-xl font-bold text-xs">REJESTRACJA</button>
                 </div>
             </div>
-            <p id="auth-msg" class="mt-4 text-xs text-red-500 font-bold"></p>
+            <p id="auth-msg" class="mt-4 text-[10px] text-red-500 font-bold uppercase"></p>
         </div>
     </div>
 
     <div id="app-container" class="hidden pb-24">
-        <header class="text-center p-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-b border-gray-200/50 dark:border-gray-700/50 relative">
-            <h1 class="text-xl font-bold uppercase tracking-widest">Plan Treningowy</h1>
-            <div class="flex items-center justify-center gap-4 mt-1">
-                <span id="user-email" class="text-[10px] font-bold text-blue-600 uppercase"></span>
-                <button id="logout" class="text-[10px] text-gray-400 hover:text-red-500 font-bold uppercase">Wyloguj</button>
-            </div>
+        <header class="text-center p-6 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm border-b border-white/10 relative">
+            <h1 class="text-lg font-bold uppercase tracking-widest">Plan Treningowy</h1>
+            <button id="logout" class="absolute top-7 right-4 text-[9px] font-bold text-red-500 uppercase">Wyloguj</button>
         </header>
 
-        <main class="p-4 max-w-lg mx-auto">
-            <div id="panes-container">
-                <div class="page-pane" id="harmonogram">
-                    <div class="bg-white/50 dark:bg-gray-800/50 p-6 rounded-xl shadow-sm text-center">
-                        <h3 class="font-bold mb-4 uppercase text-xs">System PUSH/PULL/LEGS</h3>
-                        <p class="text-[10px] opacity-70 italic">Pon: PUSH | Śr: PULL | Pt: LEGS</p>
-                    </div>
+        <main class="p-4 max-w-lg mx-auto" id="main-content">
+            <div id="harmonogram" class="page-pane">
+                <div class="bg-white/40 dark:bg-gray-800/40 p-6 rounded-2xl shadow-sm text-center">
+                    <h3 class="font-bold uppercase text-xs mb-2">System PUSH PULL LEGS</h3>
+                    <p class="text-[10px] opacity-60">Pon: PUSH | Śr: PULL | Pt: LEGS</p>
                 </div>
+            </div>
 
-                <!-- Treningi -->
-                <div class="page-pane hidden" id="push"><div id="push-cards" class="space-y-4"></div><button data-workout="push" class="save-btn w-full mt-4 bg-blue-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Zapisz PUSH</button></div>
-                <div class="page-pane hidden" id="pull"><div id="pull-cards" class="space-y-4"></div><button data-workout="pull" class="save-btn w-full mt-4 bg-blue-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Zapisz PULL</button></div>
-                <div class="page-pane hidden" id="legs"><div id="legs-cards" class="space-y-4"></div><button data-workout="legs" class="save-btn w-full mt-4 bg-blue-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Zapisz LEGS</button></div>
-                <div class="page-pane hidden" id="brzuch"><div id="brzuch-cards" class="space-y-4"></div><button data-workout="brzuch" class="save-btn w-full mt-4 bg-blue-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Zapisz CORE</button></div>
+            <div id="push" class="page-pane hidden">
+                <div id="push-cards" class="space-y-4"></div>
+                <button data-workout="push" class="save-btn w-full mt-6 bg-blue-600 text-white py-4 rounded-2xl font-bold uppercase text-xs shadow-lg">Zapisz PUSH</button>
+            </div>
 
-                <div class="page-pane hidden" id="ai-raport">
-                    <h3 class="font-bold mb-4 uppercase text-center text-xs">Analiza Gemini AI</h3>
-                    <button id="generate-ai" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold uppercase text-xs shadow-lg">Generuj Raport AI</button>
-                    <div id="ai-result" class="mt-6 p-6 bg-white/70 dark:bg-gray-800/70 rounded-3xl hidden text-xs leading-relaxed"></div>
-                </div>
+            <div id="pull" class="page-pane hidden">
+                <div id="pull-cards" class="space-y-4"></div>
+                <button data-workout="pull" class="save-btn w-full mt-6 bg-blue-600 text-white py-4 rounded-2xl font-bold uppercase text-xs shadow-lg">Zapisz PULL</button>
+            </div>
+
+            <div id="legs" class="page-pane hidden">
+                <div id="legs-cards" class="space-y-4"></div>
+                <button data-workout="legs" class="save-btn w-full mt-6 bg-blue-600 text-white py-4 rounded-2xl font-bold uppercase text-xs shadow-lg">Zapisz LEGS</button>
+            </div>
+
+            <div id="brzuch" class="page-pane hidden">
+                <div id="brzuch-cards" class="space-y-4"></div>
+                <button data-workout="brzuch" class="save-btn w-full mt-6 bg-blue-600 text-white py-4 rounded-2xl font-bold uppercase text-xs shadow-lg">Zapisz CORE</button>
+            </div>
+
+            <div id="ai-raport" class="page-pane hidden">
+                <h3 class="font-bold mb-4 uppercase text-center text-xs tracking-widest">Analiza Gemini Flash</h3>
+                <button id="generate-ai" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold uppercase text-xs shadow-xl transition-all active:scale-95">Generuj Raport AI</button>
+                <div id="ai-result" class="mt-6 p-6 bg-white/60 dark:bg-gray-800/60 rounded-3xl hidden text-[11px] leading-relaxed border border-white/20"></div>
             </div>
         </main>
     </div>
 
-    <nav id="nav-bar" class="hidden fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t border-gray-200 dark:border-gray-800 flex justify-around p-2 z-50">
-        <button class="nav-btn p-2" data-tab="harmonogram">🏠</button>
-        <button class="nav-btn p-2" data-tab="push">💪</button>
-        <button class="nav-btn p-2" data-tab="pull">🏋️</button>
-        <button class="nav-btn p-2" data-tab="legs">🦵</button>
-        <button class="nav-btn p-2" data-tab="brzuch">🔥</button>
-        <button class="nav-btn p-2" data-tab="ai-raport">🤖</button>
+    <nav id="nav-bar" class="hidden fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t border-white/10 flex justify-around p-3 z-50">
+        <button class="nav-btn p-2 text-xl" data-tab="harmonogram">🏠</button>
+        <button class="nav-btn p-2 text-xl" data-tab="push">💪</button>
+        <button class="nav-btn p-2 text-xl" data-tab="pull">🏋️</button>
+        <button class="nav-btn p-2 text-xl" data-tab="legs">🦵</button>
+        <button class="nav-btn p-2 text-xl" data-tab="brzuch">🔥</button>
+        <button class="nav-btn p-2 text-xl" data-tab="ai-raport">🤖</button>
     </nav>
 
     <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] px-6 py-2 rounded-full font-bold opacity-0 transition-opacity z-[200]"></div>
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithCustomToken } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
         import { getFirestore, doc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
         const firebaseConfig = JSON.parse(__firebase_config);
@@ -109,42 +122,33 @@
             push: [{ name: "Wyciskanie sztangi płasko", sets: "4x8" }, { name: "OHP hantle", sets: "3x10" }],
             pull: [{ name: "Podciąganie", sets: "4xMAX" }, { name: "Wiosłowanie sztangą", sets: "4x10" }],
             legs: [{ name: "Przysiady", sets: "4x10" }, { name: "RDL", sets: "3x12" }],
-            brzuch: [{ name: "Allahy", sets: "4x15" }]
+            brzuch: [{ name: "Allahy", sets: "4x15" }, { name: "Unoszenie nóg", sets: "3xMAX" }]
         };
 
-        let currentLogs = [];
+        let logs = [];
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('login-overlay').classList.add('hidden');
                 document.getElementById('app-container').classList.remove('hidden');
                 document.getElementById('nav-bar').classList.remove('hidden');
-                document.getElementById('user-email').textContent = user.email;
-                syncLogs(user.uid);
-            } else {
-                document.getElementById('login-overlay').classList.remove('hidden');
-                document.getElementById('app-container').classList.add('hidden');
-                document.getElementById('nav-bar').classList.add('hidden');
+                onSnapshot(doc(db, 'artifacts', appId, 'users', user.uid, 'data', 'training'), (snap) => {
+                    logs = snap.exists() ? snap.data().entries || [] : [];
+                    renderAll();
+                });
             }
         });
-
-        const syncLogs = (uid) => {
-            onSnapshot(doc(db, 'artifacts', appId, 'users', uid, 'training', 'logs'), (snap) => {
-                currentLogs = snap.exists() ? snap.data().entries || [] : [];
-                renderAll();
-            });
-        };
 
         const renderAll = () => {
             Object.keys(workouts).forEach(type => {
                 const container = document.getElementById(`${type}-cards`);
-                if(!container) return;
+                if (!container) return;
                 container.innerHTML = workouts[type].map(ex => `
-                    <div class="ex-card bg-white/60 dark:bg-gray-800/60 p-5 rounded-2xl border border-white/20">
-                        <div class="font-bold text-xs mb-1">${ex.name}</div>
+                    <div class="bg-white/50 dark:bg-gray-900/50 p-5 rounded-2xl shadow-sm border border-white/5">
+                        <div class="font-bold text-xs mb-2 uppercase opacity-80">${ex.name}</div>
                         <div class="flex justify-between items-center">
-                            <span class="text-[10px] font-mono opacity-50">${ex.sets}</span>
-                            <input type="number" step="0.5" class="weight-input w-20 p-2 bg-slate-100 dark:bg-gray-700 rounded-lg text-center font-bold text-xs" placeholder="kg">
+                            <span class="text-[10px] font-mono opacity-40">${ex.sets}</span>
+                            <input type="number" step="0.5" class="weight-input w-24 p-3 bg-white/10 dark:bg-black/20 rounded-xl text-center font-bold text-xs outline-none focus:ring-1 focus:ring-blue-500" placeholder="kg">
                         </div>
                     </div>
                 `).join('');
@@ -156,37 +160,28 @@
                 const type = btn.dataset.workout;
                 const weights = Array.from(document.getElementById(`${type}-cards`).querySelectorAll('.weight-input')).map(i => parseFloat(i.value));
                 if (weights.every(w => isNaN(w))) return;
-                
                 const now = new Date().toISOString().split('T')[0];
                 const newEntries = workouts[type].map((ex, i) => ({ date: now, exercise: ex.name, weight: weights[i] || 0 })).filter(e => e.weight > 0);
-                
-                await setDoc(doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'training', 'logs'), { entries: [...currentLogs, ...newEntries] });
-                showToast("Zapisano trening");
+                await setDoc(doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'data', 'training'), { entries: [...logs, ...newEntries] });
+                showToast("Trening zapisany");
             };
         });
 
         document.getElementById('generate-ai').onclick = async () => {
-            if (currentLogs.length < 3) return showToast("Zbyt mało danych");
+            if (logs.length < 3) return showToast("Zbyt mało danych");
             const resBox = document.getElementById('ai-result');
             resBox.classList.remove('hidden');
-            resBox.innerHTML = "Generowanie raportu...";
-            
+            resBox.textContent = "Analizowanie...";
             try {
-                // URL Twojej wdrożonej funkcji chmurowej
                 const functionUrl = `https://analyzeTraining-europe-west1-${firebaseConfig.projectId}.a.run.app`;
-                const dataSummary = currentLogs.slice(-20).map(l => `${l.date}, ${l.exercise}, ${l.weight}kg`).join('\n');
-                
                 const response = await fetch(functionUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ dataSummary })
+                    body: JSON.stringify({ dataSummary: logs.slice(-20).map(l => `${l.date}, ${l.exercise}, ${l.weight}kg`).join('\n') })
                 });
-
                 const result = await response.json();
                 resBox.innerHTML = result.text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
-            } catch (e) {
-                resBox.innerHTML = "Błąd połączenia z modułem AI. Upewnij się, że funkcja analyzeTraining jest wdrożona.";
-            }
+            } catch (e) { resBox.textContent = "Błąd połączenia z modułem AI."; }
         };
 
         const showPage = (id) => {
@@ -197,7 +192,7 @@
 
         document.querySelectorAll('.nav-btn').forEach(b => b.onclick = () => showPage(b.dataset.tab));
         document.getElementById('google-login').onclick = () => signInWithPopup(auth, new GoogleAuthProvider());
-        document.getElementById('logout').onclick = () => signOut(auth);
+        document.getElementById('logout').onclick = () => signOut(auth).then(() => location.reload());
         const showToast = (m) => { const t = document.getElementById('toast'); t.textContent = m; t.style.opacity = '1'; setTimeout(() => t.style.opacity = '0', 2000); };
     </script>
 </body>
