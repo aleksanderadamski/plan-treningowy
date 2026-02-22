@@ -423,7 +423,7 @@
                 document.getElementById('auth-overlay').classList.add('hidden');
                 document.getElementById('app-content').classList.remove('hidden');
                 document.getElementById('app-nav').classList.remove('hidden');
-                document.getElementById('user-id-display').textContent = user.email;
+                document.getElementById('user-id-display').textContent = user.isAnonymous ? "Gość" : user.email;
                 syncLogs(user.uid);
                 updateSystemUI();
             } else {
@@ -433,7 +433,21 @@
             }
         });
 
+        const initAuth = async () => {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                try { 
+                    await signInWithCustomToken(auth, __initial_auth_token); 
+                } catch(e) {
+                    await signInAnonymously(auth);
+                }
+            } else {
+                try { await signInAnonymously(auth); } catch(e) {}
+            }
+        };
+        initAuth();
+
         const syncLogs = (uid) => {
+            if (!currentUser) return;
             onSnapshot(doc(db, 'artifacts', appId, 'users', uid, 'data', 'logs'), (snap) => {
                 trainingLogs = snap.exists() ? (snap.data().entries || []) : [];
                 renderAll();
@@ -510,11 +524,13 @@
             currentSystem = 'PPL';
             localStorage.setItem('trainingSystem', 'PPL');
             updateSystemUI();
+            navigate('harmonogram');
         };
         document.getElementById('select-fbw').onclick = () => {
             currentSystem = 'FBW';
             localStorage.setItem('trainingSystem', 'FBW');
             updateSystemUI();
+            navigate('harmonogram');
         };
 
         document.body.addEventListener('change', (e) => {
@@ -538,7 +554,7 @@
                     if(!isNaN(weight) && weight > 0) {
                         entries.push({ 
                             date: now, 
-                            system: currentSystem, // Tagowanie danych systemem
+                            system: currentSystem,
                             category: category, 
                             exercise: card.querySelector('.ex-select').value, 
                             sets: card.querySelector('.sets-display').textContent,
@@ -552,7 +568,6 @@
         });
 
         const updateHistoryUI = () => {
-            // Filtrowanie danych wg wybranego systemu
             const filteredLogs = trainingLogs.filter(l => (l.system || 'PPL') === currentSystem);
 
             document.getElementById('csv-output').value = "Data,Kategoria,Cwiczenie,Serie x Powt.,Ciezar\n" + filteredLogs.map(l => {
@@ -600,7 +615,7 @@
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === id));
             
             if (currentPane) currentPane.classList.add('hidden');
-            newPane.classList.remove('hidden');
+            if (newPane) newPane.classList.remove('hidden');
             
             if (id === 'postepy') updateHistoryUI();
         };
@@ -624,6 +639,40 @@
             document.getElementById('csv-output').select(); 
             document.execCommand('copy'); 
             showToast('Skopiowano!'); 
+        };
+
+        document.getElementById('import-pasted-csv').onclick = async () => {
+            if (!currentUser) return;
+            const text = document.getElementById('csv-output').value.trim();
+            if (!text) return;
+
+            const lines = text.split('\n');
+            const newSystemEntries = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const parts = lines[i].split(',');
+                if (parts.length >= 5) {
+                    newSystemEntries.push({
+                        date: parts[0].trim(),
+                        system: currentSystem,
+                        category: parts[1].trim(),
+                        exercise: parts[2].trim().replace(/^"|"$/g, ''),
+                        sets: parts[3].trim(),
+                        weight: parseFloat(parts[4])
+                    });
+                }
+            }
+
+            if (newSystemEntries.length === 0 && lines.length > 1) {
+                showToast('Błędny format CSV', 'error');
+                return;
+            }
+
+            const otherSystemEntries = trainingLogs.filter(l => (l.system || 'PPL') !== currentSystem);
+            const updatedLogs = [...otherSystemEntries, ...newSystemEntries];
+
+            await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs'), { entries: updatedLogs });
+            showToast('Zsynchronizowano z chmurą');
         };
 
         const scheduleToggle = document.getElementById('scheduleToggle');
