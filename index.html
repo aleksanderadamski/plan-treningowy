@@ -167,11 +167,134 @@
             };
         });
 
+<<<<<<< HEAD
         document.getElementById('generate-ai').onclick = async () => {
             if (logs.length < 3) return showToast("Zbyt mało danych");
             const resBox = document.getElementById('ai-result');
             resBox.classList.remove('hidden');
             resBox.textContent = "Analizowanie...";
+=======
+        const updateHistoryUI = () => {
+            document.getElementById('csv-output').value = "Data,Kategoria,Cwiczenie,Serie x Powt.,Ciezar\n" + trainingLogs.map(l => {
+                const cat = l.category || exerciseMap[normalizeName(l.exercise)] || 'INNE';
+                return `${l.date},${cat},${l.exercise},${l.sets || ''},${l.weight}`;
+            }).join('\n');
+            
+            const accordion = document.getElementById('progress-accordion');
+            accordion.innerHTML = '';
+            
+            ['PUSH', 'PULL', 'LEGS', 'BRZUCH'].forEach(cat => {
+                const exInCat = [...new Set(trainingLogs.filter(l => (l.category || exerciseMap[normalizeName(l.exercise)]) === cat).map(l => l.exercise))].sort();
+                if(exInCat.length === 0) return;
+                
+                const details = document.createElement('details');
+                details.className = 'bg-white/40 dark:bg-gray-800/40 rounded-2xl overflow-hidden';
+                details.innerHTML = `
+                    <summary class="p-4 font-bold text-[11px] uppercase tracking-widest cursor-pointer text-gray-800 dark:text-white">${cat}</summary>
+                    <div class="p-2 space-y-1 bg-white/20 dark:bg-black/10">
+                        ${exInCat.map(n => `<button class="w-full text-left p-3 rounded-xl text-[9px] font-bold uppercase text-gray-900 dark:text-white hover:bg-white/50 dark:hover:bg-gray-700/50" onclick="showChart('${n.replace(/'/g, "\\'")}')">${n}</button>`).join('')}
+                    </div>
+                `;
+                accordion.appendChild(details);
+            });
+        };
+
+        document.getElementById('import-pasted-csv').onclick = () => {
+            const lines = document.getElementById('csv-output').value.split('\n');
+            const newEntries = [];
+            lines.forEach((line, i) => {
+                if (i === 0 || !line.trim()) return;
+                const parts = line.split(',');
+                if (parts.length >= 3) {
+                    const date = parts[0].trim();
+                    let category, exercise, sets, weight;
+                    if(parts.length === 5) {
+                        category = parts[1].trim().toUpperCase();
+                        exercise = parts[2].trim();
+                        sets = parts[3].trim();
+                        weight = parseFloat(parts[4]);
+                    } else if(parts.length === 4) {
+                        category = parts[1].trim().toUpperCase();
+                        exercise = parts[2].trim();
+                        weight = parseFloat(parts[3]);
+                    } else {
+                        exercise = parts[1].trim();
+                        weight = parseFloat(parts[2]);
+                        category = exerciseMap[normalizeName(exercise)] || 'INNE';
+                    }
+                    if(!isNaN(weight)) newEntries.push({ date, category, exercise, sets: sets || '', weight });
+                }
+            });
+            if (newEntries.length) saveToCloud(newEntries);
+        };
+
+        window.showChart = (name) => {
+            document.getElementById('chart-container').classList.remove('hidden');
+            const ctx = document.getElementById('progress-chart').getContext('2d');
+            if(chartInstance) chartInstance.destroy();
+            const data = trainingLogs.filter(l => normalizeName(l.exercise) === normalizeName(name)).sort((a,b) => new Date(a.date) - new Date(b.date));
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: { labels: data.map(l => l.date), datasets: [{ data: data.map(l => l.weight), borderColor: '#2563eb', tension: 0.4, fill: false }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: false } } }
+            });
+            window.scrollTo({ top: document.getElementById('chart-container').offsetTop - 20, behavior: 'smooth' });
+        };
+
+        const callGemini = async (prompt, systemPrompt) => {
+            const activeKey = apiKey || firebaseConfig.apiKey;
+            // Aktualizacja modelu na Gemini 3 Flash zgodnie z Twoją informacją
+            const modelName = 'gemini-3.0-flash';
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${activeKey}`;
+            
+            const payload = {
+                contents: [{
+                    parts: [
+                        { text: systemPrompt },
+                        { text: prompt }
+                    ]
+                }]
+            };
+
+            let delay = 1000;
+            for (let i = 0; i < 5; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const errData = await response.json();
+                        throw new Error(errData.error?.message || 'API Error');
+                    }
+                    const result = await response.json();
+                    const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (!text) throw new Error('Model zwrócił pustą odpowiedź');
+                    return text;
+                } catch (e) {
+                    if (i === 4) throw e;
+                    await new Promise(r => setTimeout(r, delay));
+                    delay *= 2;
+                }
+            }
+        };
+
+        document.getElementById('generate-ai-insight').onclick = async () => {
+            if (trainingLogs.length < 5) return showToast("Zbyt mało danych (min. 5)");
+            const btn = document.getElementById('generate-ai-insight');
+            const resultBox = document.getElementById('ai-result-container');
+            const loading = document.getElementById('ai-loading');
+            const textEl = document.getElementById('ai-text');
+            btn.disabled = true;
+            resultBox.classList.remove('hidden');
+            loading.classList.remove('hidden');
+            textEl.innerHTML = '';
+            const dataSummary = trainingLogs.slice(-30).map(l => `${l.date}, ${l.exercise}, ${l.weight}kg`).join('\n');
+            const systemPrompt = "Jesteś trenerem personalnym. Analizujesz historię treningową. Cel: 1. Szacuj 1RM głównych bojów. 2. Wykryj stagnację. 3. Zasugeruj obciążenia na kolejny trening (+2.5kg lub +5%). Formatuj w punktach, używaj **pogrubień**. Pisz krótko i konkretnie po polsku.";
+            const prompt = `Analizuj ostatnie wpisy:\n${dataSummary}`;
+>>>>>>> parent of 65c4684 (2.6)
             try {
                 const functionUrl = `https://analyzeTraining-europe-west1-${firebaseConfig.projectId}.a.run.app`;
                 const response = await fetch(functionUrl, {
