@@ -31,7 +31,6 @@
             background: linear-gradient(-45deg, var(--grad-color-1), var(--grad-color-2), var(--grad-color-3), var(--grad-color-4));
             background-size: 400% 400%;
             animation: gradientFloat 25s ease infinite;
-            background-position-y: calc(50% + var(--scroll-y, 0px));
             transition: background 0.5s ease;
             overflow-x: hidden;
             min-height: 100vh;
@@ -123,7 +122,7 @@
                 <button id="logout-btn" class="text-[10px] font-bold text-red-500 uppercase mt-1 hover:underline tracking-tighter">Wyloguj</button>
             </div>
             <button id="theme-toggle" class="p-2 absolute top-5 right-4 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">
-                <span id="theme-icon" class="font-bold">Motyw</span>
+                <span id="theme-icon" class="font-bold text-xs uppercase">Tryb</span>
             </button>
         </header>
 
@@ -184,15 +183,15 @@
                 </div>
 
                 <div class="page-pane hidden" id="ai-analiza">
-                    <h3 class="font-bold mb-4 uppercase text-center tracking-widest text-gray-900 dark:text-white text-sm">Analiza Gemini 3</h3>
+                    <h3 class="font-bold mb-4 uppercase text-center tracking-widest text-gray-900 dark:text-white text-sm">Analiza Gemini AI</h3>
                     <div class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-6 rounded-3xl shadow-sm border border-blue-500/10 mb-4">
-                        <p class="text-[10px] text-center opacity-70 mb-4 text-gray-700 dark:text-gray-300 uppercase font-bold tracking-tight text-balance">Model AI przeanalizuje logi treningowe, obliczy 1RM i wykryje stagnację</p>
+                        <p class="text-[10px] text-center opacity-70 mb-4 text-gray-700 dark:text-gray-300 uppercase font-bold tracking-tight text-balance">AI przeanalizuje logi treningowe, obliczy 1RM i wykryje stagnację</p>
                         <button id="generate-ai-insight" class="w-full bg-blue-600 text-white py-3 rounded-2xl font-bold uppercase text-xs shadow-md hover:bg-blue-700 transition-colors disabled:opacity-50">Generuj Raport</button>
                     </div>
                     <div id="ai-result-container" class="hidden bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl p-6 rounded-3xl shadow-xl border border-blue-500/20">
                         <div id="ai-loading" class="flex flex-col items-center gap-3 py-8 hidden">
                             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                            <span class="text-xs font-bold animate-pulse uppercase tracking-tighter">Analizowanie danych...</span>
+                            <span class="text-xs font-bold animate-pulse uppercase tracking-tighter">Analizowanie...</span>
                         </div>
                         <div id="ai-text" class="text-[11px] leading-relaxed markdown-content text-gray-800 dark:text-gray-200"></div>
                     </div>
@@ -200,7 +199,7 @@
 
                 <div class="page-pane hidden" id="dziennik">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white">
-                        <h3 class="font-bold uppercase tracking-widest text-sm">Baza Logów</h3>
+                        <h3 class="font-bold uppercase tracking-widest text-sm text-bold">Logi CSV</h3>
                         <div class="flex gap-2">
                             <button id="import-pasted-csv" class="text-[10px] bg-blue-600 text-white px-3 py-1 rounded-lg font-bold uppercase">Sync</button>
                             <button id="copy-log" class="text-[10px] bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded-lg font-bold uppercase">Kopiuj</button>
@@ -233,9 +232,6 @@
         import { getFirestore, doc, setDoc, onSnapshot, collection, query, getDoc } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
         import { getAnalytics } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js';
 
-        // Klucz API dla Gemini - zapewniany przez środowisko Google Cloud/Canvas.
-        const apiKey = "AIzaSyAdWYZmp9zfQ7Rbvi91WBUSHPmgOWypAfM"; 
-
         const firebaseConfig = {
             apiKey: "AIzaSyAdWYZmp9zfQ7Rbvi91WBUSHPmgOWypAfM",
             authDomain: "training-assistant-44a28.firebaseapp.com",
@@ -249,7 +245,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'training-assistant-44a28';
+        const appId = 'training-pro-v3';
         
         try { getAnalytics(app); } catch (e) {}
 
@@ -273,7 +269,7 @@
             legs: [
                 { options: [{ name: "Przysiady ze sztangą na plecach", sets: "4x6-8" }, { name: "Wypychanie ciężaru na suwnicy", sets: "4x8-10" }, { name: "Przysiady na maszynie Hack", sets: "4x8-10" }]},
                 { options: [{ name: "Martwy ciąg na prostych nogach (RDL)", sets: "3x8-12" }, { name: "Uginanie nóg na maszynie leżąc", sets: "3x10-12" }, { name: "Uginanie nóg na maszynie siedząc", sets: "3x10-12" }]},
-                { options: [{ name: "Przysiady bułgarskie", sets: "3x8-12 (na noga)" }, { name: "Wykroki z hantlami", sets: "3x10-12 (na noga)" }, { name: "Zakroki ze sztangą/hantlami", sets: "3x10-12 (na noga)" }]},
+                { options: [{ name: "Przysiady bułgarskie", sets: "3x8-12 (na nogę)" }, { name: "Wykroki z hantlami", sets: "3x10-12 (na nogę)" }, { name: "Zakroki ze sztangą/hantlami", sets: "3x10-12 (na nogę)" }]},
                 { options: [{ name: "Prostowanie nóg na maszynie siedząc", sets: "3x12-15" }, { name: "Przysiad Goblet", sets: "3x12-15" }, { name: "Przysiad syzyfowy (Sissy Squat)", sets: "3xMAX" }]},
                 { options: [{ name: "Hip Thrust ze sztangą", sets: "4x8-12" }, { name: "'Żuraw' (Glute Ham Raise)", sets: "3xMAX" }, { name: "Wyprosty tułowia na ławce rzymskiej (pod pośladki)", sets: "3x12-15" }]},
                 { options: [{ name: "Wspięcia na palce (stojąc)", sets: "4x12-20" }, { name: "Wspięcia na palce na suwnicy", sets: "4x15-25" }, { name: "Wspięcia na palce siedząc", sets: "4x15-25" }]}
@@ -304,7 +300,18 @@
         const toggleTheme = () => {
             const isDark = document.documentElement.classList.toggle('dark');
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateThemeUI(isDark);
         };
+
+        const updateThemeUI = (isDark) => {
+            const icon = document.getElementById('theme-icon');
+            if (icon) icon.textContent = isDark ? 'Jasny' : 'Ciemny';
+            const authIcon = document.getElementById('auth-theme-toggle');
+            if (authIcon) authIcon.textContent = isDark ? 'Jasny' : 'Ciemny';
+        };
+
+        // Initial Theme Load
+        updateThemeUI(document.documentElement.classList.contains('dark'));
 
         document.getElementById('auth-theme-toggle').onclick = toggleTheme;
         document.getElementById('theme-toggle').onclick = toggleTheme;
@@ -314,12 +321,22 @@
             document.getElementById('auth-error').textContent = msg;
         };
 
+        const hideError = () => {
+            document.getElementById('auth-error-container').classList.add('hidden');
+        };
+
         const loginWithGoogle = async () => {
+            hideError();
             const provider = new GoogleAuthProvider();
-            try { await signInWithPopup(auth, provider); } catch (e) { showError(`Auth Error: ${e.code}`); }
+            try { 
+                await signInWithPopup(auth, provider); 
+            } catch (e) { 
+                showError(`Błąd autoryzacji Google: ${e.message}`); 
+            }
         };
 
         const loginWithEmail = async () => {
+            hideError();
             const e = document.getElementById('auth-email').value;
             const p = document.getElementById('auth-password').value;
             if (!e || !p) return showError("Wprowadź dane.");
@@ -327,6 +344,7 @@
         };
 
         const registerWithEmail = async () => {
+            hideError();
             const e = document.getElementById('auth-email').value;
             const p = document.getElementById('auth-password').value;
             if (!e || !p) return showError("Wprowadź dane.");
@@ -340,7 +358,7 @@
 
         onAuthStateChanged(auth, async (user) => {
             currentUser = user;
-            if (user && !user.isAnonymous) {
+            if (user) {
                 document.getElementById('auth-overlay').classList.add('hidden');
                 document.getElementById('app-content').classList.remove('hidden');
                 document.getElementById('app-nav').classList.remove('hidden');
@@ -357,6 +375,8 @@
             onSnapshot(doc(db, 'artifacts', appId, 'users', uid, 'data', 'logs'), (snap) => {
                 trainingLogs = snap.exists() ? (snap.data().entries || []) : [];
                 renderAll();
+            }, (err) => {
+                console.error("Błąd synchronizacji:", err);
             });
         };
 
@@ -458,36 +478,7 @@
             });
         };
 
-        document.getElementById('import-pasted-csv').onclick = () => {
-            const lines = document.getElementById('csv-output').value.split('\n');
-            const newEntries = [];
-            lines.forEach((line, i) => {
-                if (i === 0 || !line.trim()) return;
-                const parts = line.split(',');
-                if (parts.length >= 3) {
-                    const date = parts[0].trim();
-                    let category, exercise, sets, weight;
-                    if(parts.length === 5) {
-                        category = parts[1].trim().toUpperCase();
-                        exercise = parts[2].trim();
-                        sets = parts[3].trim();
-                        weight = parseFloat(parts[4]);
-                    } else if(parts.length === 4) {
-                        category = parts[1].trim().toUpperCase();
-                        exercise = parts[2].trim();
-                        weight = parseFloat(parts[3]);
-                    } else {
-                        exercise = parts[1].trim();
-                        weight = parseFloat(parts[2]);
-                        category = exerciseMap[normalizeName(exercise)] || 'INNE';
-                    }
-                    if(!isNaN(weight)) newEntries.push({ date, category, exercise, sets: sets || '', weight });
-                }
-            });
-            if (newEntries.length) saveToCloud(newEntries);
-        };
-
-        window.showChart = (name) => {
+        const showChart = (name) => {
             document.getElementById('chart-container').classList.remove('hidden');
             const ctx = document.getElementById('progress-chart').getContext('2d');
             if(chartInstance) chartInstance.destroy();
@@ -499,97 +490,48 @@
             });
             window.scrollTo({ top: document.getElementById('chart-container').offsetTop - 20, behavior: 'smooth' });
         };
+        window.showChart = showChart;
 
-        const callGemini = async (prompt, systemPrompt) => {
-            const activeKey = apiKey || firebaseConfig.apiKey;
-            // Aktualizacja modelu na Gemini 3 Flash zgodnie z Twoją informacją
-            const modelName = 'gemini-3-flash-preview';
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${activeKey}`;
+        const navigate = (id) => {
+            const currentPane = document.querySelector('.page-pane:not(.hidden)');
+            const newPane = document.getElementById(id);
+            if (currentPane === newPane) return;
             
-            const payload = {
-                contents: [{
-                    parts: [
-                        { text: systemPrompt },
-                        { text: prompt }
-                    ]
-                }]
-            };
-
-            let delay = 1000;
-            for (let i = 0; i < 5; i++) {
-                try {
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        const errData = await response.json();
-                        throw new Error(errData.error?.message || 'API Error');
-                    }
-                    const result = await response.json();
-                    const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                    if (!text) throw new Error('Model zwrócił pustą odpowiedź');
-                    return text;
-                } catch (e) {
-                    if (i === 4) throw e;
-                    await new Promise(r => setTimeout(r, delay));
-                    delay *= 2;
-                }
-            }
-        };
-
-        document.getElementById('generate-ai-insight').onclick = async () => {
-            if (trainingLogs.length < 5) return showToast("Zbyt mało danych (min. 5)");
-            const btn = document.getElementById('generate-ai-insight');
-            const resultBox = document.getElementById('ai-result-container');
-            const loading = document.getElementById('ai-loading');
-            const textEl = document.getElementById('ai-text');
-            btn.disabled = true;
-            resultBox.classList.remove('hidden');
-            loading.classList.remove('hidden');
-            textEl.innerHTML = '';
-            const dataSummary = trainingLogs.slice(-30).map(l => `${l.date}, ${l.exercise}, ${l.weight}kg`).join('\n');
-            const systemPrompt = "Jesteś trenerem personalnym. Analizujesz historię treningową. Cel: 1. Szacuj 1RM głównych bojów. 2. Wykryj stagnację. 3. Zasugeruj obciążenia na kolejny trening (+2.5kg lub +5%). Formatuj w punktach, używaj **pogrubień**. Pisz krótko i konkretnie po polsku.";
-            const prompt = `Analizuj ostatnie wpisy:\n${dataSummary}`;
-            try {
-                const response = await callGemini(prompt, systemPrompt);
-                loading.classList.add('hidden');
-                textEl.innerHTML = response.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
-            } catch (e) {
-                loading.classList.add('hidden');
-                textEl.innerHTML = `<span class="text-red-500 font-bold uppercase text-[10px]">Błąd: ${e.message}</span>`;
-            } finally { btn.disabled = false; }
-        };
-
-        const tabOrder = ['harmonogram', 'push', 'pull', 'legs', 'brzuch', 'postepy', 'ai-analiza', 'dziennik'];
-        const navigate = (id, dir = null) => {
-            const curr = document.querySelector('.page-pane:not(.hidden)');
-            const dest = document.getElementById(id);
-            if(curr === dest) return;
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === id));
-            if(dir) {
-                curr.classList.add(dir === 'L' ? 'animate-slide-out-to-left' : 'animate-slide-out-to-right');
-                dest.classList.add(dir === 'L' ? 'animate-slide-in-from-right' : 'animate-slide-in-from-left');
-            }
-            dest.classList.remove('hidden');
-            setTimeout(() => { 
-                curr.className = 'page-pane hidden'; 
-                dest.className = 'page-pane'; 
-                if(id === 'postepy') updateHistoryUI(); 
-            }, 300);
+            
+            if (currentPane) currentPane.classList.add('hidden');
+            newPane.classList.remove('hidden');
+            
+            if (id === 'postepy') updateHistoryUI();
         };
+
         document.querySelectorAll('.nav-btn').forEach(b => b.onclick = () => navigate(b.dataset.tab));
-        const showToast = (m) => { const t = document.getElementById('toast'); t.textContent = m; t.style.opacity = '1'; setTimeout(() => t.style.opacity = '0', 2000); };
-        window.onscroll = () => document.body.style.setProperty('--scroll-y', `${window.scrollY / -15}px`);
-        document.getElementById('clear-log').onclick = async () => { if(confirm('Wyczyścić chmurę?') && currentUser) await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs'), { entries: [] }); };
-        document.getElementById('copy-log').onclick = () => { document.getElementById('csv-output').select(); document.execCommand('copy'); showToast('Kopia OK'); };
+        
+        const showToast = (m) => { 
+            const t = document.getElementById('toast'); 
+            t.textContent = m; 
+            t.style.opacity = '1'; 
+            setTimeout(() => t.style.opacity = '0', 2000); 
+        };
+
+        document.getElementById('clear-log').onclick = async () => { 
+            if(confirm('Wyczyścić chmurę?') && currentUser) {
+                await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs'), { entries: [] }); 
+            }
+        };
+
+        document.getElementById('copy-log').onclick = () => { 
+            document.getElementById('csv-output').select(); 
+            document.execCommand('copy'); 
+            showToast('Skopiowano!'); 
+        };
+
         const scheduleToggle = document.getElementById('scheduleToggle');
         scheduleToggle.onchange = () => {
-            document.getElementById('schedule-display').textContent = scheduleToggle.checked ? "PUSH, PULL, LEGS..." : "Pon: PUSH | Śr: PULL | Pt: LEGS";
+            document.getElementById('schedule-display').textContent = scheduleToggle.checked ? "PUSH, PULL, LEGS, PUSH (itd.)" : "Pon: PUSH | Śr: PULL | Pt: LEGS";
             document.querySelector('.dot').style.transform = scheduleToggle.checked ? 'translateX(1.25rem)' : 'translateX(0)';
         };
+
         renderAll();
     </script>
 </body>
