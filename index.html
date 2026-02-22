@@ -182,11 +182,11 @@
         <button class="nav-btn ppl-nav px-2 py-2 flex flex-col items-center flex-shrink-0" data-tab="brzuch">🔥<span class="text-[8px] font-bold">CORE</span></button>
 
         <!-- FBW Nav -->
-        <button class="nav-btn fbw-nav px-2 py-2 flex flex-col items-center flex-shrink-0 hidden" data-tab="trening-a">🅰️<span class="text-[8px] font-bold">PLAN A</span></button>
-        <button class="nav-btn fbw-nav px-2 py-2 flex flex-col items-center flex-shrink-0 hidden" data-tab="trening-b">🅱️<span class="text-[8px] font-bold">PLAN B</span></button>
+        <button class="nav-btn fbw-nav px-2 py-2 flex flex-col items-center flex-shrink-0 hidden" data-tab="trening-a">🅰️<span class="text-[8px] font-bold">TRENING A</span></button>
+        <button class="nav-btn fbw-nav px-2 py-2 flex flex-col items-center flex-shrink-0 hidden" data-tab="trening-b">🅱️<span class="text-[8px] font-bold">TRENING B</span></button>
 
         <button class="nav-btn px-2 py-2 flex flex-col items-center flex-shrink-0" data-tab="postepy">📈<span class="text-[8px] font-bold">STATS</span></button>
-        <button class="nav-btn px-2 py-2 flex flex-col items-center flex-shrink-0" data-tab="dziennik">📖<span class="text-[8px] font-bold">LOGS</span></button>
+        <button class="nav-btn px-2 py-2 flex flex-col items-center flex-shrink-0" data-tab="dziennik">📖<span class="text-[8px] font-bold">LOG</span></button>
     </nav>
 
     <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] px-6 py-2 rounded-full font-bold opacity-0 transition-opacity z-[200]"></div>
@@ -194,7 +194,7 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithCustomToken, signInAnonymously } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
-        import { getFirestore, doc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+        import { getFirestore, doc, setDoc, onSnapshot, collection, query, getDoc } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
         import { getAnalytics } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js';
 
         const firebaseConfig = JSON.parse(__firebase_config);
@@ -234,12 +234,12 @@
                 { options: [{ name: "Unoszenie nóg", sets: "4xMAX" }]}
             ],
             "trening-a": [
-                { options: [{ name: "FBW A: Ćwiczenie 1", sets: "3x8" }]},
-                { options: [{ name: "FBW A: Ćwiczenie 2", sets: "3x10" }]}
+                { options: [{ name: "FBW A: Przykładowe 1", sets: "3x8" }]},
+                { options: [{ name: "FBW A: Przykładowe 2", sets: "3x10" }]}
             ],
             "trening-b": [
-                { options: [{ name: "FBW B: Ćwiczenie 1", sets: "3x8" }]},
-                { options: [{ name: "FBW B: Ćwiczenie 2", sets: "3x10" }]}
+                { options: [{ name: "FBW B: Przykładowe 1", sets: "3x8" }]},
+                { options: [{ name: "FBW B: Przykładowe 2", sets: "3x10" }]}
             ]
         };
 
@@ -355,7 +355,6 @@
             }
         });
 
-        // Environment Auth Handshake
         const initAuth = async () => {
             if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                 try { await signInWithCustomToken(auth, __initial_auth_token); } catch(e) {}
@@ -433,7 +432,7 @@
             const exercises = [...new Set(filtered.map(l => l.exercise))].sort();
             exercises.forEach(ex => {
                 const btn = document.createElement('button');
-                btn.className = 'w-full text-left p-4 bg-white/40 dark:bg-gray-800/40 rounded-2xl font-bold text-xs uppercase tracking-widest';
+                btn.className = 'w-full text-left p-4 bg-white/40 dark:bg-gray-800/40 rounded-2xl font-bold text-xs uppercase tracking-widest mb-2';
                 btn.textContent = ex;
                 btn.onclick = () => showChart(ex);
                 accordion.appendChild(btn);
