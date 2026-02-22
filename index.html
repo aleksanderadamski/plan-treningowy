@@ -500,20 +500,26 @@
             window.scrollTo({ top: document.getElementById('chart-container').offsetTop - 20, behavior: 'smooth' });
         };
 
-        const callGemini = async (prompt, systemPrompt) => {
-            const activeKey = apiKey || firebaseConfig.apiKey;
-            // Aktualizacja modelu na Gemini 3 Flash zgodnie z Twoją informacją
-            const modelName = 'gemini-3-flash-preview';
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${activeKey}`;
-            
-            const payload = {
-                contents: [{
-                    parts: [
-                        { text: systemPrompt },
-                        { text: prompt }
-                    ]
-                }]
-            };
+		const generateAIInsight = async () => {
+		  const dataSummary = trainingLogs.slice(-30).map(l => `${l.date}, ${l.exercise}, ${l.weight}kg`).join('\n');
+		  
+		  // Adres URL otrzymany w terminalu po wykonaniu 'firebase deploy'
+		  const functionUrl = "https://analyzeTraining-<region>-<project-id>.a.run.app";
+
+		  const response = await fetch(functionUrl, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ dataSummary })
+		  });
+
+		  if (!response.ok) {
+			const err = await response.json();
+			throw new Error(err.error || 'Błąd proxy');
+		  }
+		  
+		  const result = await response.json();
+		  return result.text;
+		};
 
             let delay = 1000;
             for (let i = 0; i < 5; i++) {
