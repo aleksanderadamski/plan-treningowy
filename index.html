@@ -104,7 +104,7 @@
                 <input type="password" id="auth-password" placeholder="HASŁO" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white font-bold text-xs">
                 <div class="flex gap-2">
                     <button id="email-login" class="flex-1 bg-blue-600 text-white p-3 rounded-xl font-bold hover:bg-blue-700 shadow-lg transition text-xs uppercase">Logowanie</button>
-                    <button id="email-register" class="flex-1 border border-blue-600 text-blue-600 p-3 rounded-xl font-bold hover:bg-blue-50 dark:hover:bg-blue-900/10 transition text-xs uppercase">Rejestracja</button>
+                    <button id="email-register" class="flex-1 border border-blue-600 text-blue-600 p-3 rounded-xl font-bold hover:bg-blue-900/10 transition text-xs uppercase">Rejestracja</button>
                 </div>
             </div>
             <div id="auth-error-container" class="mt-4 p-3 bg-red-50 dark:bg-red-900/20 rounded-xl hidden text-left border border-red-200 dark:border-red-800">
@@ -182,21 +182,6 @@
                     </div>
                 </div>
 
-                <div class="page-pane hidden" id="ai-analiza">
-                    <h3 class="font-bold mb-4 uppercase text-center tracking-widest text-gray-900 dark:text-white text-sm">Analiza Gemini AI</h3>
-                    <div class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-6 rounded-3xl shadow-sm border border-blue-500/10 mb-4">
-                        <p class="text-[10px] text-center opacity-70 mb-4 text-gray-700 dark:text-gray-300 uppercase font-bold tracking-tight text-balance">AI przeanalizuje logi treningowe, obliczy 1RM i wykryje stagnację</p>
-                        <button id="generate-ai-insight" class="w-full bg-blue-600 text-white py-3 rounded-2xl font-bold uppercase text-xs shadow-md hover:bg-blue-700 transition-colors disabled:opacity-50">Generuj Raport</button>
-                    </div>
-                    <div id="ai-result-container" class="hidden bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl p-6 rounded-3xl shadow-xl border border-blue-500/20">
-                        <div id="ai-loading" class="flex flex-col items-center gap-3 py-8 hidden">
-                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                            <span class="text-xs font-bold animate-pulse uppercase tracking-tighter">Analizowanie...</span>
-                        </div>
-                        <div id="ai-text" class="text-[11px] leading-relaxed markdown-content text-gray-800 dark:text-gray-200"></div>
-                    </div>
-                </div>
-
                 <div class="page-pane hidden" id="dziennik">
                     <div class="flex justify-between items-center mb-4 text-gray-900 dark:text-white">
                         <h3 class="font-bold uppercase tracking-widest text-sm text-bold">Logi CSV</h3>
@@ -220,7 +205,6 @@
         <button class="nav-btn px-2 py-2 flex flex-col items-center flex-shrink-0" data-tab="legs">🦵<span class="text-[8px] font-bold">LEGS</span></button>
         <button class="nav-btn px-2 py-2 flex flex-col items-center flex-shrink-0" data-tab="brzuch">🔥<span class="text-[8px] font-bold">CORE</span></button>
         <button class="nav-btn px-2 py-2 flex flex-col items-center flex-shrink-0" data-tab="postepy">📈<span class="text-[8px] font-bold">STATS</span></button>
-        <button class="nav-btn px-2 py-2 flex flex-col items-center flex-shrink-0" data-tab="ai-analiza">🤖<span class="text-[8px] font-bold">AI</span></button>
         <button class="nav-btn px-2 py-2 flex flex-col items-center flex-shrink-0" data-tab="dziennik">📖<span class="text-[8px] font-bold">LOGS</span></button>
     </nav>
 
