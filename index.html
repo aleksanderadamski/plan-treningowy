@@ -252,6 +252,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        // ⚠️ Changing this ID orphans all existing users' Firestore data.
         const appId = 'training-pro-v3';
         
         try { getAnalytics(app); } catch (e) {}
@@ -358,6 +359,8 @@
         let chartInstance = null;
         let currentUser = null;
         let currentSystem = localStorage.getItem('trainingSystem') || 'PPL';
+        let selectedExercises = JSON.parse(localStorage.getItem('selectedExercises') || '{}');
+        const saveSelectedExercises = () => localStorage.setItem('selectedExercises', JSON.stringify(selectedExercises));
 
         const toggleTheme = () => {
             const isDark = document.documentElement.classList.toggle('dark');
@@ -434,6 +437,7 @@
         });
 
         const initAuth = async () => {
+            if (auth.currentUser) return;
             if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                 try { 
                     await signInWithCustomToken(auth, __initial_auth_token); 
@@ -458,8 +462,13 @@
 
         const saveToCloud = async (entries) => {
             if (!currentUser) return;
-            await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs'), { entries: entries });
-            showToast("Zsynchronizowano");
+            try {
+                await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs'), { entries: entries });
+                showToast("Zsynchronizowano");
+            } catch (e) {
+                showToast("Błąd zapisu — sprawdź połączenie");
+                console.error("saveToCloud:", e);
+            }
         };
 
         const getStats = (name) => {
@@ -473,19 +482,21 @@
                 const container = document.getElementById(`${type}-cards`);
                 if(!container) return;
                 container.innerHTML = workouts[type].map((slot, i) => {
-                    const stats = getStats(slot.options[0].name);
+                    const selIdx = selectedExercises[`${type}-${i}`] || 0;
+                    const selOption = slot.options[selIdx] || slot.options[0];
+                    const stats = getStats(selOption.name);
                     return `
                         <div class="card bg-white/60 dark:bg-gray-800/60 p-5 rounded-3xl border border-white/20 shadow-sm">
                             <select class="ex-select w-full bg-transparent font-bold text-xs outline-none mb-2 text-gray-900 dark:text-white" data-type="${type}" data-idx="${i}">
-                                ${slot.options.map(o => `<option value="${o.name}">${o.name}</option>`).join('')}
+                                ${slot.options.map((o, oi) => `<option value="${o.name}"${oi === selIdx ? ' selected' : ''}>${o.name}</option>`).join('')}
                             </select>
                             <div class="stats-box text-[9px] font-bold text-blue-500 dark:text-blue-400 mb-4 px-1 flex gap-4">
                                 ${stats ? `<span>🏆 MAX: ${stats.pb}KG</span><span>⏮ OST: ${stats.last}KG</span>` : ''}
                             </div>
                             <div class="flex items-center justify-between">
-                                <span class="sets-display text-[9px] font-mono opacity-50 uppercase font-bold">${slot.options[0].sets}</span>
+                                <span class="sets-display text-[9px] font-mono opacity-50 uppercase font-bold">${selOption.sets}</span>
                                 <div class="flex items-center gap-2">
-                                    <input type="number" step="0.5" class="weight-input w-16 p-1 bg-slate-100 dark:bg-gray-700 rounded-lg text-center font-bold text-xs text-gray-900 dark:text-white" placeholder="0">
+                                    <input type="number" step="0.5" min="0" max="500" class="weight-input w-16 p-1 bg-slate-100 dark:bg-gray-700 rounded-lg text-center font-bold text-xs text-gray-900 dark:text-white" placeholder="0">
                                     <span class="text-[9px] font-bold uppercase opacity-50">kg</span>
                                 </div>
                             </div>
@@ -540,6 +551,8 @@
                 card.querySelector('.sets-display').textContent = selected.sets;
                 const stats = getStats(selected.name);
                 card.querySelector('.stats-box').innerHTML = stats ? `<span>🏆 MAX: ${stats.pb}KG</span><span>⏮ OST: ${stats.last}KG</span>` : '';
+                selectedExercises[`${e.target.dataset.type}-${e.target.dataset.idx}`] = e.target.selectedIndex;
+                saveSelectedExercises();
             }
         });
 
@@ -603,9 +616,8 @@
                 data: { labels: data.map(l => l.date), datasets: [{ data: data.map(l => l.weight), borderColor: '#2563eb', tension: 0.4, fill: false }] },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: false } } }
             });
-            window.scrollTo({ top: document.getElementById('chart-container').offsetTop - 20, behavior: 'smooth' });
+            document.getElementById('chart-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
         };
-        window.showChart = showChart;
 
         const navigate = (id) => {
             const currentPane = document.querySelector('.page-pane:not(.hidden)');
@@ -629,16 +641,34 @@
             setTimeout(() => t.style.opacity = '0', 2000); 
         };
 
-        document.getElementById('clear-log').onclick = async () => { 
-            if(confirm('Wyczyścić chmurę?') && currentUser) {
-                await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs'), { entries: [] }); 
+        const clearBtn = document.getElementById('clear-log');
+        clearBtn.onclick = async () => {
+            if (clearBtn.dataset.confirm !== 'true') {
+                clearBtn.textContent = 'Potwierdź — nieodwracalne!';
+                clearBtn.dataset.confirm = 'true';
+                setTimeout(() => { clearBtn.textContent = 'Wyczyść historię'; delete clearBtn.dataset.confirm; }, 3000);
+                return;
+            }
+            if (!currentUser) return;
+            try {
+                await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs'), { entries: [] });
+                clearBtn.textContent = 'Wyczyść historię';
+                delete clearBtn.dataset.confirm;
+            } catch (e) {
+                showToast("Błąd — sprawdź połączenie");
+                console.error("clear-log:", e);
             }
         };
 
-        document.getElementById('copy-log').onclick = () => { 
-            document.getElementById('csv-output').select(); 
-            document.execCommand('copy'); 
-            showToast('Skopiowano!'); 
+        document.getElementById('copy-log').onclick = () => {
+            const text = document.getElementById('csv-output').value;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => showToast('Skopiowano!')).catch(() => showToast('Błąd kopiowania'));
+            } else {
+                document.getElementById('csv-output').select();
+                document.execCommand('copy');
+                showToast('Skopiowano!');
+            }
         };
 
         document.getElementById('import-pasted-csv').onclick = async () => {
@@ -648,37 +678,55 @@
 
             const lines = text.split('\n');
             const newSystemEntries = [];
-            
+            let skipped = 0;
+
             for (let i = 1; i < lines.length; i++) {
                 const parts = lines[i].split(',');
                 if (parts.length >= 5) {
+                    const date = parts[0].trim();
+                    const weight = parseFloat(parts[4]);
+                    if (!date.match(/^\d{4}-\d{2}-\d{2}$/) || isNaN(weight) || weight <= 0) {
+                        skipped++;
+                        continue;
+                    }
                     newSystemEntries.push({
-                        date: parts[0].trim(),
+                        date,
                         system: currentSystem,
                         category: parts[1].trim(),
                         exercise: parts[2].trim().replace(/^"|"$/g, ''),
                         sets: parts[3].trim(),
-                        weight: parseFloat(parts[4])
+                        weight
                     });
                 }
             }
 
             if (newSystemEntries.length === 0 && lines.length > 1) {
-                showToast('Błędny format CSV', 'error');
+                showToast('Błędny format CSV');
                 return;
             }
 
             const otherSystemEntries = trainingLogs.filter(l => (l.system || 'PPL') !== currentSystem);
             const updatedLogs = [...otherSystemEntries, ...newSystemEntries];
 
-            await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs'), { entries: updatedLogs });
-            showToast('Zsynchronizowano z chmurą');
+            try {
+                await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'logs'), { entries: updatedLogs });
+                showToast(skipped > 0 ? `Zsynchronizowano (pominięto: ${skipped})` : 'Zsynchronizowano z chmurą');
+            } catch (e) {
+                showToast("Błąd zapisu — sprawdź połączenie");
+                console.error("import-csv:", e);
+            }
         };
 
         const scheduleToggle = document.getElementById('scheduleToggle');
-        scheduleToggle.onchange = () => {
+        const applyScheduleToggle = () => {
             document.getElementById('schedule-display').textContent = scheduleToggle.checked ? "PUSH, PULL, LEGS, PUSH (itd.)" : "Pon: PUSH | Śr: PULL | Pt: LEGS";
             document.querySelector('.dot').style.transform = scheduleToggle.checked ? 'translateX(1.25rem)' : 'translateX(0)';
+        };
+        scheduleToggle.checked = localStorage.getItem('scheduleToggle') === 'true';
+        applyScheduleToggle();
+        scheduleToggle.onchange = () => {
+            localStorage.setItem('scheduleToggle', scheduleToggle.checked);
+            applyScheduleToggle();
         };
 
         renderAll();
