@@ -1,0 +1,55 @@
+:root {
+  --grad-color-1: #e0f2fe; --grad-color-2: #f0f9ff;
+  --grad-color-3: #fefce8; --grad-color-4: #ecfdf5;
+}
+html.dark {
+  --grad-color-1: #1e3a8a; --grad-color-2: #1e1b4b;
+  --grad-color-3: #4a044e; --grad-color-4: #312e81;
+}
+body {
+    font-family: 'Poppins', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    background: linear-gradient(-45deg, var(--grad-color-1), var(--grad-color-2), var(--grad-color-3), var(--grad-color-4));
+    background-size: 400% 400%;
+    animation: gradientFloat 25s ease infinite;
+    transition: background 0.5s ease;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+@keyframes gradientFloat {
+    0% { background-position-x: 0%; }
+    50% { background-position-x: 100%; }
+    100% { background-position-x: 0%; }
+}
+.nav-btn.active { color: #2563eb; }
+html.dark .nav-btn.active { color: #60a5fa; }
+.page-pane { transition: transform 0.3s ease-out, opacity 0.3s ease-out; }
+
+@keyframes slide-in-from-right { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes slide-out-to-left { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+@keyframes slide-in-from-left { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes slide-out-to-right { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+.animate-slide-in-from-right { animation: slide-in-from-right 0.3s forwards; }
+.animate-slide-out-to-left { animation: slide-out-to-left 0.3s forwards; }
+.animate-slide-in-from-left { animation: slide-in-from-left 0.3s forwards; }
+.animate-slide-out-to-right { animation: slide-out-to-right 0.3s forwards; }
+
+details > summary { list-style: none; }
+details > summary::-webkit-details-marker { display: none; }
+details summary:after { content: '+'; float: right; font-weight: bold; transition: transform 0.2s; }
+details[open] summary:after { transform: rotate(45deg); }
+
+#auth-overlay { backdrop-filter: blur(10px); }
+
+select option {
+    background-color: #ffffff;
+    color: #111827;
+}
+html.dark select option {
+    background-color: #1f2937;
+    color: #f9fafb;
+}
+
+.markdown-content p { margin-bottom: 0.5rem; }
+.markdown-content strong { color: #2563eb; font-weight: 700; }
+html.dark .markdown-content strong { color: #60a5fa; }
